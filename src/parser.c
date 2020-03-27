@@ -1,4 +1,4 @@
-/* Name, parser.c, CS 24000, Spring 2020
+/* Aryan Wadhwani, parser.c, CS 24000, Spring 2020
  * Last updated March 27, 2020
  */
 
@@ -7,8 +7,14 @@
 #include "parser.h"
 
 /* Define parse_file here */
+song_data_t *parse_file(const char* file_name){
+  return NULL;
+} /* parse_file() */
 
 /* Define parse_header here */
+void parse_header(FILE *read_file, song_data_t *midi_file){
+  return;
+}
 
 /* Define parse_track here */
 
