@@ -7,6 +7,7 @@
 #include "../include/song_writer.h"
 #include "../include/event_tables.h"
 
+#include <malloc_debug.h>
 #include <malloc.h>
 #include <stdio.h>
 #include <assert.h>
@@ -17,8 +18,13 @@
 uint32_t endian_swap_32(uint32_t);
 uint16_t endian_swap_16(uint16_t);
 uint32_t get_event_size(event_t *);
-/* Function Definitions */
+bool is_status(uint8_t);
+void print_binary(int);
 
+/* Global Variables */
+uint8_t prev_status = 0x00;
+
+/* Function Definitions */
 /*
  * Define parse_file here
  */
@@ -122,9 +128,9 @@ void parse_track(FILE *read_file, song_data_t *midi_song){
     copy_track_head->event = malloc(sizeof(event_t));
     assert(copy_track_head->event);
     copy_track_head->event = parse_event(read_file);
-
+    
+    printf("This worked %d times? wtf\n", length);
     length = length + get_event_size(copy_track_head->event);
-    //TODO: Get parse_event to work, and find a way to figure out the size of the file
 
     if (count_bytes != length){
       copy_track_head->next_event = malloc(sizeof(event_node_t));
@@ -147,7 +153,7 @@ event_t *parse_event(FILE *read_file){
   assert(new_event);
   new_event->delta_time = parse_var_len(read_file);
 
-  uint8_t read_type = 0;
+  uint8_t read_type = 0x00;
   int check_error = fread(&read_type, sizeof(uint8_t), 1, read_file);
   assert(check_error == 1);
   new_event->type = read_type;
@@ -183,16 +189,47 @@ sys_event_t parse_sys_event(FILE *read_file, uint8_t type){
 
 /* Define parse_meta_event here */
 meta_event_t parse_meta_event(FILE *read_file){
-  meta_event_t a;
-  a.data_len = 0;
-  return a;
+  build_event_tables();
+  meta_event_t meta_event = (meta_event_t) {"\0", 0, NULL};
+  uint8_t read_type = 0x00;
+
+  int check_error = fread(&read_type, sizeof(uint8_t), 1, read_file);
+  assert(check_error == 1);
+
+  meta_event = META_TABLE[read_type];
+  assert(strcmp(meta_event.name, "") != 0);
+  if (meta_event.data_len != 0){
+    assert(parse_var_len(read_file) == meta_event.data_len);
+  } else {
+    meta_event.data_len = parse_var_len(read_file);
+  }
+
+  meta_event.data = malloc(meta_event.data_len * sizeof(uint8_t));
+  assert(meta_event.data);
+  check_error = fread(meta_event.data, 
+                      meta_event.data_len * sizeof(uint8_t),
+                      1, read_file);
+  assert(check_error == 1);
+  return meta_event;
 }
 
 /* Define parse_midi_event here */
-midi_event_t parse_midi_event(FILE *read_file, uint8_t size){
-  midi_event_t a;
-  a.status = 0;
-  return a;
+midi_event_t parse_midi_event(FILE *read_file, uint8_t read_status){
+  midi_event_t midi_event = (midi_event_t) {"\0", 0, 0, NULL};
+  if (is_status(read_status)){
+    midi_event.status = read_status;
+  } else {
+    midi_event.status = prev_status;
+    fseek(read_file, -1 * sizeof(uint8_t), SEEK_CUR);
+  }
+  midi_event = MIDI_TABLE[midi_event.status]; 
+  assert(strcmp(midi_event.name, "") != 0);
+  midi_event.data = malloc(midi_event.data_len * sizeof(uint8_t));
+  assert(midi_event.data);
+  int check_error = fread(midi_event.data, midi_event.data_len * sizeof(uint8_t),
+                          1, read_file);
+  assert(check_error == 1);
+  return midi_event;
 }
 
 /* Define parse_var_len here */
@@ -236,21 +273,31 @@ void free_event_node(event_node_t *song_event){
   return;
 }
 
-uint32_t get_event_size(event_t *event){
-  uint32_t event_size = 0;
-  uint32_t delta_time = event->delta_time;
-  uint8_t check_size = delta_time;
+uint32_t get_var_len_size(uint32_t number){
+  uint32_t var_len_size = 0;
+  uint8_t check_size = number;
   do {
-    check_size = delta_time;
-    delta_time = delta_time >> 8;
-    event_size = event_size + sizeof(uint8_t);
-  } while (check_size != 0 || delta_time != 0);
-  switch(event->type){
+    check_size = number;
+    number = number >> 8;
+    var_len_size = var_len_size + sizeof(uint8_t);
+  } while (check_size != 0 || number != 0);
+  return var_len_size;
+}
+
+uint32_t get_event_size(event_t *event){
+  uint32_t event_size = sizeof(uint8_t) + get_var_len_size(event->delta_time);
+  switch(event_type(event)){
     case SYS_EVENT_T:
+      event_size = event_size + get_var_len_size(event->sys_event.data_len) +
+                   event->sys_event.data_len * sizeof(uint8_t);
       break;
     case META_EVENT_T:
+      event_size = event_size + get_var_len_size(event->meta_event.data_len) +
+                   event->meta_event.data_len * sizeof(uint8_t);
       break;
     case MIDI_EVENT_T:
+      event_size = event_size + get_var_len_size(event->midi_event.data_len) +
+                   event->midi_event.data_len * sizeof(uint8_t);
       break;
   }
   return event_size;
@@ -270,6 +317,14 @@ uint16_t endian_swap_16(uint16_t num_16){
   return end_swap_32(nums_8);
 }
 
+bool is_status(uint8_t status){
+  if (status >> 7 == 1){
+    prev_status = status;
+    return true;
+  } else {
+    return false;
+  }
+}
 
 uint32_t endian_swap_32(uint32_t num_32){
   uint8_t nums_8[4] = {num_32 >> 24, num_32 >> 16, num_32 >> 8, num_32};
