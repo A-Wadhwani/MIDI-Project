@@ -237,7 +237,7 @@ midi_event_t parse_midi_event(FILE *read_file, uint8_t read_status){
     midi_event.status = read_status;
   } else {
     midi_event.status = prev_status;
-    fseek(read_file, -1L, SEEK_CUR);
+    fseek(read_file, -1 * sizeof(char), SEEK_CUR);
   }
   midi_event = MIDI_TABLE[midi_event.status];
   assert(strcmp(midi_event.name, "") != 0);
@@ -256,15 +256,25 @@ midi_event_t parse_midi_event(FILE *read_file, uint8_t read_status){
 
 /* Define parse_var_len here */
 uint32_t parse_var_len(FILE *read_file){
-  uint8_t read_length[4] = {};
-  int i = 0;
+  uint32_t parsed_val = 0;
+  uint8_t read;
+  int count = 0;
   int check_error = 0;
   do {
-    check_error = fread(&read_length[i], sizeof(uint8_t), 1, read_file);
+    check_error = fread(&read, sizeof(uint8_t), 1, read_file);
     assert(check_error == 1);
-    i++;
-  } while(read_length[i] >= 128 && i != 4);
-  return end_swap_32(read_length);
+    if (read > 127){
+      read = read - 128;
+      parsed_val = (parsed_val << 7) + read;
+    }
+    else { 
+      parsed_val = (parsed_val << 7) + read;
+      return parsed_val;
+    }
+    printf("Read value: %d\n", read);
+    count++;
+  } while(count != 4);
+  return parsed_val;
 }
 
 /* Define event_type here */
@@ -309,6 +319,7 @@ bool end_of_track(FILE *read_file){
   bool is_end = strcmp(chunk_type, "MTrk") == 0;
   assert(check_error == 1);
   free(chunk_type);
+  chunk_type = NULL;
   return is_end;
 }
 
@@ -350,7 +361,8 @@ uint16_t end_swap_16(uint8_t number[2]){
 }
 /* Define end_swap_32 here */
 uint32_t end_swap_32(uint8_t number[4]){
-  return ((number[3] << 24) | (number[2] << 16) | (number[1] << 8) | (number[0]));
+  uint32_t num = number[3] << 24;
+  return (num | (number[2] << 16) | (number[1] << 8) | number[0]);
 }
 
 uint16_t endian_swap_16(uint16_t num_16){
@@ -370,6 +382,7 @@ bool is_status(uint8_t status){
 uint32_t endian_swap_32(uint32_t num_32){
   uint8_t nums_8[4] = {num_32 >> 24, num_32 >> 16, num_32 >> 8, num_32};
   return end_swap_32(nums_8);
+  return num_32;
 }
 
 void print_binary(int number){
@@ -405,6 +418,6 @@ int main(){
   printf("Writing to output.mid....\n");
   verify_song(midi_song);
   write_song_data(midi_song, "output.mid");
-  printf("Writing complete!\n");
+  printf("Writing complete!\n %u ijej", endian_swap_32(10000000));
   return 0;
 }
