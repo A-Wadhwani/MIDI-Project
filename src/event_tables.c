@@ -14,7 +14,7 @@
 void build_event_tables() {
   //  META Events
   memset(META_TABLE, 0, sizeof(META_TABLE));
-  META_TABLE[0x00] = (meta_event_t) {"Sequence Number", 3, NULL};
+  META_TABLE[0x00] = (meta_event_t) {"Sequence Number", 2, NULL};
   META_TABLE[0x01] = (meta_event_t) {"Text Event", 0, NULL};
   META_TABLE[0x02] = (meta_event_t) {"Copyright Notice", 0, NULL};
   META_TABLE[0x03] = (meta_event_t) {"Sequence/Track Name", 0, NULL};

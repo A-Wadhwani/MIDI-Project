@@ -7,7 +7,6 @@
 #include "../include/song_writer.h"
 #include "../include/event_tables.h"
 
-#include <malloc_debug.h>
 #include <malloc.h>
 #include <stdio.h>
 #include <assert.h>
@@ -17,7 +16,8 @@
 /* Function Declarations */
 uint32_t endian_swap_32(uint32_t);
 uint16_t endian_swap_16(uint16_t);
-uint32_t get_event_size(event_t *);
+// uint32_t get_event_size(event_t *);
+bool end_of_track(FILE *);
 bool is_status(uint8_t);
 void print_binary(int);
 
@@ -47,12 +47,15 @@ song_data_t *parse_file(const char* file_name){
   assert(midi_song->track_list);
 
   parse_header(read_file, midi_song);
+  
   midi_song->track_list = NULL;
+  
   for(int i = 0; i < midi_song->num_tracks; i++){
     parse_track(read_file, midi_song);
   }
   assert(feof(read_file));
-
+  fclose(read_file);
+  read_file = NULL;
   return midi_song;
 } /* parse_file() */
 
@@ -64,6 +67,7 @@ void parse_header(FILE *read_file, song_data_t *midi_song){
   assert(strcmp(chunk_type, "MThd") == 0);
   assert(check_error == 1);
   free(chunk_type);
+  chunk_type = NULL;
 
   uint32_t length = 0;
   check_error = fread(&length, sizeof(length), 1, read_file);
@@ -92,7 +96,6 @@ void parse_header(FILE *read_file, song_data_t *midi_song){
   if (read_division >> 15 == 0){
     midi_song->division.ticks_per_qtr = read_division;
   } else {
-    printf("does not use \n");
     midi_song->division.frames_per_sec = read_division >> 8;
     midi_song->division.ticks_per_frame = read_division;
   }
@@ -123,26 +126,28 @@ void parse_track(FILE *read_file, song_data_t *midi_song){
   assert(new_track->event_list);
   event_node_t *copy_track_head = new_track->event_list;
   
-  uint32_t count_bytes = 0;
-  while (count_bytes != length){
+  printf("length: %u\n", length);
+  while (!end_of_track(read_file)){
     copy_track_head->event = malloc(sizeof(event_t));
     assert(copy_track_head->event);
     copy_track_head->event = parse_event(read_file);
-    
-    printf("This worked %d times? wtf\n", length);
-    length = length + get_event_size(copy_track_head->event);
-
-    if (count_bytes != length){
-      copy_track_head->next_event = malloc(sizeof(event_node_t));
-      assert(copy_track_head->next_event);
-      copy_track_head = copy_track_head->next_event;
-    }
+    copy_track_head->next_event = malloc(sizeof(event_node_t));
+    assert(copy_track_head->next_event);
+    copy_track_head = copy_track_head->next_event;
   }
 
   track_node_t *copy_song_head = midi_song->track_list;
-  while (copy_song_head->track != NULL){
+  if (copy_song_head == NULL){
+    midi_song->track_list = malloc(sizeof(track_node_t));
+    midi_song->track_list->track = new_track;
+    return;
+  }
+  while (copy_song_head->next_track != NULL){
     copy_song_head = copy_song_head->next_track;
   }
+  copy_song_head->next_track = malloc(sizeof(track_node_t));
+  assert(copy_song_head->next_track);
+  copy_song_head = copy_song_head->next_track;
   copy_song_head->track = new_track;
   return;
 }
@@ -161,12 +166,15 @@ event_t *parse_event(FILE *read_file){
   switch(event_type(new_event)){
     case SYS_EVENT_T:
       new_event->sys_event = parse_sys_event(read_file, read_type);
+      printf("SYS_EVENT called\n");
       break;
     case META_EVENT_T:
       new_event->meta_event = parse_meta_event(read_file);
+      printf("META_EVENT called\n");
       break;
     case MIDI_EVENT_T:
       new_event->midi_event = parse_midi_event(read_file, read_type);
+      printf("MIDI_EVENT called\n");
       break;
   }
   return new_event;
@@ -206,6 +214,9 @@ meta_event_t parse_meta_event(FILE *read_file){
 
   meta_event.data = malloc(meta_event.data_len * sizeof(uint8_t));
   assert(meta_event.data);
+  if (meta_event.data_len == 0){
+    return meta_event;
+  }
   check_error = fread(meta_event.data, 
                       meta_event.data_len * sizeof(uint8_t),
                       1, read_file);
@@ -222,7 +233,7 @@ midi_event_t parse_midi_event(FILE *read_file, uint8_t read_status){
     midi_event.status = prev_status;
     fseek(read_file, -1 * sizeof(uint8_t), SEEK_CUR);
   }
-  midi_event = MIDI_TABLE[midi_event.status]; 
+  midi_event = MIDI_TABLE[midi_event.status];
   assert(strcmp(midi_event.name, "") != 0);
   midi_event.data = malloc(midi_event.data_len * sizeof(uint8_t));
   assert(midi_event.data);
@@ -273,6 +284,24 @@ void free_event_node(event_node_t *song_event){
   return;
 }
 
+bool end_of_track(FILE *read_file){ 
+  if(feof(read_file)){
+    return true;
+  }
+  char *chunk_type = malloc(4 * sizeof(char));
+  assert(chunk_type);
+  int check_error = fread(chunk_type, 4 * sizeof(char), 1, read_file);
+  if (check_error == 0){
+    return true;
+  }
+  fseek(read_file, -4 * sizeof(char), SEEK_CUR);
+  bool is_end = strcmp(chunk_type, "MTrk") == 0;
+  assert(check_error == 1);
+  free(chunk_type);
+  return is_end;
+}
+
+/* 
 uint32_t get_var_len_size(uint32_t number){
   uint32_t var_len_size = 0;
   uint8_t check_size = number;
@@ -280,12 +309,12 @@ uint32_t get_var_len_size(uint32_t number){
     check_size = number;
     number = number >> 8;
     var_len_size = var_len_size + sizeof(uint8_t);
-  } while (check_size != 0 || number != 0);
+  } while (check_size > 127 || number != 0);
   return var_len_size;
 }
 
 uint32_t get_event_size(event_t *event){
-  uint32_t event_size = sizeof(uint8_t) + get_var_len_size(event->delta_time);
+  uint32_t event_size = 2 * sizeof(uint8_t) + get_var_len_size(event->delta_time);
   switch(event_type(event)){
     case SYS_EVENT_T:
       event_size = event_size + get_var_len_size(event->sys_event.data_len) +
@@ -296,12 +325,13 @@ uint32_t get_event_size(event_t *event){
                    event->meta_event.data_len * sizeof(uint8_t);
       break;
     case MIDI_EVENT_T:
-      event_size = event_size + get_var_len_size(event->midi_event.data_len) +
+      if (is_status(event->is_status()))
+      event_size = event_size +
                    event->midi_event.data_len * sizeof(uint8_t);
       break;
   }
   return event_size;
-}
+} */
 
 /* Define end_swap_16 here */
 uint16_t end_swap_16(uint8_t number[2]){
