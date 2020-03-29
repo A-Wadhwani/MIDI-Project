@@ -126,7 +126,6 @@ void parse_track(FILE *read_file, song_data_t *midi_song){
   assert(new_track->event_list);
   event_node_t *copy_track_head = new_track->event_list;
   
-  printf("length: %u\n", length);
   while (!end_of_track(read_file)){
     copy_track_head->event = malloc(sizeof(event_t));
     assert(copy_track_head->event);
@@ -175,11 +174,9 @@ event_t *parse_event(FILE *read_file){
       break;
     case META_EVENT_T:
       new_event->meta_event = parse_meta_event(read_file);
-      printf("META_EVENT called\n");
       break;
     case MIDI_EVENT_T:
       new_event->midi_event = parse_midi_event(read_file, read_type);
-      printf("MIDI_EVENT called\n");
       break;
   }
   return new_event;
@@ -271,7 +268,6 @@ uint32_t parse_var_len(FILE *read_file){
       parsed_val = (parsed_val << 7) + read;
       return parsed_val;
     }
-    printf("Read value: %d\n", read);
     count++;
   } while(count != 4);
   return parsed_val;
@@ -416,8 +412,7 @@ int main(){
   song_data_t *midi_song = parse_file(read_file_name);
   printf("Reading complete!\n");
   printf("Writing to output.mid....\n");
-  verify_song(midi_song);
   write_song_data(midi_song, "output.mid");
-  printf("Writing complete!\n %u ijej", endian_swap_32(10000000));
+  printf("Writing complete!\n");
   return 0;
 }
