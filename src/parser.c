@@ -131,9 +131,14 @@ void parse_track(FILE *read_file, song_data_t *midi_song){
     copy_track_head->event = malloc(sizeof(event_t));
     assert(copy_track_head->event);
     copy_track_head->event = parse_event(read_file);
-    copy_track_head->next_event = malloc(sizeof(event_node_t));
-    assert(copy_track_head->next_event);
-    copy_track_head = copy_track_head->next_event;
+    if (!end_of_track(read_file)){
+      copy_track_head->next_event = malloc(sizeof(event_node_t));
+      assert(copy_track_head->next_event);
+      copy_track_head = copy_track_head->next_event;
+    }
+    else {
+      copy_track_head->next_event = NULL;
+    }
   }
 
   track_node_t *copy_song_head = midi_song->track_list;
@@ -367,6 +372,23 @@ void print_binary(int number){
   printf("%d", number % 2);
 }
 
+void verify_song(song_data_t *midi_song){
+  printf("Header details Format: %u, Num Tracks: %u, Division: %u\n", 
+         midi_song->format, midi_song->num_tracks, midi_song->division.ticks_per_qtr);
+  track_node_t *copy_track = midi_song->track_list;
+  for(int i = 0; i < midi_song->num_tracks; i++){
+    printf("Track %u: Length %u\n",i, copy_track->track->length);
+    event_node_t *copy_event = copy_track->track->event_list;
+    while(copy_event != NULL){
+      printf("  Event type %u, Delta time %u\n",
+             event_type(copy_event->event), copy_event->event->delta_time);
+      copy_event = copy_event->next_event;
+    }
+    copy_track = copy_track->next_track;
+  }
+  printf("End of read\n");
+}
+
 int main(){
   char read_file_name[50];
   printf("Provide file name: \n");
@@ -375,6 +397,7 @@ int main(){
   song_data_t *midi_song = parse_file(read_file_name);
   printf("Reading complete!\n");
   printf("Writing to output.mid....\n");
+  verify_song(midi_song);
   write_song_data(midi_song, "output.mid");
   printf("Writing complete!\n");
   return 0;
