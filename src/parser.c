@@ -64,9 +64,10 @@ song_data_t *parse_file(const char* file_name){
 void parse_header(FILE *read_file, song_data_t *midi_song){
   char *chunk_type = malloc(4 * sizeof(char));
   assert(chunk_type);
+  
   int check_error = fread(chunk_type, 4 * sizeof(char), 1, read_file);
   printf("CHUNK TYPE: %s\n", chunk_type);
-  assert(strcmp(chunk_type, "MThd") == 0);
+  assert(strncmp(chunk_type, "MThd", 4) == 0);
   assert(check_error == 1);
   free(chunk_type);
   chunk_type = NULL;
@@ -109,12 +110,11 @@ void parse_track(FILE *read_file, song_data_t *midi_song){
   track_t *new_track = malloc(sizeof(track_t));
   assert(new_track);
 
-  char *chunk_type = malloc((4 * sizeof(char)) + 1);
+  char *chunk_type = malloc(4 * sizeof(char));
   assert(chunk_type);
   
   int check_error = fread(chunk_type, 4 * sizeof(char), 1, read_file);
   assert(check_error == 1);
-  chunk_type[4] = '\0';
   assert(strcmp(chunk_type, "MTrk") == 0);
   free(chunk_type);
   chunk_type = NULL;
