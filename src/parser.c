@@ -442,6 +442,9 @@ void test_parser(){
   free_song(midi_song);
 }
 
+/* 
 int main(){
+  test_parser();
   return 0;
 }
+*/
