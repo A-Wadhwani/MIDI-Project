@@ -148,15 +148,19 @@ void parse_track(FILE *read_file, song_data_t *midi_song){
   if (copy_song_head == NULL){
     midi_song->track_list = malloc(sizeof(track_node_t));
     midi_song->track_list->track = new_track;
+    midi_song->track_list->next_track = NULL;
     return;
   }
   while (copy_song_head->next_track != NULL){
+    printf("Count\n");
     copy_song_head = copy_song_head->next_track;
   }
   copy_song_head->next_track = malloc(sizeof(track_node_t));
   assert(copy_song_head->next_track);
+
   copy_song_head = copy_song_head->next_track;
   copy_song_head->track = new_track;
+  copy_song_head->next_track = NULL;
   return;
 }
 
@@ -445,9 +449,9 @@ void test_parser(){
   free_song(midi_song);
 }
 
-/* 
+ 
 int main(){
   test_parser();
   return 0;
-} */
+}
 
