@@ -26,6 +26,7 @@ void print_binary(int);
 uint8_t prev_status = 0x00;
 
 /* Function Definitions */
+
 /*
  * Define parse_file here
  */
@@ -444,9 +445,9 @@ void test_parser(){
   free_song(midi_song);
 }
 
- 
+/* 
 int main(){
   test_parser();
   return 0;
-}
+} */
 
