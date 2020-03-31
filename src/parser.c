@@ -115,7 +115,7 @@ void parse_track(FILE *read_file, song_data_t *midi_song){
   
   int check_error = fread(chunk_type, 4 * sizeof(char), 1, read_file);
   assert(check_error == 1);
-  assert(strcmp(chunk_type, "MTrk") == 0);
+  assert(strncmp(chunk_type, "MTrk", 4) == 0);
   free(chunk_type);
   chunk_type = NULL;
 
