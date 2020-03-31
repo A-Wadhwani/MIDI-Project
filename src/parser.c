@@ -210,7 +210,7 @@ meta_event_t parse_meta_event(FILE *read_file){
   assert(check_error == 1);
 
   meta_event = META_TABLE[read_type];
-  assert(strlen(meta_event.name) != 0);
+  assert(strncmp(meta_event.name, "", 1) != 0);
   if (meta_event.data_len != 0){
     assert(parse_var_len(read_file) == meta_event.data_len);
   } else {
@@ -240,7 +240,7 @@ midi_event_t parse_midi_event(FILE *read_file, uint8_t read_status){
     fseek(read_file, -1 * sizeof(char), SEEK_CUR);
   }
   midi_event = MIDI_TABLE[midi_event.status];
-  assert(strlen(midi_event.name) != 0);
+  assert(strncmp(midi_event.name, "", 1) != 0);
 
   if(midi_event.data_len == 0){
     return midi_event;
@@ -339,7 +339,7 @@ bool end_of_track(FILE *read_file){
     return true;
   }
   fseek(read_file, -4 * sizeof(char), SEEK_CUR);
-  bool is_end = strcmp(chunk_type, "MTrk") == 0;
+  bool is_end = strncmp(chunk_type, "MTrk", 4) == 0;
   assert(check_error == 1);
   free(chunk_type);
   chunk_type = NULL;
@@ -444,9 +444,9 @@ void test_parser(){
   free_song(midi_song);
 }
 
-/* 
+ 
 int main(){
   test_parser();
   return 0;
 }
-*/
+
