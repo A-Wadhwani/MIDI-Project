@@ -210,7 +210,7 @@ meta_event_t parse_meta_event(FILE *read_file){
   assert(check_error == 1);
 
   meta_event = META_TABLE[read_type];
-  assert(strcmp(meta_event.name, "") != 0);
+  assert(strlen(meta_event.name) != 0);
   if (meta_event.data_len != 0){
     assert(parse_var_len(read_file) == meta_event.data_len);
   } else {
@@ -240,7 +240,7 @@ midi_event_t parse_midi_event(FILE *read_file, uint8_t read_status){
     fseek(read_file, -1 * sizeof(char), SEEK_CUR);
   }
   midi_event = MIDI_TABLE[midi_event.status];
-  assert(strcmp(midi_event.name, "") != 0);
+  assert(strlen(midi_event.name) != 0);
 
   if(midi_event.data_len == 0){
     return midi_event;
