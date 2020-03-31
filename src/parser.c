@@ -67,7 +67,6 @@ void parse_header(FILE *read_file, song_data_t *midi_song){
   assert(chunk_type);
   
   int check_error = fread(chunk_type, 4 * sizeof(char), 1, read_file);
-  printf("CHUNK TYPE: %s\n", chunk_type);
   assert(strncmp(chunk_type, "MThd", 4) == 0);
   assert(check_error == 1);
   free(chunk_type);
@@ -152,7 +151,6 @@ void parse_track(FILE *read_file, song_data_t *midi_song){
     return;
   }
   while (copy_song_head->next_track != NULL){
-    printf("Count\n");
     copy_song_head = copy_song_head->next_track;
   }
   copy_song_head->next_track = malloc(sizeof(track_node_t));
@@ -178,7 +176,6 @@ event_t *parse_event(FILE *read_file){
   switch(event_type(new_event)){
     case SYS_EVENT_T:
       new_event->sys_event = parse_sys_event(read_file, read_type);
-      printf("SYS_EVENT called\n");
       break;
     case META_EVENT_T:
       new_event->meta_event = parse_meta_event(read_file);
@@ -319,16 +316,24 @@ void free_track_node(track_node_t *track_node){
     free_event_node(copy_node);
     copy_node = NULL;
   }
-  track_node->next_track = NULL;
   free(track_node->track);
   free(track_node);
 }
 
 /* Define free_event_node here */
 void free_event_node(event_node_t *event_node){
+  switch(event_type(event_node->event)){
+    case META_EVENT_T:
+      free(event_node->event->meta_event.data);
+      break;
+    case MIDI_EVENT_T:
+      free(event_node->event->midi_event.data);
+      break;
+    case SYS_EVENT_T:
+      free(event_node->event->sys_event.data);
+  }
   free(event_node->event);
   event_node->event = NULL;
-  event_node->next_event = NULL;
   free(event_node);
   return;
 }
@@ -437,7 +442,7 @@ void verify_song(song_data_t *midi_song){
 }
 
 void test_parser(){
-  char read_file_name[50];
+  char *read_file_name = malloc(50 * sizeof(char));
   printf("Provide file name: \n");
   scanf("%s", read_file_name);
   printf("Reading file...\n");
@@ -446,6 +451,8 @@ void test_parser(){
   printf("Writing to output.mid....\n");
   write_song_data(midi_song, "output.mid");
   printf("Writing complete!\n");
+  verify_song(midi_song);
+  free(read_file_name);
   free_song(midi_song);
 }
 
