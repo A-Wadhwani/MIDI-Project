@@ -65,7 +65,7 @@ void parse_header(FILE *read_file, song_data_t *midi_song){
   char *chunk_type = malloc(4 * sizeof(char));
   assert(chunk_type);
   int check_error = fread(chunk_type, 4 * sizeof(char), 1, read_file);
-  printf("%s", chunk_type);
+  printf("CHUNK TYPE: %s\n", chunk_type);
   assert(strcmp(chunk_type, "MThd") == 0);
   assert(check_error == 1);
   free(chunk_type);
