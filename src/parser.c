@@ -3,15 +3,16 @@
  */
 
 /* Add any includes here */
-#include "../include/parser.h"
-#include "../include/song_writer.h"
-#include "../include/event_tables.h"
+#include "parser.h"
+#include "song_writer.h"
+#include "event_tables.h"
 
 #include <malloc.h>
 #include <stdio.h>
 #include <assert.h>
 #include <string.h>
 #include <inttypes.h>
+#include <stdbool.h>
 
 /* Function Declarations */
 uint32_t endian_swap_32(uint32_t);
@@ -288,16 +289,40 @@ uint8_t event_type(event_t *event){
 
 /* Define free_song here */
 void free_song(song_data_t *midi_song){
-  return;
+  if (midi_song == NULL){
+    return;
+  }
+  free(midi_song->path);
+  midi_song->path = NULL;
+  while(midi_song->track_list != NULL){
+    track_node_t *copy_node = midi_song->track_list;
+    midi_song->track_list = copy_node->next_track;
+    free_track_node(copy_node);
+    copy_node = NULL;
+  }
+  midi_song->track_list = NULL;
+  free(midi_song);
 }
 
 /* Define free_track_node here */
-void free_track_node(track_node_t *song_track){
-  return;
+void free_track_node(track_node_t *track_node){
+  while(track_node->track->event_list != NULL){
+    event_node_t *copy_node = track_node->track->event_list;
+    track_node->track->event_list = copy_node->next_event;
+    free_event_node(copy_node);
+    copy_node = NULL;
+  }
+  track_node->next_track = NULL;
+  free(track_node->track);
+  free(track_node);
 }
 
 /* Define free_event_node here */
-void free_event_node(event_node_t *song_event){
+void free_event_node(event_node_t *event_node){
+  free(event_node->event);
+  event_node->event = NULL;
+  event_node->next_event = NULL;
+  free(event_node);
   return;
 }
 
@@ -414,5 +439,6 @@ int main(){
   printf("Writing to output.mid....\n");
   write_song_data(midi_song, "output.mid");
   printf("Writing complete!\n");
+  free_song(midi_song);
   return 0;
 }
