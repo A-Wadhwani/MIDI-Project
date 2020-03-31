@@ -10,7 +10,7 @@
 #include <malloc.h>
 
 /* Global Variables */
-extern tree_node_t *g_song_library;
+tree_node_t *g_song_library;
 
 /* Define find_parent_pointer here */
 tree_node_t **find_parent_pointer(tree_node_t **tree_node, const char *song_name){
