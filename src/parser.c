@@ -429,7 +429,7 @@ void verify_song(song_data_t *midi_song){
   printf("End of read\n");
 }
 
-int main(){
+void test_parser(){
   char read_file_name[50];
   printf("Provide file name: \n");
   scanf("%s", read_file_name);
@@ -440,5 +440,8 @@ int main(){
   write_song_data(midi_song, "output.mid");
   printf("Writing complete!\n");
   free_song(midi_song);
+}
+
+int main(){
   return 0;
 }
