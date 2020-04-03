@@ -135,7 +135,7 @@ void parse_track(FILE *read_file, song_data_t *midi_song){
     assert(copy_track_head->event);
     copy_track_head->event = parse_event(read_file);
     if (!end_of_track(read_file)){
-      copy_track_head->next_event = malloc(sizeof(event_node_t));
+    //  copy_track_head->next_event = malloc(sizeof(event_node_t));
       assert(copy_track_head->next_event);
       copy_track_head = copy_track_head->next_event;
     }
