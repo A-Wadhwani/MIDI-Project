@@ -350,6 +350,7 @@ bool end_of_track(FILE *read_file){
   }
   fseek(read_file, -4 * sizeof(char), SEEK_CUR);
   bool is_end = strncmp(chunk_type, "MTrk", 4) == 0;
+  assert(check_error == 1);
   free(chunk_type);
   chunk_type = NULL;
   return is_end;
