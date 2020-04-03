@@ -46,7 +46,7 @@ song_data_t *parse_file(const char* file_name){
   midi_song->path[strlen(file_name)] = '\0';
 
   // midi_song->track_list = malloc(sizeof(track_node_t));
-  assert(midi_song->track_list);
+  // assert(midi_song->track_list);
 
   parse_header(read_file, midi_song);
   
