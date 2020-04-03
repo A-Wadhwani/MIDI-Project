@@ -85,7 +85,7 @@ int main(int argc, char **argv) {
     free_library(g_song_library);
   }
   if (song_path) {
-    // free_song(song);
+    free_song(song);
   }
 
   return 0;
