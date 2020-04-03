@@ -45,7 +45,7 @@ song_data_t *parse_file(const char* file_name){
   strcpy(midi_song->path, file_name);
   midi_song->path[strlen(file_name)] = '\0';
 
-  midi_song->track_list = malloc(sizeof(track_node_t));
+  // midi_song->track_list = malloc(sizeof(track_node_t));
   assert(midi_song->track_list);
 
   parse_header(read_file, midi_song);
@@ -116,6 +116,7 @@ void parse_track(FILE *read_file, song_data_t *midi_song){
   int check_error = fread(chunk_type, 4 * sizeof(char), 1, read_file);
   assert(check_error == 1);
   assert(strncmp(chunk_type, "MTrk", 4) == 0);
+
   free(chunk_type);
   chunk_type = NULL;
 
