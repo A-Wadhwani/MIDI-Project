@@ -345,7 +345,7 @@ bool end_of_track(FILE *read_file){
   if(feof(read_file)){
     return true;
   }
-  char *chunk_type = malloc(4 * sizeof(char));
+  char chunk_type[4] = "";
   assert(chunk_type);
   int check_error = fread(chunk_type, 4 * sizeof(char), 1, read_file);
   if (check_error == 0){
@@ -354,8 +354,6 @@ bool end_of_track(FILE *read_file){
   fseek(read_file, -4 * sizeof(char), SEEK_CUR);
   bool is_end = strncmp(chunk_type, "MTrk", 4) == 0;
   assert(check_error == 1);
-  free(chunk_type);
-  chunk_type = NULL;
   return is_end;
 }
 
