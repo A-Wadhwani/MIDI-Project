@@ -344,8 +344,8 @@ bool end_of_track(FILE *read_file){
   }
   char *chunk_type = malloc(4 * sizeof(char));
   assert(chunk_type);
-  int check_error = fread(chunk_type, sizeof(char), 4, read_file);
-  if (check_error != 4){
+  int check_error = fread(chunk_type, 4 * sizeof(char), 1, read_file);
+  if (check_error == 0){
     return true;
   }
   fseek(read_file, -4 * sizeof(char), SEEK_CUR);
