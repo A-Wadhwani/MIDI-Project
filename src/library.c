@@ -8,6 +8,8 @@
 
 #include <string.h>
 #include <malloc.h>
+#include <dirent.h>
+#include <ftw.h>
 
 /* Global Variables */
 
@@ -64,9 +66,7 @@ int remove_song_from_tree(tree_node_t **tree_root, const char *song_name){
     if (compare_strings == 0){
       tree_node_t *save_left = (*copy_root)->left_child;
       tree_node_t *save_right = (*copy_root)->right_child;
-      free((*copy_root)->song_name);
-      free_song((*copy_root)->song);
-      free(*copy_root);
+      free_node(*copy_root);
       *copy_root = NULL;
       tree_insert(tree_root, save_left);
       tree_insert(tree_root, save_right);
@@ -87,40 +87,82 @@ void free_node(tree_node_t *tree_node){
   if (tree_node == NULL){
     return;
   }
-  remove_song_from_tree(&tree_node, tree_node->song_name);
-  free_node(tree_node);
+  free(tree_node->song_name);
+  free_song(tree_node->song);
+  free(tree_node);
 }
 
 /* Define print_node here */
 void print_node(tree_node_t *tree_node, FILE *output_file){
+  fprintf(output_file, "%s\n", tree_node->song_name);
   return;
 }
 
 /* Define traverse_pre_order here */
-void traverse_pre_order(tree_node_t *tree_node, void *data, traversal_func_t function){
+void traverse_pre_order(tree_node_t *tree_node, void *data, traversal_func_t run_operation){
+  if (tree_node == NULL){
+    return;
+  }
+  run_operation(tree_node, data);
+  traverse_pre_order(tree_node->left_child, data, run_operation);
+  traverse_pre_order(tree_node->right_child, data, run_operation);
   return;
 }
 
 /* Define traverse_in_order here */
-void traverse_in_order(tree_node_t *tree_node, void *data, traversal_func_t function){
+void traverse_in_order(tree_node_t *tree_node, void *data, traversal_func_t run_operation){
+  if (tree_node == NULL){
+    return;
+  }
+  traverse_in_order(tree_node->left_child, data, run_operation);
+  run_operation(tree_node, data);
+  traverse_in_order(tree_node->right_child, data, run_operation);
   return;
 }
 
 /* Define traverse_post_order here */
-void traverse_post_order(tree_node_t *tree_node, void *data, traversal_func_t function){
+void traverse_post_order(tree_node_t *tree_node, void *data, traversal_func_t run_operation){
+  if (tree_node == NULL){
+    return;
+  }
+  traverse_post_order(tree_node->left_child, data, run_operation);
+  traverse_post_order(tree_node->right_child, data, run_operation);
+  run_operation(tree_node, data);
   return;
 }
 
 /* Define free_library here */
 void free_library(tree_node_t *tree_node){
-  return;
+  if (tree_node == NULL){
+    return;
+  }
+  free_library(tree_node->left_child);
+  free_library(tree_node->right_child);
+  free_node(tree_node);
 }
 
 /* Define write_song_list here */
 void write_song_list(FILE *fp, tree_node_t *tree_node){
+  traverse_pre_order(tree_node, fp, (traversal_func_t) print_node);
   return;
 }
+
 /* Define make_library here */
 void make_library(const char *directory_name){
+  DIR *directory = opendir(directory_name);
+  struct dirent *dir = NULL;
+  while ((dir = readdir(directory)) != NULL){
+    printf("FILE DETAILS: \n"); 
+    printf("  %s \n", dir->d_name);
+    printf("  %c \n", dir->d_type);
+    printf("  %d \n", dir->d_reclen);
+  }
   return;
+}
+
+int main(){
+  char name[100];
+  scanf("%s", name);
+  make_library(name);
+  return 0;
 }
