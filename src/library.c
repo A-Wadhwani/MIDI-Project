@@ -168,6 +168,8 @@ int add_file_to_library(const char *file_path, const struct stat *sb, int type_f
   strncpy(dir_string, file_path, strlen(file_path));
   do {
     check_error = sscanf(dir_string, "%[^/]/%[^\n]", file_name, save_right);
+    free(dir_string);
+    dir_string = malloc(strlen(save_right) * sizeof(char) + 1);
     strncpy(dir_string, save_right, strlen(save_right));
   } while (check_error == 2);
  
