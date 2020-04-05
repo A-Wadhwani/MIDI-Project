@@ -173,6 +173,7 @@ int add_file_to_library(const char *file_path, const struct stat *sb, int type_f
 
   int check_error = 0;
   strncpy(dir_string, file_path, strlen(file_path));
+  dir_string[strlen(file_path)] = '\0';
   do {
     check_error = sscanf(dir_string, "%[^/]/%[^\n]", file_name, save_right);
     strncpy(dir_string, save_right, strlen(save_right));
