@@ -11,6 +11,7 @@
 #include <malloc.h>
 #include <dirent.h>
 #include <ftw.h>
+#include <assert.h>
 
 /* Global Variables */
 
@@ -168,22 +169,19 @@ int add_file_to_library(const char *file_path, const struct stat *sb, int type_f
 }
 
 char *get_file_name(const char *file_path){
-  char *file_name = malloc(strlen(file_path) * sizeof(char));
-  strcpy(file_name, file_path);
-  strcpy(file_name, basename(file_name));
-  return file_name;
+  char *file_name = malloc(strlen(file_path));
+  char *save_right = malloc(strlen(file_path));
+  strcpy(save_right, file_path);
+  int check_error = 0;
+  do {
+    check_error = sscanf(save_right, "%[^/]/%[^\n]", file_name, save_right);
+  } while (check_error == 2);
+  free(file_name);
+  return save_right;
 }
 
 /* Define make_library here */
 void make_library(const char *directory_name){
-  printf("%d\n", ftw(directory_name, &add_file_to_library, 20));
+  assert(ftw(directory_name, &add_file_to_library, 20) == 0);
   return;
 }
-
-/* 
-int main(){
-  make_library("music/");
-  free_library(g_song_library);
-  return 0;
-}
-*/
