@@ -161,15 +161,23 @@ int add_file_to_library(const char *file_path, const struct stat *sb, int type_f
   }
   tree_node_t *new_node = malloc(sizeof(tree_node_t));
   
-  new_node->song_name = malloc(strlen(file_path) * sizeof(char));
-  strncpy(new_node->song_name, file_path, strlen(file_path));
   char *file_name = malloc(strlen(file_path) * sizeof(char));  
+  char *save_right = malloc(strlen(file_path) * sizeof(char));
   int check_error = 0;
+  strncpy(save_right, file_path, strlen(file_path));
   do {
-    check_error = sscanf(new_node->song_name, "%[^/]/%[^\n]", file_name, new_node->song_name);
+    check_error = sscanf(save_right, "%[^/]/%[^\n]", file_name, save_right);
   } while (check_error == 2);
+ 
+  new_node->song_name = malloc(strlen(save_right) * sizeof(char) + 1);
+  strncpy(new_node->song_name, save_right, strlen(save_right));
+  new_node->song_name[strlen(save_right)] = '\0';
+
   free(file_name);
-  
+  free(save_right);
+  file_name = NULL;
+  save_right = NULL;
+
   new_node->song = parse_file(file_path);
   new_node->left_child = NULL;
   new_node->right_child = NULL;
