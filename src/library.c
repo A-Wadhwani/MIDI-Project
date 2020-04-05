@@ -161,8 +161,8 @@ int add_file_to_library(const char *file_path, const struct stat *sb, int type_f
   }
   tree_node_t *new_node = malloc(sizeof(tree_node_t));
   
-  char *file_name = malloc(strlen(file_path) * sizeof(char));  
-  char *save_right = malloc(strlen(file_path) * sizeof(char));
+  char *file_name = malloc(strlen(file_path) * sizeof(char) + 1);
+  char *save_right = malloc(strlen(file_path) * sizeof(char) + 1);
   int check_error = 0;
   strncpy(save_right, file_path, strlen(file_path));
   do {
