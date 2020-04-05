@@ -55,7 +55,7 @@ int tree_insert(tree_node_t **tree_root, tree_node_t *tree_node){
     free_node(tree_node);
     return DUPLICATE_SONG;
   }
-  if (compare_strings < 0){
+  if (compare_strings > 0){
     return tree_insert(&((*tree_root)->left_child), tree_node);
   }
   return tree_insert(&((*tree_root)->right_child), tree_node);
