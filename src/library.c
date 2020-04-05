@@ -152,17 +152,7 @@ void make_library(const char *directory_name){
   DIR *directory = opendir(directory_name);
   struct dirent *dir = NULL;
   while ((dir = readdir(directory)) != NULL){
-    printf("FILE DETAILS: \n"); 
-    printf("  %s \n", dir->d_name);
-    printf("  %c \n", dir->d_type);
-    printf("  %d \n", dir->d_reclen);
   }
   return;
 }
 
-int main(){
-  char name[100];
-  scanf("%s", name);
-  make_library(name);
-  return 0;
-}
