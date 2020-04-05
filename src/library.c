@@ -7,6 +7,7 @@
 #include "library.h"
 
 #include <string.h>
+#include <libgen.h>
 #include <malloc.h>
 #include <dirent.h>
 #include <ftw.h>
@@ -14,6 +15,11 @@
 /* Global Variables */
 
 tree_node_t *g_song_library = NULL;
+
+/* Function Definitions */
+
+int add_file_to_library(const char *, const struct stat *, int);
+char* get_file_name(const char *);
 
 /* Define find_parent_pointer here */
 tree_node_t **find_parent_pointer(tree_node_t **tree_node, const char *song_name){
@@ -147,12 +153,33 @@ void write_song_list(FILE *fp, tree_node_t *tree_node){
   return;
 }
 
+int add_file_to_library(const char *file_path, const struct stat *sb, int type_flag){
+  if (type_flag != FTW_F){
+    return 0;
+  }
+  tree_node_t *new_node = malloc(sizeof(tree_node_t));
+  new_node->song_name = get_file_name(file_path);
+  new_node->song = parse_file(file_path);
+  new_node->left_child = NULL;
+  new_node->right_child = NULL;
+  tree_insert(&g_song_library, new_node); 
+  return 0;
+}
+
+char *get_file_name(const char *file_path){
+  char *copy_file_name = malloc(strlen(file_path) * sizeof(char));
+  strcpy(copy_file_name, file_path);
+  return basename(copy_file_name);
+}
+
 /* Define make_library here */
 void make_library(const char *directory_name){
-  DIR *directory = opendir(directory_name);
-  struct dirent *dir = NULL;
-  while ((dir = readdir(directory)) != NULL){
-  }
+  printf("%d\n", ftw(directory_name, &add_file_to_library, 20));
   return;
 }
 
+
+int main(){
+  make_library("music/");
+  write_song_list(stdout, g_song_library);
+}
