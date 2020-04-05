@@ -93,7 +93,7 @@ void free_node(tree_node_t *tree_node){
   if (tree_node == NULL){
     return;
   }
-  free(tree_node->song_name);
+//  free(tree_node->song_name);
   free_song(tree_node->song);
   free(tree_node);
 }
@@ -145,6 +145,7 @@ void free_library(tree_node_t *tree_node){
   free_library(tree_node->left_child);
   free_library(tree_node->right_child);
   free_node(tree_node);
+  tree_node = NULL;
 }
 
 /* Define write_song_list here */
@@ -177,3 +178,11 @@ void make_library(const char *directory_name){
   printf("%d\n", ftw(directory_name, &add_file_to_library, 20));
   return;
 }
+
+/* 
+int main(){
+  make_library("music/");
+  free_library(g_song_library);
+  return 0;
+}
+*/
