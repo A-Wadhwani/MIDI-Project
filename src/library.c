@@ -169,6 +169,9 @@ int add_file_to_library(const char *file_path, const struct stat *sb, int type_f
 }
 
 char *get_file_name(const char *file_path){
+  if (file_path == NULL){
+    return NULL;
+  }
   char *file_name = malloc(strlen(file_path) * sizeof(char));
   char *save_right = malloc(strlen(file_path) * sizeof(char));
   strncpy(save_right, file_path, strlen(file_path));
