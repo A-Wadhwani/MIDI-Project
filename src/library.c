@@ -52,6 +52,7 @@ int tree_insert(tree_node_t **tree_root, tree_node_t *tree_node){
   }
   int compare_strings = strcmp((*tree_root)->song_name, tree_node->song_name);
   if (compare_strings == 0){
+    free_node(tree_node);
     return DUPLICATE_SONG;
   }
   if (compare_strings < 0){
@@ -215,10 +216,10 @@ void write_song_to_file(tree_node_t *tree_node, char *dir){
   write_song_data(tree_node->song, result);
 }
 
-/* 
+
 int main(){
   make_library("music/");
-  traverse_pre_order(g_song_library, "music/my_tests/output_", (traversal_func_t) write_song_to_file);
+  traverse_pre_order(g_song_library, "music/my_tests/", (traversal_func_t) write_song_to_file);
   return 0;
 }
-*/
+
