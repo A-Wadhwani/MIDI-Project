@@ -176,6 +176,7 @@ int add_file_to_library(const char *file_path, const struct stat *sb, int type_f
   do {
     check_error = sscanf(dir_string, "%[^/]/%[^\n]", file_name, save_right);
     strncpy(dir_string, save_right, strlen(save_right));
+    dir_string[strlen(save_right)] = '\0';
   } while (check_error == 2);
  
   new_node->song_name = malloc(strlen(save_right) * sizeof(char) + 1);
