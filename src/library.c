@@ -177,9 +177,3 @@ void make_library(const char *directory_name){
   printf("%d\n", ftw(directory_name, &add_file_to_library, 20));
   return;
 }
-
-
-int main(){
-  make_library("music/");
-  write_song_list(stdout, g_song_library);
-}
