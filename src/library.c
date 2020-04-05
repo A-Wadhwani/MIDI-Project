@@ -35,7 +35,7 @@ tree_node_t **find_parent_pointer(tree_node_t **tree_node, const char *song_name
   if (compare_strings == 0){
     return tree_node;
   }
-  if (compare_strings < 0){
+  if (compare_strings > 0){
     return find_parent_pointer(&((*tree_node)->left_child), song_name);
   }
   return find_parent_pointer(&((*tree_node)->right_child), song_name);
@@ -81,7 +81,7 @@ int remove_song_from_tree(tree_node_t **tree_root, const char *song_name){
       tree_insert(tree_root, save_right);
       return DELETE_SUCCESS;
     }
-    if (compare_strings < 0){
+    if (compare_strings > 0){
       copy_root = &((*copy_root)->left_child);
     }
     else {
