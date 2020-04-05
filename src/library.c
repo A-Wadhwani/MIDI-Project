@@ -5,6 +5,7 @@
 /* Included Libraries */
 
 #include "library.h"
+#include "song_writer.h"
 
 #include <string.h>
 #include <libgen.h>
@@ -205,4 +206,17 @@ int add_file_to_library(const char *file_path, const struct stat *sb, int type_f
 void make_library(const char *directory_name){
   assert(ftw(directory_name, &add_file_to_library, 20) == 0);
   return;
+}
+
+void write_song_to_file(tree_node_t *tree_node, char *dir){
+  char result[strlen(tree_node->song_name) + strlen(dir) + 2];
+  strcpy(result, dir);
+  strcat(result, tree_node->song_name);
+  write_song_data(tree_node->song, result);
+}
+
+int main(){
+  make_library("music/");
+  traverse_pre_order(g_song_library, "music/my_tests/output_", (traversal_func_t) write_song_to_file);
+  return 0;
 }
