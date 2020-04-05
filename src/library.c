@@ -153,7 +153,7 @@ void free_library(tree_node_t *tree_node){
 
 /* Define write_song_list here */
 void write_song_list(FILE *fp, tree_node_t *tree_node){
-  traverse_pre_order(tree_node, fp, (traversal_func_t) print_node);
+  traverse_in_order(tree_node, fp, (traversal_func_t) print_node);
   return;
 }
 
