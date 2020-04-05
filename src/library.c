@@ -93,7 +93,7 @@ void free_node(tree_node_t *tree_node){
   if (tree_node == NULL){
     return;
   }
-//  free(tree_node->song_name);
+  free(tree_node->song_name);
   free_song(tree_node->song);
   free(tree_node);
 }
@@ -168,9 +168,10 @@ int add_file_to_library(const char *file_path, const struct stat *sb, int type_f
 }
 
 char *get_file_name(const char *file_path){
-  char *copy_file_name = malloc(strlen(file_path) * sizeof(char));
-  strcpy(copy_file_name, file_path);
-  return basename(copy_file_name);
+  char *file_name = malloc(strlen(file_path) * sizeof(char));
+  strcpy(file_name, file_path);
+  strcpy(file_name, basename(file_name));
+  return file_name;
 }
 
 /* Define make_library here */
