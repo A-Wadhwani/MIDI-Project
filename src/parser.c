@@ -345,10 +345,11 @@ bool end_of_track(FILE *read_file){
   if(feof(read_file)){
     return true;
   }
-  char *chunk_type = malloc(sizeof(char) * 4 + 1);
+  char *chunk_type = malloc(sizeof(char) * 4);
   int check_error = fread(chunk_type, sizeof(char), 4, read_file);
-  chunk_type[4] = '\0';
   if (check_error != 4){
+    free(chunk_type);
+    chunk_type = NULL;
     return true;
   }
   bool is_end = strncmp(chunk_type, "MTrk", 4) == 0;
