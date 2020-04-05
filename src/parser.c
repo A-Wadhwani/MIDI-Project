@@ -355,7 +355,6 @@ bool end_of_track(FILE *read_file){
   free(chunk_type);
   chunk_type = NULL;
   fseek(read_file, -4 * sizeof(char), SEEK_CUR);
-  assert(check_error == 1);
   return is_end;
 }
 
