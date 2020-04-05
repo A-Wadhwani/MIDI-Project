@@ -215,8 +215,10 @@ void write_song_to_file(tree_node_t *tree_node, char *dir){
   write_song_data(tree_node->song, result);
 }
 
+/* 
 int main(){
   make_library("music/");
   traverse_pre_order(g_song_library, "music/my_tests/output_", (traversal_func_t) write_song_to_file);
   return 0;
 }
+*/
