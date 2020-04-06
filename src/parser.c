@@ -2,27 +2,30 @@
  * Last updated March 27, 2020
  */
 
-/* Add any includes here */
+/* Included Libraries */
+
 #include "parser.h"
 #include "song_writer.h"
-#include "event_tables.h"
 
 #include <malloc.h>
-#include <stdio.h>
 #include <assert.h>
 #include <string.h>
-#include <inttypes.h>
-#include <stdbool.h>
+
+/* User Defined Constants */
+
 
 /* Function Declarations */
+
 uint32_t endian_swap_32(uint32_t);
 uint16_t endian_swap_16(uint16_t);
-// uint32_t get_event_size(event_t *);
 bool end_of_track(FILE *);
 bool is_status(uint8_t);
 void print_binary(int);
+void verify_song(song_data_t *);
+void debug_parser();
 
 /* Global Variables */
+
 uint8_t prev_status = 0x00;
 
 /* Function Definitions */
@@ -406,6 +409,12 @@ uint16_t endian_swap_16(uint16_t num_16){
   return end_swap_32(nums_8);
 }
 
+uint32_t endian_swap_32(uint32_t num_32){
+  uint8_t nums_8[4] = {num_32 >> 24, num_32 >> 16, num_32 >> 8, num_32};
+  return end_swap_32(nums_8);
+  return num_32;
+}
+
 bool is_status(uint8_t status){
   if (status >> 7 == 1){
     prev_status = status;
@@ -413,12 +422,6 @@ bool is_status(uint8_t status){
   } else {
     return false;
   }
-}
-
-uint32_t endian_swap_32(uint32_t num_32){
-  uint8_t nums_8[4] = {num_32 >> 24, num_32 >> 16, num_32 >> 8, num_32};
-  return end_swap_32(nums_8);
-  return num_32;
 }
 
 void print_binary(int number){
@@ -444,7 +447,7 @@ void verify_song(song_data_t *midi_song){
   printf("End of read\n");
 }
 
-void test_parser(){
+void debug_parser(){
   char *read_file_name = malloc(50 * sizeof(char));
   printf("Provide file name: \n");
   scanf("%s", read_file_name);
