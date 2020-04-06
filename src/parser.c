@@ -13,6 +13,9 @@
 
 /* User Defined Constants */
 
+#define MIDI_HEADER "MThd"
+
+#define OK_CHUNK_READ (1)
 
 /* Function Declarations */
 
@@ -31,7 +34,9 @@ uint8_t prev_status = 0x00;
 /* Function Definitions */
 
 /*
- * Define parse_file here
+ * Dynamically allocates memory for a song_data_t struct
+ * and parses a .mid binary file and stores it's information
+ * into the struct. 
  */
 
 song_data_t *parse_file(const char* file_name){
@@ -48,36 +53,40 @@ song_data_t *parse_file(const char* file_name){
   strcpy(midi_song->path, file_name);
   midi_song->path[strlen(file_name)] = '\0';
 
-  // midi_song->track_list = malloc(sizeof(track_node_t));
-  // assert(midi_song->track_list);
-
   parse_header(read_file, midi_song);
-  
   midi_song->track_list = NULL;
   
   for(int i = 0; i < midi_song->num_tracks; i++){
     parse_track(read_file, midi_song);
   }
+
   assert(feof(read_file));
   fclose(read_file);
   read_file = NULL;
   return midi_song;
 } /* parse_file() */
 
-/* Define parse_header here */
+/*
+ * Reads the midi header information into the 
+ * song_data_t struct
+ */
+
 void parse_header(FILE *read_file, song_data_t *midi_song){
-  char *chunk_type = malloc(4 * sizeof(char));
+  char *chunk_type = malloc(strlen(MIDI_HEADER) * sizeof(char));
   assert(chunk_type);
   
-  int check_error = fread(chunk_type, 4 * sizeof(char), 1, read_file);
-  assert(strncmp(chunk_type, "MThd", 4) == 0);
-  assert(check_error == 1);
+  int check_error = fread(chunk_type, strlen(MIDI_HEADER) * sizeof(char), 1, read_file);
+
+  assert(strncmp(chunk_type, MIDI_HEADER, strlen(MIDI_HEADER)) == 0);
+  assert(check_error == OK_CHUNK_READ);
+  
   free(chunk_type);
   chunk_type = NULL;
 
   uint32_t length = 0;
   check_error = fread(&length, sizeof(length), 1, read_file);
   assert(check_error == 1);
+  printf("%u\n", length);
   length = endian_swap_32(length);
   assert(length == 6);
 
