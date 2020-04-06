@@ -187,8 +187,6 @@ int add_file_to_library(const char *file_path, const struct stat *sb, int type_f
   strncpy(new_node->song_name, save_right, strlen(save_right));
   new_node->song_name[strlen(save_right)] = '\0';
 
- 
-  
   free(file_name);
   free(save_right);
   free(dir_string);
@@ -196,7 +194,6 @@ int add_file_to_library(const char *file_path, const struct stat *sb, int type_f
   save_right = NULL;
   dir_string = NULL;
   
-
   new_node->song = parse_file(file_path);
   new_node->left_child = NULL;
   new_node->right_child = NULL;
