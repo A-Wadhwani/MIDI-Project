@@ -54,7 +54,6 @@ tree_node_t **find_parent_handler(tree_node_t **tree_root, tree_node_t **tree_pa
 
 /* Define tree_insert here */
 int tree_insert(tree_node_t **tree_root, tree_node_t *tree_node){
-  printf("I MADE IT OUT OF THERE \n");
   if (tree_root == NULL){
     tree_root = &tree_node;
     return INSERT_SUCCESS;
@@ -79,10 +78,6 @@ int tree_insert(tree_node_t **tree_root, tree_node_t *tree_node){
       copy_root = copy_root->right_child;
     }
   }
-  if (store_parent == NULL){
-    printf("EIRJFOIJEAIODJIW LINE 83 ERROR \n");
-  }
-
   if (strncmp(store_parent->song_name, tree_node->song_name, strlen(tree_node->song_name)) < 0){
     store_parent->left_child = tree_node;
     return INSERT_SUCCESS;
