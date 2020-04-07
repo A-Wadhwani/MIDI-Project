@@ -78,7 +78,7 @@ int tree_insert(tree_node_t **tree_root, tree_node_t *tree_node){
       copy_root = copy_root->right_child;
     }
   }
-
+  copy_root = copy_root->right_child;
   if (store_parent == NULL){
     printf("EIRJFOIJEAIODJIW LINE 83 ERROR \n");
   }
