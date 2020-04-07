@@ -1,3 +1,4 @@
+
 /* Aryan Wadhwani, library.c, CS 24000, Spring 2020
  * Last updated April 3, 2020
  */
@@ -29,6 +30,9 @@ tree_node_t **find_parent_pointer(tree_node_t **tree_node, const char *song_name
   }
   if (*tree_node == NULL){
     return NULL;
+  }
+  if (strcmp((*tree_node)->song_name, song_name) == 0){
+    return tree_node;
   }
   return find_parent_handler(tree_node, tree_node, song_name);
 }
@@ -245,10 +249,3 @@ void write_song_to_file(tree_node_t *tree_node, char *dir){
   write_song_data(tree_node->song, result);
 }
 
-int main(){
-  make_library("../music");
-  write_song_list(stdout, g_song_library);
-  printf("NOW AFTER CHANGES \n\n\n");
-  remove_song_from_tree(&g_song_library, "reflect.mid");
-  write_song_list(stdout, g_song_library);
-}
