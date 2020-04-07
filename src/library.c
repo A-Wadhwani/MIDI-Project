@@ -54,6 +54,7 @@ tree_node_t **find_parent_handler(tree_node_t **tree_root, tree_node_t **tree_pa
 
 /* Define tree_insert here */
 int tree_insert(tree_node_t **tree_root, tree_node_t *tree_node){
+  printf("I MADE IT OUT OF THERE \n");
   if (tree_root == NULL){
     tree_root = &tree_node;
     return INSERT_SUCCESS;
@@ -67,7 +68,6 @@ int tree_insert(tree_node_t **tree_root, tree_node_t *tree_node){
   
   while (copy_root != NULL){
     store_parent = copy_root;
-    printf("I MADE IT OUT OF THERE \n");
     int compare_strings = strncmp(copy_root->song_name, tree_node->song_name, strlen(tree_node->song_name));
     if (compare_strings == 0){
       return DUPLICATE_SONG;
