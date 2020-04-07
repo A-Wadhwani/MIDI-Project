@@ -25,7 +25,7 @@ char* get_file_name(const char *);
 
 /* Define find_parent_pointer here */
 tree_node_t **find_parent_pointer(tree_node_t **tree_node, const char *song_name){
-  printf("GIVEN SONG NAME: %s", song_name);
+  printf("GIVEN SONG NAME: %s\n", song_name);
   if (tree_node == NULL){
     return NULL;
   }
@@ -45,6 +45,7 @@ tree_node_t **find_parent_handler(tree_node_t **tree_root, tree_node_t **tree_pa
   }
   int compare_strings = strncmp((*tree_root)->song_name, song_name, strlen(song_name));
   if (compare_strings == 0){
+    printf("FOUND DAD: %s\n", (*tree_parent)->song_name);
     return tree_parent;
   }
   if (compare_strings < 0){
