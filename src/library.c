@@ -68,6 +68,7 @@ int tree_insert(tree_node_t **tree_root, tree_node_t *tree_node){
   while (copy_root != NULL){
     store_parent = copy_root;
     int compare_strings = strncmp(copy_root->song_name, tree_node->song_name, strlen(tree_node->song_name));
+    printf("I MADE IT OUT OF THERE \n");
     if (compare_strings == 0){
       return DUPLICATE_SONG;
     }
@@ -78,7 +79,6 @@ int tree_insert(tree_node_t **tree_root, tree_node_t *tree_node){
       copy_root = copy_root->right_child;
     }
   }
-  printf("I MADE IT OUT OF THERE \n");
   if (store_parent == NULL){
     printf("EIRJFOIJEAIODJIW LINE 83 ERROR \n");
   }
