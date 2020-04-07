@@ -19,7 +19,7 @@
 tree_node_t *g_song_library = NULL;
 
 /* Function Definitions */
-
+tree_node_t **find_parent_handler(tree_node_t **, tree_node_t **, const char *);
 int add_file_to_library(const char *, const struct stat *, int);
 char* get_file_name(const char *);
 
@@ -31,20 +31,33 @@ tree_node_t **find_parent_pointer(tree_node_t **tree_node, const char *song_name
   if (*tree_node == NULL){
     return NULL;
   }
-  int compare_strings = strcmp((*tree_node)->song_name, song_name);
+  return find_parent_handler(tree_node, tree_node, song_name);
+}
+
+tree_node_t **find_parent_handler(tree_node_t **tree_root, tree_node_t **tree_parent,
+                                  const char *song_name){
+  if (tree_root == NULL){
+    return NULL;
+  }
+  if (*tree_root == NULL){
+    return NULL;
+  }
+  int compare_strings = strcmp((*tree_root)->song_name, song_name);
   if (compare_strings == 0){
-    return tree_node;
+    return tree_parent;
   }
   if (compare_strings > 0){
-    return find_parent_pointer(&((*tree_node)->left_child), song_name);
+    return find_parent_handler(&(*tree_root)->left_child, tree_root, song_name);
   }
-  return find_parent_pointer(&((*tree_node)->right_child), song_name);
+  return find_parent_handler(&(*tree_root)->right_child, tree_root, song_name);
 }
 
 /* Define tree_insert here */
 int tree_insert(tree_node_t **tree_root, tree_node_t *tree_node){
   if (tree_root == NULL){
     tree_root = malloc(sizeof(tree_node_t*));
+    *tree_root = tree_node;
+    return INSERT_SUCCESS;
   }
   if (*tree_root == NULL){
     *tree_root = tree_node;
@@ -69,25 +82,11 @@ int remove_song_from_tree(tree_node_t **tree_root, const char *song_name){
   if (*tree_root == NULL){
     return SONG_NOT_FOUND;
   }
-  tree_node_t **copy_root = tree_root;
-  while(copy_root != NULL){
-    int compare_strings = strcmp((*copy_root)->song_name, song_name);
-    if (compare_strings == 0){
-      tree_node_t *save_left = (*copy_root)->left_child;
-      tree_node_t *save_right = (*copy_root)->right_child;
-      free_node(*copy_root);
-      *copy_root = NULL;
-      tree_insert(tree_root, save_left);
-      tree_insert(tree_root, save_right);
-      return DELETE_SUCCESS;
-    }
-    if (compare_strings > 0){
-      copy_root = &((*copy_root)->left_child);
-    }
-    else {
-      copy_root = &((*copy_root)->right_child);
-    }
+  tree_node_t **found_song = find_parent_pointer(tree_root, song_name);
+  if (found_song == NULL){
+    return SONG_NOT_FOUND;
   }
+
   return SONG_NOT_FOUND;
 }
 
@@ -162,17 +161,17 @@ int add_file_to_library(const char *file_path, const struct stat *sb, int type_f
     return 0;
   }
   tree_node_t *new_node = malloc(sizeof(tree_node_t));
-  
- 
+
+
   char *file_name = malloc(strlen(file_path) * sizeof(char) + 1);
   char *save_right = malloc(strlen(file_path) * sizeof(char) + 1);
   char *dir_string = malloc(strlen(file_path) * sizeof(char) + 1);
 
 
-/*  char file_name[strlen(file_path)];
-  char save_right[strlen(file_path)];
-  char dir_string[strlen(file_path)];
-*/
+  /*  char file_name[strlen(file_path)];
+      char save_right[strlen(file_path)];
+      char dir_string[strlen(file_path)];
+      */
 
   int check_error = 0;
   strncpy(dir_string, file_path, strlen(file_path));
@@ -182,7 +181,7 @@ int add_file_to_library(const char *file_path, const struct stat *sb, int type_f
     strncpy(dir_string, save_right, strlen(save_right));
     dir_string[strlen(save_right)] = '\0';
   } while (check_error == 2);
- 
+
   new_node->song_name = malloc(strlen(save_right) * sizeof(char) + 1);
   strncpy(new_node->song_name, save_right, strlen(save_right));
   new_node->song_name[strlen(save_right)] = '\0';
@@ -193,7 +192,7 @@ int add_file_to_library(const char *file_path, const struct stat *sb, int type_f
   file_name = NULL;
   save_right = NULL;
   dir_string = NULL;
-  
+
   new_node->song = parse_file(file_path);
   new_node->left_child = NULL;
   new_node->right_child = NULL;
@@ -214,11 +213,9 @@ void write_song_to_file(tree_node_t *tree_node, char *dir){
   write_song_data(tree_node->song, result);
 }
 
-/* 
 int main(){
-  make_library("music/");
-  traverse_pre_order(g_song_library, "music/my_tests/output_", (traversal_func_t) write_song_to_file);
-  return 0;
+   make_library("../music/");
+   write_song_list(stdout, g_song_library);
+   find_parent_pointer(&g_song_library, "HELLOO BJIEJD");
+   return 0;
 }
-*/
-
