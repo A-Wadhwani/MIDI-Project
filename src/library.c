@@ -55,22 +55,40 @@ tree_node_t **find_parent_handler(tree_node_t **tree_root, tree_node_t **tree_pa
 /* Define tree_insert here */
 int tree_insert(tree_node_t **tree_root, tree_node_t *tree_node){
   if (tree_root == NULL){
-    tree_root = malloc(sizeof(tree_node_t*));
-    *tree_root = tree_node;
+    tree_root = &tree_node;
     return INSERT_SUCCESS;
   }
   if (*tree_root == NULL){
     *tree_root = tree_node;
     return INSERT_SUCCESS;
   }
-  int compare_strings = strcmp((*tree_root)->song_name, tree_node->song_name);
-  if (compare_strings == 0){
-    return DUPLICATE_SONG;
+  tree_node_t *copy_root = *tree_root;
+  tree_node_t *store_parent = NULL;
+  
+  while (copy_root != NULL){
+    store_parent = copy_root;
+    int compare_strings = strcmp(copy_root->song_name, tree_node->song_name);
+    if (compare_strings == 0){
+      return DUPLICATE_SONG;
+    }
+    if (compare_strings > 0){
+      copy_root = copy_root->left_child;
+    }
+    else {
+      copy_root = copy_root->right_child;
+    }
   }
-  if (compare_strings > 0){
-    return tree_insert(&((*tree_root)->left_child), tree_node);
+
+  if (store_parent == NULL){
+    printf("EIRJFOIJEAIODJIW LINE 83 ERROR \n");
   }
-  return tree_insert(&((*tree_root)->right_child), tree_node);
+
+  if (strcmp(copy_root->song_name, tree_node->song_name) > 0){
+    copy_root->left_child = tree_node;
+    return INSERT_SUCCESS;
+  }
+  copy_root->right_child = tree_node;
+  return INSERT_SUCCESS;
 }
 
 /* Define remove_song_from_tree here */
