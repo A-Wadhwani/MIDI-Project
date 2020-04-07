@@ -83,11 +83,11 @@ int tree_insert(tree_node_t **tree_root, tree_node_t *tree_node){
     printf("EIRJFOIJEAIODJIW LINE 83 ERROR \n");
   }
 
-  if (strcmp(copy_root->song_name, tree_node->song_name) > 0){
-    copy_root->left_child = tree_node;
+  if (strcmp(store_parent->song_name, tree_node->song_name) > 0){
+    store_parent->left_child = tree_node;
     return INSERT_SUCCESS;
   }
-  copy_root->right_child = tree_node;
+  store_parent->right_child = tree_node;
   return INSERT_SUCCESS;
 }
 
@@ -230,3 +230,8 @@ void write_song_to_file(tree_node_t *tree_node, char *dir){
   write_song_data(tree_node->song, result);
 }
 
+int main(){
+  make_library("../music");
+  write_song_list(stdout, g_song_library);
+  return 0;
+}
