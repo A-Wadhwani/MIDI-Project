@@ -69,6 +69,7 @@ int tree_insert(tree_node_t **tree_root, tree_node_t *tree_node){
     store_parent = copy_root;
     int compare_strings = strncmp(copy_root->song_name, tree_node->song_name, strlen(tree_node->song_name));
     if (compare_strings == 0){
+      free_node(tree_node);
       return DUPLICATE_SONG;
     }
     if (compare_strings < 0){
