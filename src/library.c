@@ -7,8 +7,8 @@
 #include "library.h"
 #include "song_writer.h"
 
+#define _GNU_SOURCE
 #include <string.h>
-#include <libgen.h>
 #include <malloc.h>
 #include <dirent.h>
 #include <ftw.h>
@@ -187,19 +187,6 @@ void write_song_list(FILE *fp, tree_node_t *tree_node){
   return;
 }
 
-const char *get_file_name(const char* file_path){
-  if (file_path == NULL){
-    return NULL;
-  }
-  const char *file_name = &*file_path;
-  while (*file_name != '/'){
-    file_name++;
-  }
-  if (get_file_name(file_name) != NULL){
-    return file_name;
-  }
-  return NULL;
-}
 
 int add_file_to_library(const char *file_path, const struct stat *sb, int type_flag){
   if (type_flag != FTW_F){
@@ -229,10 +216,8 @@ int add_file_to_library(const char *file_path, const struct stat *sb, int type_f
   strncpy(new_node->song_name, save_right, strlen(save_right));
   new_node->song_name[strlen(save_right)] = '\0';
 */
-  const char* file_name = get_file_name(file_path);
-  new_node->song_name = malloc(strlen(file_name));
-  strcpy(new_node->song_name, file_name);
   new_node->song = parse_file(file_path);
+  new_node->song_name =  (char *) basename(file_path);
   new_node->left_child = NULL;
   new_node->right_child = NULL;
   tree_insert(&g_song_library, new_node); 
