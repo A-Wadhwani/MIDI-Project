@@ -189,7 +189,8 @@ void write_song_list(FILE *fp, tree_node_t *tree_node){
 char* get_file_name(const char* file_path){
   char *file_name = strchr(file_path, '/');
   while (strchr(file_path + 1, '/') != NULL){
-    file_name = strchr(file_path + 1, '/');
+    file_name = strchr(file_name + 1, '/');
+    printf("%s", file_name);
   }
   return file_name;
 }
