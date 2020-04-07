@@ -84,7 +84,7 @@ int tree_insert(tree_node_t **tree_root, tree_node_t *tree_node){
     printf("EIRJFOIJEAIODJIW LINE 83 ERROR \n");
   }
 
-  if (strcmp(store_parent->song_name, tree_node->song_name) < 0){
+  if (strncmp(store_parent->song_name, tree_node->song_name, strlen(store_parent->song_name)) < 0){
     store_parent->left_child = tree_node;
     printf("ALL GOOD AND EXITED1!");
     return INSERT_SUCCESS;
