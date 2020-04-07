@@ -156,10 +156,14 @@ void free_library(tree_node_t *tree_node){
   if (tree_node == NULL){
     return;
   }
-  free_library(tree_node->left_child);
-  tree_node->left_child = NULL;
-  free_library(tree_node->right_child);
-  tree_node->right_child = NULL;
+  if (tree_node->left_child != NULL){
+    free_library(tree_node->left_child);
+    tree_node->left_child = NULL;
+  }
+  if (tree_node->right_child != NULL){
+    free_library(tree_node->right_child);
+    tree_node->right_child = NULL;
+  }
   free_node(tree_node);
   tree_node = NULL;
 }
