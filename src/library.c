@@ -47,12 +47,12 @@ tree_node_t **find_parent_handler(tree_node_t **tree_root, tree_node_t **tree_pa
   }
   int compare_strings = strncmp((*tree_root)->song_name, song_name, strlen(song_name));
   if (compare_strings == 0){
-    if (strncmp((*tree_parent)->song_name, (*tree_root)->song_name, strlen(song_name)) < 0){
+    if (strncmp((*tree_parent)->song_name, (*tree_root)->song_name, strlen(song_name)) > 0){
       return &(*tree_parent)->left_child;
     }
     return &(*tree_parent)->right_child;
   }
-  if (compare_strings < 0){
+  if (compare_strings > 0){
     return find_parent_handler(&(*tree_root)->left_child, tree_root, song_name);
   }
   return find_parent_handler(&(*tree_root)->right_child, tree_root, song_name);
@@ -77,14 +77,14 @@ int tree_insert(tree_node_t **tree_root, tree_node_t *tree_node){
     if (compare_strings == 0){
       return DUPLICATE_SONG;
     }
-    if (compare_strings < 0){
+    if (compare_strings > 0){
       copy_root = copy_root->left_child;
     }
     else {
       copy_root = copy_root->right_child;
     }
   }
-  if (strncmp(store_parent->song_name, tree_node->song_name, strlen(tree_node->song_name)) < 0){
+  if (strncmp(store_parent->song_name, tree_node->song_name, strlen(tree_node->song_name)) > 0){
     store_parent->left_child = tree_node;
     return INSERT_SUCCESS;
   }
