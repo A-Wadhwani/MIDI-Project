@@ -177,15 +177,14 @@ int add_file_to_library(const char *file_path, const struct stat *sb, int type_f
   tree_node_t *new_node = malloc(sizeof(tree_node_t));
 
 
-  char *file_name = malloc(strlen(file_path) * sizeof(char) + 1);
+  /* char *file_name = malloc(strlen(file_path) * sizeof(char) + 1);
   char *save_right = malloc(strlen(file_path) * sizeof(char) + 1);
   char *dir_string = malloc(strlen(file_path) * sizeof(char) + 1);
+*/
 
-
-  /*  char file_name[strlen(file_path)];
-      char save_right[strlen(file_path)];
-      char dir_string[strlen(file_path)];
-      */
+  char file_name[strlen(file_path)];
+  char save_right[strlen(file_path)];
+  char dir_string[strlen(file_path)];
 
   int check_error = 0;
   strncpy(dir_string, file_path, strlen(file_path));
@@ -199,13 +198,6 @@ int add_file_to_library(const char *file_path, const struct stat *sb, int type_f
   new_node->song_name = malloc(strlen(save_right) * sizeof(char) + 1);
   strncpy(new_node->song_name, save_right, strlen(save_right));
   new_node->song_name[strlen(save_right)] = '\0';
-
-  free(file_name);
-  free(save_right);
-  free(dir_string);
-  file_name = NULL;
-  save_right = NULL;
-  dir_string = NULL;
 
   new_node->song = parse_file(file_path);
   new_node->left_child = NULL;
