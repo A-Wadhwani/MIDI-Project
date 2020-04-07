@@ -105,8 +105,12 @@ int remove_song_from_tree(tree_node_t **tree_root, const char *song_name){
   tree_node_t *save_right = (*found_song)->right_child;
   free_node(*found_song);
   *found_song = NULL;
-  tree_insert(tree_root, save_left);
-  tree_insert(tree_root, save_right);
+  if (save_left){
+    tree_insert(tree_root, save_left);
+  }
+  if (save_right){
+    tree_insert(tree_root, save_right);
+  }
   return DELETE_SUCCESS;
 }
 
