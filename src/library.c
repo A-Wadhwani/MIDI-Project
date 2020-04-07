@@ -20,9 +20,7 @@ tree_node_t *g_song_library = NULL;
 /* Function Definitions */
 tree_node_t **find_parent_handler(tree_node_t **, tree_node_t **, const char *);
 int add_file_to_library(const char *, const struct stat *, int);
-const char* get_file_name(const char *);
-char* basename(const char *);
-char* strdup(const char *);
+char* get_file_name(const char *);
 
 /* Define find_parent_pointer here */
 tree_node_t **find_parent_pointer(tree_node_t **tree_node, const char *song_name){
@@ -188,6 +186,14 @@ void write_song_list(FILE *fp, tree_node_t *tree_node){
   return;
 }
 
+char* get_file_name(const char* file_path){
+  char *file_name = strchr(file_path, '/');
+  while (strchr(file_path + 1, '/') != NULL){
+    file_name = strchr(file_path + 1, '/');
+  }
+  return file_name;
+}
+
 
 int add_file_to_library(const char *file_path, const struct stat *sb, int type_flag){
   if (type_flag != FTW_F){
@@ -218,7 +224,7 @@ int add_file_to_library(const char *file_path, const struct stat *sb, int type_f
   new_node->song_name[strlen(save_right)] = '\0';
 */
   new_node->song = parse_file(file_path);
-  new_node->song_name = strdup(basename(file_path));
+  new_node->song_name = get_file_name(new_node->song->path); 
   new_node->left_child = NULL;
   new_node->right_child = NULL;
   tree_insert(&g_song_library, new_node); 
