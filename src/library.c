@@ -48,7 +48,7 @@ tree_node_t **find_parent_handler(tree_node_t **tree_root, tree_node_t **tree_pa
     printf("FOUND DAD: %s\n", (*tree_parent)->song_name);
     return tree_parent;
   }
-  if (compare_strings < 0){
+  if (compare_strings > 0){
     printf("%s\n", (*tree_root)->song_name);
     return find_parent_handler(&(*tree_root)->left_child, tree_root, song_name);
   }
