@@ -25,21 +25,13 @@ char* get_file_name(const char *);
 
 /* Define find_parent_pointer here */
 tree_node_t **find_parent_pointer(tree_node_t **tree_node, const char *song_name){
-  printf("GIVEN SONG NAME: %s\n", song_name);
   if (tree_node == NULL){
     return NULL;
   }
   if (*tree_node == NULL){
     return NULL;
   }
-  tree_node_t **copy = find_parent_handler(tree_node, tree_node, song_name);
-  if (copy == NULL){
-    printf("LOL DEAD\n");
-  }
-  else {
-    printf("Rescued parent: %s\n", (*copy)->song_name);
-  }
-  return copy;
+  return find_parent_handler(tree_node, tree_node, song_name);
 }
 
 tree_node_t **find_parent_handler(tree_node_t **tree_root, tree_node_t **tree_parent,
@@ -52,17 +44,14 @@ tree_node_t **find_parent_handler(tree_node_t **tree_root, tree_node_t **tree_pa
   }
   int compare_strings = strncmp((*tree_root)->song_name, song_name, strlen(song_name));
   if (compare_strings == 0){
-    printf("FOUND DAD: %s\n", (*tree_parent)->song_name);
     if (strncmp((*tree_parent)->song_name, (*tree_root)->song_name, strlen(song_name)) < 0){
       return &(*tree_parent)->left_child;
     }
     return &(*tree_parent)->right_child;
   }
   if (compare_strings < 0){
-    printf("%s\n", (*tree_root)->song_name);
     return find_parent_handler(&(*tree_root)->left_child, tree_root, song_name);
   }
-  printf("%s\n", (*tree_root)->song_name);
   return find_parent_handler(&(*tree_root)->right_child, tree_root, song_name);
 }
 
@@ -112,7 +101,12 @@ int remove_song_from_tree(tree_node_t **tree_root, const char *song_name){
   if (found_song == NULL){
     return SONG_NOT_FOUND;
   }
-
+  tree_node_t *save_left = (*found_song)->left_child;
+  tree_node_t *save_right = (*found_song)->right_child;
+  free_node(*found_song);
+  found_song = NULL;
+  tree_insert(tree_root, save_left);
+  tree_insert(tree_root, save_right);
   return SONG_NOT_FOUND;
 }
 
