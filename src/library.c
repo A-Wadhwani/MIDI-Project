@@ -85,9 +85,11 @@ int tree_insert(tree_node_t **tree_root, tree_node_t *tree_node){
 
   if (strcmp(store_parent->song_name, tree_node->song_name) < 0){
     store_parent->left_child = tree_node;
+    printf("ALL GOOD AND EXITED1!");
     return INSERT_SUCCESS;
   }
   store_parent->right_child = tree_node;
+  printf("ALL GOOD AND EXITED2!");
   return INSERT_SUCCESS;
 }
 
