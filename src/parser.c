@@ -14,7 +14,7 @@
 /* User Defined Constants */
 
 #define MIDI_HEADER "MThd"
-
+#define MIDI_TRACK "MTrk"
 #define OK_CHUNK_READ (1)
 
 /* Function Declarations */
@@ -84,30 +84,26 @@ void parse_header(FILE *read_file, song_data_t *midi_song){
   chunk_type = NULL;
 
   uint32_t length = 0;
-  check_error = fread(&length, sizeof(length), 1, read_file);
-  assert(check_error == 1);
-  printf("%u\n", length);
+  fread(&length, sizeof(length), 1, read_file);
   length = endian_swap_32(length);
   assert(length == 6);
 
   uint16_t format = 0;
-  check_error = fread(&format, sizeof(format), 1, read_file);
-  assert(check_error == 1);
+  fread(&format, sizeof(format), 1, read_file);
   format = endian_swap_16(format);
   assert((format == 0) || (format == 1) || (format == 2));
   midi_song->format = format;
 
   uint16_t num_tracks = 0;
-  check_error = fread(&num_tracks, sizeof(num_tracks), 1, read_file);
-  assert(check_error == 1);
+  fread(&num_tracks, sizeof(num_tracks), 1, read_file);
   num_tracks = endian_swap_16(num_tracks);
   midi_song->num_tracks = num_tracks;
 
   uint16_t read_division = 0;
-  check_error = fread(&read_division, sizeof(read_division), 1, read_file);
-  assert(check_error == 1);
+  fread(&read_division, sizeof(read_division), 1, read_file);
   read_division = endian_swap_16(read_division);
-  midi_song->division.uses_tpq = (read_division >> 15) == 0;
+  
+  midi_song->division.uses_tpq = ((read_division >> 15) == 0);
   if (read_division >> 15 == 0){
     midi_song->division.ticks_per_qtr = read_division;
   } else {
@@ -117,39 +113,39 @@ void parse_header(FILE *read_file, song_data_t *midi_song){
   return;
 } /* parse_header() */
 
-/* Define parse_track here */
+/*
+ * Parses track and events that are a part of the
+ * track from the .mid file, and stores them in
+ * the song_data_t struct
+ */
+
 void parse_track(FILE *read_file, song_data_t *midi_song){
   track_t *new_track = malloc(sizeof(track_t));
   assert(new_track);
 
-  char *chunk_type = malloc(4 * sizeof(char));
+  char *chunk_type = malloc(strlen(MIDI_TRACK) * sizeof(char));
   assert(chunk_type);
   
-  int check_error = fread(chunk_type, 4 * sizeof(char), 1, read_file);
-  assert(check_error == 1);
-  assert(strncmp(chunk_type, "MTrk", 4) == 0);
+  int check_error = fread(chunk_type, strlen(MIDI_TRACK) * sizeof(char), 1, read_file);
+  assert(check_error == OK_CHUNK_READ);
+  assert(strncmp(chunk_type, MIDI_TRACK, strlen(MIDI_TRACK)) == 0);
 
   free(chunk_type);
   chunk_type = NULL;
 
   uint32_t length = 0;
-  check_error = fread(&length, sizeof(length), 1, read_file);
-  assert(check_error == 1);
+  fread(&length, sizeof(length), 1, read_file);
   length = endian_swap_32(length);
   new_track->length = length;
 
   new_track->event_list = malloc(sizeof(event_node_t));
-  assert(new_track->event_list);
   event_node_t *copy_track_head = new_track->event_list;
-
-//  copy_track_head->event = malloc(sizeof(event_t));
-//  assert(copy_track_head->event);
 
   while (!end_of_track(read_file)){
     copy_track_head->event = parse_event(read_file);
+
     if (!end_of_track(read_file)){
       copy_track_head->next_event = malloc(sizeof(event_node_t));
-      assert(copy_track_head->next_event);
       copy_track_head = copy_track_head->next_event;
     }
     else {
@@ -165,9 +161,11 @@ void parse_track(FILE *read_file, song_data_t *midi_song){
     midi_song->track_list->next_track = NULL;
     return;
   }
+
   while (copy_song_head->next_track != NULL){
     copy_song_head = copy_song_head->next_track;
   }
+
   copy_song_head->next_track = malloc(sizeof(track_node_t));
   assert(copy_song_head->next_track);
 
@@ -175,17 +173,19 @@ void parse_track(FILE *read_file, song_data_t *midi_song){
   copy_song_head->track = new_track;
   copy_song_head->next_track = NULL;
   return;
-}
+} /* parse_track() */
 
-/* Define parse_event here */
+/*
+ * Reads a MTrk event from file and returns a pointer
+ * to the dynamically allocated memory of the event
+ */
+
 event_t *parse_event(FILE *read_file){
   event_t *new_event = malloc(sizeof(event_t));
-  assert(new_event);
   new_event->delta_time = parse_var_len(read_file);
 
   uint8_t read_type = 0x00;
-  int check_error = fread(&read_type, sizeof(uint8_t), 1, read_file);
-  assert(check_error == 1);
+  fread(&read_type, sizeof(uint8_t), 1, read_file);
   new_event->type = read_type;
   
   switch(event_type(new_event)){
@@ -200,34 +200,38 @@ event_t *parse_event(FILE *read_file){
       break;
   }
   return new_event;
-}
+} /* parse_event() */
 
-/* Define parse_sys_event here */
+/*
+ * Handles parsing of a sys_event from a file.
+ */
+
 sys_event_t parse_sys_event(FILE *read_file, uint8_t type){
   sys_event_t sys_event = (sys_event_t) {0, NULL};
   
   sys_event.data_len = parse_var_len(read_file);
   sys_event.data = malloc(sys_event.data_len * sizeof(uint8_t));
-  assert(sys_event.data);
 
-  int check_error = fread(sys_event.data,
-                      sys_event.data_len * sizeof(uint8_t),
-                      1, read_file);
-  assert(check_error == 1);
+  fread(sys_event.data, sys_event.data_len * sizeof(uint8_t),
+        1, read_file);
+
   return sys_event;
-}
+} /* parse_sys_event() */
 
-/* Define parse_meta_event here */
+/*
+ * Handles parsing of a meta_event from a file.
+ */
+
 meta_event_t parse_meta_event(FILE *read_file){
   build_event_tables();
   meta_event_t meta_event = (meta_event_t) {"\0", 0, NULL};
   uint8_t read_type = 0x00;
 
   int check_error = fread(&read_type, sizeof(uint8_t), 1, read_file);
-  assert(check_error == 1);
 
   meta_event = META_TABLE[read_type];
-  assert(strncmp(meta_event.name, "", 1) != 0);
+  assert(meta_event.name != NULL);
+
   if (meta_event.data_len != 0){
     assert(parse_var_len(read_file) == meta_event.data_len);
   } else {
@@ -240,12 +244,10 @@ meta_event_t parse_meta_event(FILE *read_file){
 
   meta_event.data = malloc(meta_event.data_len * sizeof(uint8_t));
   assert(meta_event.data);
-  check_error = fread(meta_event.data, 
-                      meta_event.data_len * sizeof(uint8_t),
-                      1, read_file);
+  fread(meta_event.data, meta_event.data_len * sizeof(uint8_t), 1, read_file);
   assert(check_error == 1);
   return meta_event;
-}
+} /* parse_meta_event() */
 
 /* Define parse_midi_event here */
 midi_event_t parse_midi_event(FILE *read_file, uint8_t read_status){
