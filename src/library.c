@@ -114,7 +114,6 @@ void free_node(tree_node_t *tree_node){
   if (tree_node->song_name != NULL){
     free_song(tree_node->song);
   }
-  free(tree_node);
 }
 
 /* Define print_node here */
