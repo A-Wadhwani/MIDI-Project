@@ -32,7 +32,14 @@ tree_node_t **find_parent_pointer(tree_node_t **tree_node, const char *song_name
   if (*tree_node == NULL){
     return NULL;
   }
-  return find_parent_handler(tree_node, tree_node, song_name);
+  tree_node_t **copy = find_parent_handler(tree_node, tree_node, song_name);
+  if (copy == NULL){
+    printf("LOL DEAD\n");
+  }
+  else {
+    printf("Rescued parent: %s\n", (*copy)->song_name);
+  }
+  return copy;
 }
 
 tree_node_t **find_parent_handler(tree_node_t **tree_root, tree_node_t **tree_parent,
