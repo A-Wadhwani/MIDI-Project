@@ -8,7 +8,6 @@
 #include "song_writer.h"
 
 #include <string.h>
-#include <libgen.h>
 #include <malloc.h>
 #include <dirent.h>
 #include <ftw.h>
@@ -22,6 +21,7 @@ tree_node_t *g_song_library = NULL;
 tree_node_t **find_parent_handler(tree_node_t **, tree_node_t **, const char *);
 int add_file_to_library(const char *, const struct stat *, int);
 const char* get_file_name(const char *);
+char* basename(const char*);
 
 /* Define find_parent_pointer here */
 tree_node_t **find_parent_pointer(tree_node_t **tree_node, const char *song_name){
@@ -217,9 +217,7 @@ int add_file_to_library(const char *file_path, const struct stat *sb, int type_f
   new_node->song_name[strlen(save_right)] = '\0';
 */
   new_node->song = parse_file(file_path);
-  char file_name[strlen(file_path)];
-  strcpy(file_name, file_path);
-  new_node->song_name = basename(file_name);
+  new_node->song_name = basename(file_path);
   new_node->left_child = NULL;
   new_node->right_child = NULL;
   tree_insert(&g_song_library, new_node); 
