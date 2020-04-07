@@ -71,7 +71,7 @@ int tree_insert(tree_node_t **tree_root, tree_node_t *tree_node){
     if (compare_strings == 0){
       return DUPLICATE_SONG;
     }
-    if (compare_strings > 0){
+    if (compare_strings < 0){
       copy_root = copy_root->left_child;
     }
     else {
