@@ -206,11 +206,13 @@ int add_file_to_library(const char *file_path, const struct stat *sb, int type_f
   strncpy(dir_string, file_path, strlen(file_path));
   dir_string[strlen(file_path)] = '\0';
   do {
-    check_error = sscanf(dir_string, "%[^/]/%[^\n]", dir_string, save_right);
+    char file_name[strlen(file_path)];
+    check_error = sscanf(dir_string, "%[^/]/%[^\n]", file_name, save_right);
     strncpy(dir_string, save_right, strlen(save_right));
     dir_string[strlen(save_right)] = '\0';
   } while (check_error == 2);
 
+  new_node->song_name = new_node->song->path;
   new_node->song_name = malloc(strlen(save_right) * sizeof(char) + 1);
   strncpy(new_node->song_name, save_right, strlen(save_right));
   new_node->song_name[strlen(save_right)] = '\0';
