@@ -53,7 +53,7 @@ tree_node_t **find_parent_handler(tree_node_t **tree_root, tree_node_t **tree_pa
   int compare_strings = strncmp((*tree_root)->song_name, song_name, strlen(song_name));
   if (compare_strings == 0){
     printf("FOUND DAD: %s\n", (*tree_parent)->song_name);
-    if (strncmp((*tree_parent)->song_name, (*tree_root)->song_name, strlen(song_name)) > 0){
+    if (strncmp((*tree_parent)->song_name, (*tree_root)->song_name, strlen(song_name)) < 0){
       return &(*tree_parent)->left_child;
     }
     return &(*tree_parent)->right_child;
