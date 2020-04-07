@@ -226,7 +226,7 @@ int add_file_to_library(const char *file_path, const struct stat *sb, int type_f
   new_node->song_name[strlen(save_right)] = '\0';
 */
   new_node->song = parse_file(file_path);
-  new_node->song_name = strchr(new_node->song->path, '/'); 
+  new_node->song_name = strchr(new_node->song->path, '/') + 1; 
   new_node->left_child = NULL;
   new_node->right_child = NULL;
   tree_insert(&g_song_library, new_node); 
