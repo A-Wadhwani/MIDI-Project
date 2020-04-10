@@ -244,12 +244,16 @@ meta_event_t parse_meta_event(FILE *read_file){
 
   meta_event.data = malloc(meta_event.data_len * sizeof(uint8_t));
   assert(meta_event.data);
-  fread(meta_event.data, meta_event.data_len * sizeof(uint8_t), 1, read_file);
+  check_error = fread(meta_event.data, meta_event.data_len *
+                      sizeof(uint8_t), 1, read_file);
   assert(check_error == 1);
   return meta_event;
 } /* parse_meta_event() */
 
-/* Define parse_midi_event here */
+/*
+ * Handles parsing of a midi event from a file
+ */
+
 midi_event_t parse_midi_event(FILE *read_file, uint8_t read_status){
   midi_event_t midi_event = (midi_event_t) {"\0", 0, 0, NULL};
   if (check_midi_status(read_status)){
@@ -261,17 +265,17 @@ midi_event_t parse_midi_event(FILE *read_file, uint8_t read_status){
   midi_event = MIDI_TABLE[midi_event.status];
   assert(strncmp(midi_event.name, "", 1) != 0);
 
-  if(midi_event.data_len == 0){
+  if (midi_event.data_len == 0){
     return midi_event;
   }
 
   midi_event.data = malloc(midi_event.data_len * sizeof(uint8_t));
   assert(midi_event.data);
-  int check_error = fread(midi_event.data, midi_event.data_len * sizeof(uint8_t),
-                          1, read_file);
+  int check_error = fread(midi_event.data, midi_event.data_len *
+                          sizeof(uint8_t), 1, read_file);
   assert(check_error == 1);
   return midi_event;
-}
+} /* parse_midi_event() */
 
 /*
  * Returns the length of the variable
