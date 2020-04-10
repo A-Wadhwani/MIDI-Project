@@ -273,32 +273,40 @@ midi_event_t parse_midi_event(FILE *read_file, uint8_t read_status){
   return midi_event;
 }
 
-/* Define parse_var_len here */
+/*
+ * Returns the length of the variable
+ * sized uint32_t
+ */
+
 uint32_t parse_var_len(FILE *read_file){
   uint32_t parsed_val = 0;
-  uint8_t read;
+  uint8_t read_num = 0;
   int count = 0;
   int check_error = 0;
   do {
-    check_error = fread(&read, sizeof(uint8_t), 1, read_file);
+    check_error = fread(&read_num, sizeof(uint8_t), 1, read_file);
     assert(check_error == 1);
-    if (read > 127){
-      read = read - 128;
-      parsed_val = (parsed_val << 7) + read;
+    if (read_num > 127){
+      read_num = read_num - 128;
+      parsed_val = (parsed_val << 7) + read_num;
     }
-    else { 
-      parsed_val = (parsed_val << 7) + read;
+    else {
+      parsed_val = (parsed_val << 7) + read_num;
       return parsed_val;
     }
     count++;
-  } while(count != 4);
+  } while (count != 4);
   return parsed_val;
-}
+} /* parse_var_len() */
 
-/* Define event_type here */
+/*
+ * Returns the type of event
+ */
+
 uint8_t event_type(event_t *event){
-  switch(event->type){
+  switch (event->type){
     case SYS_EVENT_1:
+      return SYS_EVENT_T;
     case SYS_EVENT_2:
       return SYS_EVENT_T;
     case META_EVENT:
@@ -306,16 +314,19 @@ uint8_t event_type(event_t *event){
     default:
       return MIDI_EVENT_T;
   }
-}
+} /* event_type() */
 
-/* Define free_song here */
+/*
+ * Frees all memory related to a song
+ */
+
 void free_song(song_data_t *midi_song){
   if (midi_song == NULL){
     return;
   }
   free(midi_song->path);
   midi_song->path = NULL;
-  while(midi_song->track_list != NULL){
+  while (midi_song->track_list != NULL){
     track_node_t *copy_node = midi_song->track_list;
     midi_song->track_list = copy_node->next_track;
     free_track_node(copy_node);
@@ -323,11 +334,14 @@ void free_song(song_data_t *midi_song){
   }
   midi_song->track_list = NULL;
   free(midi_song);
-}
+} /* free_song() */
 
-/* Define free_track_node here */
+/*
+ * Frees all memory related to a track
+ */
+
 void free_track_node(track_node_t *track_node){
-  while(track_node->track->event_list != NULL){
+  while (track_node->track->event_list != NULL){
     event_node_t *copy_node = track_node->track->event_list;
     track_node->track->event_list = copy_node->next_event;
     free_event_node(copy_node);
@@ -335,11 +349,14 @@ void free_track_node(track_node_t *track_node){
   }
   free(track_node->track);
   free(track_node);
-}
+} /* free_track_node() */
 
-/* Define free_event_node here */
+/*
+ * Frees all memory related to an event
+ */
+
 void free_event_node(event_node_t *event_node){
-  switch(event_type(event_node->event)){
+  switch (event_type(event_node->event)){
     case META_EVENT_T:
       free(event_node->event->meta_event.data);
       break;
@@ -353,10 +370,15 @@ void free_event_node(event_node_t *event_node){
   event_node->event = NULL;
   free(event_node);
   return;
-}
+} /* free_event_node() */
 
-bool end_of_track(FILE *read_file){ 
-  if(feof(read_file)){
+/*
+ * Returns true if the file has reached
+ * the end of the track.
+ */
+
+bool end_of_track(FILE *read_file){
+  if (feof(read_file)){
     return true;
   }
   char *chunk_type = malloc(sizeof(char) * 4);
@@ -371,63 +393,50 @@ bool end_of_track(FILE *read_file){
   chunk_type = NULL;
   fseek(read_file, -4 * sizeof(char), SEEK_CUR);
   return is_end;
-}
+} /* end_of_track() */
 
-/* 
-uint32_t get_var_len_size(uint32_t number){
-  uint32_t var_len_size = 0;
-  uint8_t check_size = number;
-  do {
-    check_size = number;
-    number = number >> 8;
-    var_len_size = var_len_size + sizeof(uint8_t);
-  } while (check_size > 127 || number != 0);
-  return var_len_size;
-}
+/*
+ * Creates a uint16_t by endian swapping
+ * a uint8_t array's elements
+ */
 
-uint32_t get_event_size(event_t *event){
-  uint32_t event_size = 2 * sizeof(uint8_t) + get_var_len_size(event->delta_time);
-  switch(event_type(event)){
-    case SYS_EVENT_T:
-      event_size = event_size + get_var_len_size(event->sys_event.data_len) +
-                   event->sys_event.data_len * sizeof(uint8_t);
-      break;
-    case META_EVENT_T:
-      event_size = event_size + get_var_len_size(event->meta_event.data_len) +
-                   event->meta_event.data_len * sizeof(uint8_t);
-      break;
-    case MIDI_EVENT_T:
-      if (is_status(event->is_status()))
-      event_size = event_size +
-                   event->midi_event.data_len * sizeof(uint8_t);
-      break;
-  }
-  return event_size;
-} */
-
-/* Define end_swap_16 here */
 uint16_t end_swap_16(uint8_t number[2]){
   return ((number[1] << 8) | (number[0]));
-}
-/* Define end_swap_32 here */
+} /* end_swap_16() */
+
+/*
+ * Creates a uint32_t by endian swapping
+ * a uint8_t array's elements
+ */
+
 uint32_t end_swap_32(uint8_t number[4]){
   uint32_t num = number[3] << 24;
   return (num | (number[2] << 16) | (number[1] << 8) | number[0]);
-}
+} /* end_swap_32() */
+
+/*
+ * Creates an array of uint8_ts from a
+ * uint32_t to be used in end_swap_16
+ */
 
 uint16_t endian_swap_16(uint16_t num_16){
   uint8_t nums_8[2] = {num_16 >> 8, num_16};
   return end_swap_32(nums_8);
-}
+} /* endian_swap_16() */
+
+/*
+ * Creates an array of uint8_ts from a
+ * uint32_t to be used in end_swap_32
+ */
 
 uint32_t endian_swap_32(uint32_t num_32){
   uint8_t nums_8[4] = {num_32 >> 24, num_32 >> 16, num_32 >> 8, num_32};
   return end_swap_32(nums_8);
-  return num_32;
-}
+} /* endian_swap_32() */
 
 /*
- * Checks if the given status 
+ * Checks if the given midi status
+ * is of the correct format
  */
 
 bool check_midi_status(uint8_t status){
@@ -437,4 +446,4 @@ bool check_midi_status(uint8_t status){
   } else {
     return false;
   }
-} /* check_midi_status */
+} /* check_midi_status() */
