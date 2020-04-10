@@ -212,9 +212,9 @@ sys_event_t parse_sys_event(FILE *read_file, uint8_t type){
   sys_event.data_len = parse_var_len(read_file);
   sys_event.data = malloc(sys_event.data_len * sizeof(uint8_t));
 
-  fread(sys_event.data, sys_event.data_len * sizeof(uint8_t),
-        1, read_file);
-
+  int check_error = fread(sys_event.data, sys_event.data_len *
+                          sizeof(uint8_t), 1, read_file);
+  assert(check_error == 1);
   return sys_event;
 } /* parse_sys_event() */
 
