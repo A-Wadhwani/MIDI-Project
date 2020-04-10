@@ -22,14 +22,14 @@
 uint32_t endian_swap_32(uint32_t);
 uint16_t endian_swap_16(uint16_t);
 bool end_of_track(FILE *);
-bool is_status(uint8_t);
+bool check_midi_status(uint8_t);
 void print_binary(int);
 void verify_song(song_data_t *);
 void debug_parser();
 
 /* Global Variables */
 
-uint8_t prev_status = 0x00;
+uint8_t g_prev_midi_status = 0x00;
 
 /* Function Definitions */
 
@@ -252,10 +252,10 @@ meta_event_t parse_meta_event(FILE *read_file){
 /* Define parse_midi_event here */
 midi_event_t parse_midi_event(FILE *read_file, uint8_t read_status){
   midi_event_t midi_event = (midi_event_t) {"\0", 0, 0, NULL};
-  if (is_status(read_status)){
+  if (check_midi_status(read_status)){
     midi_event.status = read_status;
   } else {
-    midi_event.status = prev_status;
+    midi_event.status = g_prev_midi_status;
     fseek(read_file, -1 * sizeof(char), SEEK_CUR);
   }
   midi_event = MIDI_TABLE[midi_event.status];
@@ -426,49 +426,15 @@ uint32_t endian_swap_32(uint32_t num_32){
   return num_32;
 }
 
-bool is_status(uint8_t status){
+/*
+ * Checks if the given status 
+ */
+
+bool check_midi_status(uint8_t status){
   if (status >> 7 == 1){
-    prev_status = status;
+    g_prev_midi_status = status;
     return true;
   } else {
     return false;
   }
-}
-
-void print_binary(int number){
-  if (number > 1)
-    print_binary(number / 2);
-  printf("%d", number % 2);
-}
-
-void verify_song(song_data_t *midi_song){
-  printf("Header details Format: %u, Num Tracks: %u, Division: %u\n", 
-         midi_song->format, midi_song->num_tracks, midi_song->division.ticks_per_qtr);
-  track_node_t *copy_track = midi_song->track_list;
-  for(int i = 0; i < midi_song->num_tracks; i++){
-    printf("Track %u: Length %u\n",i, copy_track->track->length);
-    event_node_t *copy_event = copy_track->track->event_list;
-    while(copy_event != NULL){
-      printf("  Event type %u, Delta time %u\n",
-             event_type(copy_event->event), copy_event->event->delta_time);
-      copy_event = copy_event->next_event;
-    }
-    copy_track = copy_track->next_track;
-  }
-  printf("End of read\n");
-}
-
-void debug_parser(){
-  char *read_file_name = malloc(50 * sizeof(char));
-  printf("Provide file name: \n");
-  scanf("%s", read_file_name);
-  printf("Reading file...\n");
-  song_data_t *midi_song = parse_file(read_file_name);
-  printf("Reading complete!\n");
-  printf("Writing to output.mid....\n");
-  write_song_data(midi_song, "output.mid");
-  printf("Writing complete!\n");
-  verify_song(midi_song);
-  free(read_file_name);
-  free_song(midi_song);
-}
+} /* check_midi_status */
