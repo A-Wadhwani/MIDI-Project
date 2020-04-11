@@ -1,6 +1,5 @@
-
 /* Aryan Wadhwani, library.c, CS 24000, Spring 2020
- * Last updated April 3, 2020
+ * Last updated April 11, 2020
  */
 
 /* Included Libraries */

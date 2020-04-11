@@ -10,7 +10,7 @@
 #include <assert.h>
 #include <string.h>
 
-/* User Defined Constants */
+/* Defined Constants */
 
 #define MIDI_HEADER "MThd"
 #define MIDI_TRACK "MTrk"
@@ -26,7 +26,7 @@ bool end_of_track(FILE *);
 
 /* Global Variables */
 
-uint8_t g_prev_midi_status = 0x00;
+uint8_t g_prev_midi_status = 0;
 
 /* Function Definitions */
 
