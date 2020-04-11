@@ -9,11 +9,12 @@
 
 #include <string.h>
 #include <malloc.h>
-#include <dirent.h>
 #include <ftw.h>
 #include <assert.h>
 
-#include "song_writer.h"
+/* Defined Constants */
+
+#define MAX_DIRECTORY_DEPTH (20)
 
 /* Global Variables */
 
@@ -24,8 +25,13 @@ tree_node_t **find_parent_handler(tree_node_t **, tree_node_t **, const char *);
 int add_file_to_library(const char *, const struct stat *, int);
 char* get_file_name(const char *);
 
-/* Define find_parent_pointer here */
-tree_node_t **find_parent_pointer(tree_node_t **tree_node, const char *song_name){
+/*
+ * Finds the parent pointer of the tree_node with the
+ * given song_name.
+ */
+
+tree_node_t **find_parent_pointer(tree_node_t **tree_node,
+                                  const char *song_name){
   if (tree_node == NULL){
     return NULL;
   }
@@ -36,19 +42,29 @@ tree_node_t **find_parent_pointer(tree_node_t **tree_node, const char *song_name
     return tree_node;
   }
   return find_parent_handler(tree_node, tree_node, song_name);
-}
+} /* find_parent_pointer() */
 
-tree_node_t **find_parent_handler(tree_node_t **tree_root, tree_node_t **tree_parent,
+/*
+ * Called by find_parent_pointer to handle the finding
+ * of the node's parent pointer.
+ */
+
+tree_node_t **find_parent_handler(tree_node_t **tree_root,
+                                  tree_node_t **tree_parent,
                                   const char *song_name){
   if (tree_root == NULL){
     return NULL;
   }
+
   if (*tree_root == NULL){
     return NULL;
   }
-  int compare_strings = strncmp((*tree_root)->song_name, song_name, strlen(song_name));
+
+  int compare_strings = strncmp((*tree_root)->song_name,
+                                song_name, strlen(song_name));
   if (compare_strings == 0){
-    if (strncmp((*tree_parent)->song_name, (*tree_root)->song_name, strlen(song_name)) > 0){
+    if (strncmp((*tree_parent)->song_name,
+                (*tree_root)->song_name, strlen(song_name)) > 0){
       return &(*tree_parent)->left_child;
     }
     return &(*tree_parent)->right_child;
@@ -57,24 +73,31 @@ tree_node_t **find_parent_handler(tree_node_t **tree_root, tree_node_t **tree_pa
     return find_parent_handler(&(*tree_root)->left_child, tree_root, song_name);
   }
   return find_parent_handler(&(*tree_root)->right_child, tree_root, song_name);
-}
+} /* find_parent_handler() */
 
-/* Define tree_insert here */
+/*
+ * Inserts given node into the tree
+ */
+
 int tree_insert(tree_node_t **tree_root, tree_node_t *tree_node){
   if (tree_root == NULL){
     tree_root = &tree_node;
     return INSERT_SUCCESS;
   }
+
   if (*tree_root == NULL){
     *tree_root = tree_node;
     return INSERT_SUCCESS;
   }
+
   tree_node_t *copy_root = *tree_root;
   tree_node_t *store_parent = NULL;
-  
+
   while (copy_root != NULL){
     store_parent = copy_root;
-    int compare_strings = strncmp(copy_root->song_name, tree_node->song_name, strlen(tree_node->song_name));
+    int compare_strings = strncmp(copy_root->song_name,
+                                  tree_node->song_name,
+                                  strlen(tree_node->song_name));
     if (compare_strings == 0){
       return DUPLICATE_SONG;
     }
@@ -85,15 +108,22 @@ int tree_insert(tree_node_t **tree_root, tree_node_t *tree_node){
       copy_root = copy_root->right_child;
     }
   }
-  if (strncmp(store_parent->song_name, tree_node->song_name, strlen(tree_node->song_name)) > 0){
+  if (strncmp(store_parent->song_name,
+              tree_node->song_name,
+              strlen(tree_node->song_name)) > 0){
     store_parent->left_child = tree_node;
     return INSERT_SUCCESS;
   }
   store_parent->right_child = tree_node;
   return INSERT_SUCCESS;
-}
+} /* tree_insert() */
 
-/* Define remove_song_from_tree here */
+/*
+ * Removes the node with the given song_name from
+ * the binary tree. Inserts it's children back into
+ * the tree.
+ */
+
 int remove_song_from_tree(tree_node_t **tree_root, const char *song_name){
   if (tree_root == NULL){
     return SONG_NOT_FOUND;
@@ -116,9 +146,13 @@ int remove_song_from_tree(tree_node_t **tree_root, const char *song_name){
     tree_insert(tree_root, save_right);
   }
   return DELETE_SUCCESS;
-}
+} /* remove_song_from_tree() */
 
-/* Define free_node here */
+/*
+ * Frees memory allocated to a node of a
+ * tree
+ */
+
 void free_node(tree_node_t *tree_node){
   if (tree_node == NULL){
     return;
@@ -127,13 +161,17 @@ void free_node(tree_node_t *tree_node){
     free_song(tree_node->song);
   }
   free(tree_node);
-}
+} /* free_node() */
 
-/* Define print_node here */
+/*
+ * Prints the song_name of the passed-in
+ * node.
+ */
+
 void print_node(tree_node_t *tree_node, FILE *output_file){
   fprintf(output_file, "%s\n", tree_node->song_name);
   return;
-}
+} /* print_node() */
 
 /*
  * Traverse the tree in pre order, running function
@@ -141,7 +179,8 @@ void print_node(tree_node_t *tree_node, FILE *output_file){
  * CENTER - LEFT - RIGHT
  */
 
-void traverse_pre_order(tree_node_t *tree_node, void *data, traversal_func_t run_operation){
+void traverse_pre_order(tree_node_t *tree_node,
+                        void *data, traversal_func_t run_operation){
   if (tree_node == NULL){
     return;
   }
@@ -157,7 +196,8 @@ void traverse_pre_order(tree_node_t *tree_node, void *data, traversal_func_t run
  * LEFT - CENTER - RIGHT
  */
 
-void traverse_in_order(tree_node_t *tree_node, void *data, traversal_func_t run_operation){
+void traverse_in_order(tree_node_t *tree_node,
+                       void *data, traversal_func_t run_operation){
   if (tree_node == NULL){
     return;
   }
@@ -173,7 +213,8 @@ void traverse_in_order(tree_node_t *tree_node, void *data, traversal_func_t run_
  * LEFT - RIGHT - CURRENT
  */
 
-void traverse_post_order(tree_node_t *tree_node, void *data, traversal_func_t run_operation){
+void traverse_post_order(tree_node_t *tree_node,
+                         void *data, traversal_func_t run_operation){
   if (tree_node == NULL){
     return;
   }
@@ -216,7 +257,7 @@ void write_song_list(FILE *fp, tree_node_t *tree_node){
  * file_path where the file_name is found.
  */
 
-char* get_file_name(const char* file_path){
+char *get_file_name(const char* file_path){
   char *file_name = strchr(file_path, '/');
   if (file_name == NULL){
     file_name = strchr(file_path, file_path[0]);
@@ -254,6 +295,6 @@ int add_file_to_library(const char *file_path,
  */
 
 void make_library(const char *directory_name){
-  assert(ftw(directory_name, &add_file_to_library, 20) == 0);
+  assert(ftw(directory_name, &add_file_to_library, MAX_DIRECTORY_DEPTH) == 0);
   return;
 } /* make_library() */
