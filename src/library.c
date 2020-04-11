@@ -135,7 +135,12 @@ void print_node(tree_node_t *tree_node, FILE *output_file){
   return;
 }
 
-/* Define traverse_pre_order here */
+/*
+ * Traverse the tree in pre order, running function
+ * run_operation on each node. Order is
+ * CENTER - LEFT - RIGHT
+ */
+
 void traverse_pre_order(tree_node_t *tree_node, void *data, traversal_func_t run_operation){
   if (tree_node == NULL){
     return;
@@ -144,9 +149,14 @@ void traverse_pre_order(tree_node_t *tree_node, void *data, traversal_func_t run
   traverse_pre_order(tree_node->left_child, data, run_operation);
   traverse_pre_order(tree_node->right_child, data, run_operation);
   return;
-}
+} /* traverse_pre_order() */
 
-/* Define traverse_in_order here */
+/*
+ * Traverse the tree in in-order, running function
+ * run_operation() on each node. Order is
+ * LEFT - CENTER - RIGHT
+ */
+
 void traverse_in_order(tree_node_t *tree_node, void *data, traversal_func_t run_operation){
   if (tree_node == NULL){
     return;
@@ -155,9 +165,14 @@ void traverse_in_order(tree_node_t *tree_node, void *data, traversal_func_t run_
   run_operation(tree_node, data);
   traverse_in_order(tree_node->right_child, data, run_operation);
   return;
-}
+} /* traverse_in_order() */
 
-/* Define traverse_post_order here */
+/*
+ * Traverses the tree in post order, running function
+ * run_operation() on each node. Order is
+ * LEFT - RIGHT - CURRENT
+ */
+
 void traverse_post_order(tree_node_t *tree_node, void *data, traversal_func_t run_operation){
   if (tree_node == NULL){
     return;
@@ -166,9 +181,12 @@ void traverse_post_order(tree_node_t *tree_node, void *data, traversal_func_t ru
   traverse_post_order(tree_node->right_child, data, run_operation);
   run_operation(tree_node, data);
   return;
-}
+} /* traverse_post_order() */
 
-/* Define free_library here */
+/*
+ * Frees all memory associated with a tree node
+ */
+
 void free_library(tree_node_t *tree_node){
   if (tree_node == NULL){
     return;
@@ -183,14 +201,20 @@ void free_library(tree_node_t *tree_node){
   }
   free_node(tree_node);
   tree_node = NULL;
-}
+} /* free_library() */
 
-/* Define write_song_list here */
+/*
+ * Writes all of the songs in sorted order
+ */
+
 void write_song_list(FILE *fp, tree_node_t *tree_node){
   traverse_in_order(tree_node, fp, (traversal_func_t) print_node);
-  return;
-}
+} /* write_song_list() */
 
+/*
+ * Returns a pointer to the location in the
+ * file_path where the file_name is found.
+ */
 
 char* get_file_name(const char* file_path){
   char *file_name = strchr(file_path, '/');
@@ -202,10 +226,15 @@ char* get_file_name(const char* file_path){
     file_name = strchr(file_name + 1, '/');
   }
   return file_name + 1;
-}
+} /* get_file_name() */
 
+/*
+ * Used by make_library to handle creation of a new node
+ * and adding it to the global g_song_library
+ */
 
-int add_file_to_library(const char *file_path, const struct stat *sb, int type_flag){
+int add_file_to_library(const char *file_path,
+                        const struct stat *sb, int type_flag){
   if (type_flag != FTW_F){
     return 0;
   }
@@ -214,20 +243,17 @@ int add_file_to_library(const char *file_path, const struct stat *sb, int type_f
   new_node->song_name = get_file_name(new_node->song->path);
   new_node->left_child = NULL;
   new_node->right_child = NULL;
-  tree_insert(&g_song_library, new_node); 
+  tree_insert(&g_song_library, new_node);
   return 0;
-}
+} /* add_file_to_library() */
 
-/* Define make_library here */
+/*
+ * Creates a song library using ftw, which
+ * recursively calls add_file_to_library to
+ * every file in the provided directory
+ */
+
 void make_library(const char *directory_name){
   assert(ftw(directory_name, &add_file_to_library, 20) == 0);
   return;
-}
-
-void write_song_to_file(tree_node_t *tree_node, char *dir){
-  char result[strlen(tree_node->song_name) + strlen(dir) + 2];
-  strcpy(result, dir);
-  strcat(result, tree_node->song_name);
-  write_song_data(tree_node->song, result);
-}
-
+} /* make_library() */
