@@ -362,7 +362,9 @@ void free_track_node(track_node_t *track_node){
     copy_node = NULL;
   }
   free(track_node->track);
+  track_node->track = NULL;
   free(track_node);
+  track_node = NULL;
 } /* free_track_node() */
 
 /*
@@ -373,16 +375,20 @@ void free_event_node(event_node_t *event_node){
   switch (event_type(event_node->event)){
     case META_EVENT_T:
       free(event_node->event->meta_event.data);
+      event_node->event->meta_event.data = NULL;
       break;
     case MIDI_EVENT_T:
       free(event_node->event->midi_event.data);
+      event_node->event->midi_event.data = NULL;
       break;
     case SYS_EVENT_T:
       free(event_node->event->sys_event.data);
+      event_node->event->sys_event.data = NULL;
   }
   free(event_node->event);
   event_node->event = NULL;
   free(event_node);
+  event_node = NULL;
   return;
 } /* free_event_node() */
 
@@ -397,12 +403,12 @@ bool end_of_track(FILE *read_file){
   }
   char *chunk_type = malloc(sizeof(char) * 4);
   int check_error = fread(chunk_type, sizeof(char), 4, read_file);
-  if (check_error != 4){
+  if (check_error != 4 * OK_CHUNK_READ){
     free(chunk_type);
     chunk_type = NULL;
     return true;
   }
-  bool is_end = strncmp(chunk_type, "MTrk", 4) == 0;
+  bool is_end = strncmp(chunk_type, "MTrk", strlen("MTrk")) == 0;
   free(chunk_type);
   chunk_type = NULL;
   fseek(read_file, -4 * sizeof(char), SEEK_CUR);

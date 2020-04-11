@@ -6,13 +6,14 @@
 /* Included Libraries */
 
 #include "library.h"
-#include "song_writer.h"
 
 #include <string.h>
 #include <malloc.h>
 #include <dirent.h>
 #include <ftw.h>
 #include <assert.h>
+
+#include "song_writer.h"
 
 /* Global Variables */
 
@@ -206,28 +207,6 @@ int add_file_to_library(const char *file_path, const struct stat *sb, int type_f
   }
   tree_node_t *new_node = malloc(sizeof(tree_node_t));
 
-
-  /* char *file_name = malloc(strlen(file_path) * sizeof(char) + 1);
-  char *save_right = malloc(strlen(file_path) * sizeof(char) + 1);
-  char *dir_string = malloc(strlen(file_path) * sizeof(char) + 1);
-
-  char save_right[strlen(file_path)];
-  char dir_string[strlen(file_path)];
-
-  int check_error = 0;
-  strncpy(dir_string, file_path, strlen(file_path));
-  dir_string[strlen(file_path)] = '\0';
-  do {
-    char file_name[strlen(file_path)];
-    check_error = sscanf(dir_string, "%[^/]/%[^\n]", file_name, save_right);
-    strncpy(dir_string, save_right, strlen(save_right));
-    dir_string[strlen(save_right)] = '\0';
-  } while (check_error == 2);
-
-  new_node->song_name = malloc(strlen(save_right) * sizeof(char) + 1);
-  strncpy(new_node->song_name, save_right, strlen(save_right));
-  new_node->song_name[strlen(save_right)] = '\0';
-*/
   new_node->song = parse_file(file_path);
   new_node->song_name = get_file_name(new_node->song->path);
   new_node->left_child = NULL;

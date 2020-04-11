@@ -2,7 +2,7 @@
  * Last updated March 27, 2020
  */
 
-#include "../include/event_tables.h"
+#include "event_tables.h"
 
 #include <string.h>
 
