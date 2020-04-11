@@ -194,6 +194,10 @@ void write_song_list(FILE *fp, tree_node_t *tree_node){
 
 char* get_file_name(const char* file_path){
   char *file_name = strchr(file_path, '/');
+  if (file_name == NULL){
+    file_name = strchr(file_path, file_path[0]);
+    return file_name;
+  }
   while (strchr(file_name + 1, '/') != NULL){
     file_name = strchr(file_name + 1, '/');
   }
@@ -206,7 +210,6 @@ int add_file_to_library(const char *file_path, const struct stat *sb, int type_f
     return 0;
   }
   tree_node_t *new_node = malloc(sizeof(tree_node_t));
-
   new_node->song = parse_file(file_path);
   new_node->song_name = get_file_name(new_node->song->path);
   new_node->left_child = NULL;
