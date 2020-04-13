@@ -294,7 +294,7 @@ int add_file_to_library(const char *file_path,
  */
 
 void make_library(const char *directory_name){
-  if(ftw(directory_name, &add_file_to_library, MAX_DIRECTORY_DEPTH) != 0){
+  if (ftw(directory_name, &add_file_to_library, MAX_DIRECTORY_DEPTH) != 0){
     free_library(g_song_library);
     g_song_library = NULL;
   }
