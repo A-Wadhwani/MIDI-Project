@@ -278,6 +278,9 @@ int add_file_to_library(const char *file_path,
   if (type_flag != FTW_F){
     return 0;
   }
+  if (strstr(file_path, ".mid") == NULL){
+    return 0;
+  }
   tree_node_t *new_node = malloc(sizeof(tree_node_t));
   new_node->song = parse_file(file_path);
   new_node->song_name = get_file_name(new_node->song->path);
