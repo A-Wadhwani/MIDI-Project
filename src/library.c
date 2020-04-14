@@ -287,7 +287,8 @@ int add_file_to_library(const char *file_path,
   new_node->song_name = get_file_name(new_node->song->path);
   new_node->left_child = NULL;
   new_node->right_child = NULL;
-  tree_insert(&g_song_library, new_node);
+  int check_insert = tree_insert(&g_song_library, new_node);
+  assert(check_insert != DUPLICATE_SONG);
   return 0;
 } /* add_file_to_library() */
 
