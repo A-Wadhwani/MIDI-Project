@@ -13,6 +13,7 @@
 
 /* Defined Constants */
 
+#define MIDI_FILE_EXTENSION ".mid"
 #define MAX_DIRECTORY_DEPTH (20)
 
 /* Global Variables */
@@ -278,7 +279,7 @@ int add_file_to_library(const char *file_path,
   if (type_flag != FTW_F){
     return 0;
   }
-  if (strstr(file_path, ".mid") == NULL){
+  if (strstr(file_path, MIDI_FILE_EXTENSION) == NULL){
     return 0;
   }
   tree_node_t *new_node = malloc(sizeof(tree_node_t));
