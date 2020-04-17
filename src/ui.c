@@ -36,12 +36,14 @@ struct parameters{
 /* Define update_song_list here */
 
 void update_song_list(){
-  printf("Hello");
+  printf("Hello\n");
   traverse_in_order(g_song_library, NULL, (traversal_func_t) add_to_song_list);
+  printf("Bye\n");
 }
 
 void add_to_song_list(tree_node_t *node, void *data){
   GtkWidget* song_label = gtk_label_new(node->song_name);
+  printf("%s\n", node->song_name);
   gtk_list_box_insert(g_widgets.song_list, song_label, 0);
   return;
 }
