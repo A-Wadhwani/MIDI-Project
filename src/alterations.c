@@ -263,16 +263,3 @@ int find_vlq_length(uint32_t variable_len){
   }
   return length;
 }
-
-int main(){
-  build_mapping_tables();
-  char file_name[300];
-  printf("Enter file_name: ");
-  scanf("%[^\n]", file_name);
-  song_data_t *new_song = parse_file(file_name);
-  //change_octave(new_song, 1);
-  //warp_time(new_song, 0.75);
-  remap_notes(new_song, N_LOWER);
-  //remap_instruments(new_song, I_BRASS_BAND);
-  write_song_data(new_song, "music/demo.mid");
-}

@@ -9,18 +9,49 @@
 #include<string.h>
 #include<malloc.h>
 
+tree_node_t *g_current_node = NULL;
+song_data_t *g_current_song = NULL;
+song_data_t *g_modified_song = NULL;
+
 /* Define update_song_list here */
+
+void update_song_list(){
+  return;
+}
 
 /* Define update_drawing_area here */
 
+void update_drawing_area(){
+  return;
+}
+
 /* Define update_info here */
+
+void update_info(){
+  return;
+}
 
 /* Define update_song here */
 
+void update_song(){
+  return;
+}
+
+
 /* Define range_of_song here */
 
-/* Define activate here */
+void range_of_song(song_data_t *midi_song, int *low_pitch,
+                   int *high_pitch, int *length){
+  return;
+}
 
+/* Define activate here */
+/*
+void activate(){
+
+}
+
+*/
 /* Define add_song_cb here */
 
 /* Define load_songs_cb here */
