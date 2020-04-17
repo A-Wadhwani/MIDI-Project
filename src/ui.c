@@ -14,12 +14,14 @@ song_data_t *g_current_song = NULL;
 song_data_t *g_modified_song = NULL;
 
 char* open_folder_dialog();
+void add_to_song_list(tree_node_t*, void*);
 
 // This structure contains all the widgets in GUI
 struct ui_widgets {
   GtkBuilder *builder;
   GtkWidget *window;
   GtkWidget *fixed;
+  GtkListBox *song_list;
   GtkButton *load_button;
   GtkButton *add_song_button;
 } g_widgets;
@@ -28,14 +30,20 @@ struct ui_widgets {
 // among different GUI pointers
 struct parameters{
   char *folder_directory;
+  char *selected_song_name;
 } g_parameters;
 
 /* Define update_song_list here */
 
 void update_song_list(){
-  return;
+  traverse_in_order(g_song_library, NULL, (traversal_func_t) add_to_song_list);
 }
 
+void add_to_song_list(tree_node_t *node, void *data){
+  GtkWidget* song_label = gtk_label_new(node->song_name);
+  gtk_list_box_insert(g_widgets.song_list, song_label, -1);
+  return;
+}
 /* Define update_drawing_area here */
 
 void update_drawing_area(){
@@ -76,6 +84,8 @@ void activate(GtkApplication *app, gpointer user_data){
   g_widgets.fixed = GTK_WIDGET(gtk_builder_get_object(g_widgets.builder, "fixed_grid"));
   gtk_container_add(GTK_CONTAINER(g_widgets.window), g_widgets.fixed);
 
+  g_widgets.song_list = GTK_LIST_BOX(gtk_builder_get_object(g_widgets.builder, "song_list"));
+
   g_widgets.load_button = GTK_BUTTON(gtk_builder_get_object(g_widgets.builder, "load_directory"));
   g_signal_connect(g_widgets.load_button, "clicked", G_CALLBACK(load_songs_cb), NULL);
   
@@ -97,7 +107,8 @@ void load_songs_cb(GtkButton *button, gpointer user_data){
     g_parameters.folder_directory = NULL;
   }
   g_parameters.folder_directory = open_folder_dialog();
-  printf("%s", g_parameters.folder_directory);
+  make_library(g_parameters.folder_directory);
+  update_song_list();
 }
 
 char* open_folder_dialog(){
@@ -111,14 +122,13 @@ char* open_folder_dialog(){
     GtkFileChooser *chooser = GTK_FILE_CHOOSER(dialog);
     file_name = gtk_file_chooser_get_filename (chooser);
   }
-  gtk_widget_destroy (dialog);
+  gtk_widget_destroy(dialog);
   return file_name;
 }
 
 /* Define song_selected_cb here */
 
 void song_selected_cb(GtkListBox *list_box, GtkListBoxRow *row){
-  
 }
 
 /* Define search_bar_cb here */
