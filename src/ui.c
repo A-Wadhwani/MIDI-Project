@@ -60,10 +60,9 @@ void range_of_song(song_data_t *midi_song, int *low_pitch,
 /* Define activate here */
 
 void activate(GtkApplication *app, gpointer user_data){
-  gtk_init(NULL, NULL);
   g_widgets.builder = gtk_builder_new_from_file("src/ui.glade");
   g_widgets.window = GTK_WIDGET(gtk_builder_get_object(g_widgets.builder, "app_window"));
-  // gtk_application_add_window(app, GTK_WINDOW(g_widgets.window));
+  gtk_application_add_window(app, GTK_WINDOW(g_widgets.window));
   // gtk_window_set_application(GTK_WINDOW(g_widgets.window), app);
   g_signal_connect(g_widgets.window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
   
