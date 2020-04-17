@@ -14,7 +14,7 @@ song_data_t *g_current_song = NULL;
 song_data_t *g_modified_song = NULL;
 
 char* open_folder_dialog();
-void add_to_song_list(tree_node_t*, void*);
+void add_to_song_list(tree_node_t*, int*);
 
 // This structure contains all the widgets in GUI
 struct ui_widgets {
@@ -37,15 +37,16 @@ struct parameters{
 
 void update_song_list(){
   printf("Hello\n");
-  traverse_in_order(g_song_library, NULL, (traversal_func_t) add_to_song_list);
+  int count = 0;
+  traverse_in_order(g_song_library, &count, (traversal_func_t) add_to_song_list);
   printf("Bye\n");
 }
 
-void add_to_song_list(tree_node_t *node, void *data){
+void add_to_song_list(tree_node_t *node, int *count){
   GtkWidget* song_label = gtk_label_new(node->song_name);
   gtk_label_set_single_line_mode(GTK_LABEL(song_label), true);
   printf("%s\n", node->song_name);
-  gtk_list_box_insert(g_widgets.song_list, song_label, 0);
+  gtk_list_box_insert(g_widgets.song_list, song_label, (*count)++);
   return;
 }
 /* Define update_drawing_area here */
