@@ -13,6 +13,8 @@ tree_node_t *g_current_node = NULL;
 song_data_t *g_current_song = NULL;
 song_data_t *g_modified_song = NULL;
 
+char* open_folder_dialog();
+char* gtk_file_chooser_get_file_name(GtkFileChooser*);
 
 // This structure contains all the widgets in GUI
 struct ui_widgets {
@@ -26,6 +28,7 @@ struct ui_widgets {
 // This structure contains all the global parameters used
 // among different GUI pointers
 struct parameters{
+  char *folder_directory;
 } g_parameters;
 
 /* Define update_song_list here */
@@ -91,7 +94,22 @@ void add_song_cb(GtkButton *button, gpointer user_data){
 /* Define load_songs_cb here */
 
 void load_songs_cb(GtkButton *button, gpointer user_data){
-  gtk_button_set_label(button, "HELLO");
+  
+}
+
+char* open_folder_dialog(){
+  GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
+  char *file_name = NULL;
+  GtkWidget *dialog = gtk_file_chooser_dialog_new("Select Folder", GTK_WINDOW(g_widgets.window), 
+                                       action, "_Cancel", GTK_RESPONSE_CANCEL,
+                                       "_Open Folder", GTK_RESPONSE_ACCEPT, NULL);
+  gint result = gtk_dialog_run (GTK_DIALOG(dialog));
+  if (result == GTK_RESPONSE_ACCEPT){
+    GtkFileChooser *chooser = GTK_FILE_CHOOSER(dialog);
+    file_name = gtk_file_chooser_get_file_name (chooser);
+  }
+  gtk_widget_destroy (dialog);
+  return file_name;
 }
 
 /* Define song_selected_cb here */
