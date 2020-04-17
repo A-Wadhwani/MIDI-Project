@@ -69,6 +69,7 @@ void activate(GtkApplication *app, gpointer user_data){
   gtk_window_set_title(GTK_WINDOW(g_widgets.window), "MIDI Library");
   gtk_window_set_resizable(GTK_WINDOW(g_widgets.window), false);
   gtk_window_set_default_size(GTK_WINDOW(g_widgets.window), 950, 720);
+  gtk_window_set_position(GTK_WINDOW(g_widgets.window), GTK_WIN_POS_CENTER);
 
   g_widgets.fixed = GTK_WIDGET(gtk_builder_get_object(g_widgets.builder, "fixed_grid"));
   gtk_container_add(GTK_CONTAINER(g_widgets.window), g_widgets.fixed);
