@@ -45,12 +45,10 @@ void update_song_list(){
 }
 
 void remove_list(){
-  int count = 0;
-  GtkListBoxRow *row = gtk_list_box_get_row_at_index(g_widgets.song_list, count);
+  GtkListBoxRow *row = gtk_list_box_get_row_at_index(g_widgets.song_list, 0);
   while (row != NULL){
-    gtk_container_remove(GTK_CONTAINER (g_widgets.song_list),  GTK_WIDGET(row));
-    count++;
-    row = gtk_list_box_get_row_at_index(g_widgets.song_list, count);
+    gtk_widget_destroy(GTK_WIDGET(row));
+    row = gtk_list_box_get_row_at_index(g_widgets.song_list, 0);
   }
 }
 
