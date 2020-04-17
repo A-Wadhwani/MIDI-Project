@@ -87,17 +87,17 @@ void activate(GtkApplication *app, gpointer user_data){
 /* Define add_song_cb here */
 
 void add_song_cb(GtkButton *button, gpointer user_data){
+}
+
+/* Define load_songs_cb here */
+
+void load_songs_cb(GtkButton *button, gpointer user_data){
   if (g_parameters.folder_directory != NULL){
     g_free(g_parameters.folder_directory);
     g_parameters.folder_directory = NULL;
   }
   g_parameters.folder_directory = open_folder_dialog();
   printf("%s", g_parameters.folder_directory);
-}
-
-/* Define load_songs_cb here */
-
-void load_songs_cb(GtkButton *button, gpointer user_data){
 }
 
 char* open_folder_dialog(){
