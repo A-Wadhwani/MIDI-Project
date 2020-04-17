@@ -107,8 +107,8 @@ void load_songs_cb(GtkButton *button, gpointer user_data){
     g_free(g_parameters.folder_directory);
     g_parameters.folder_directory = NULL;
   }
-  printf("%s\n", g_parameters.folder_directory);
   g_parameters.folder_directory = open_folder_dialog();
+  printf("%s\n", g_parameters.folder_directory);
   make_library(g_parameters.folder_directory);
   update_song_list();
 }
