@@ -12,9 +12,9 @@
 tree_node_t *g_current_node = NULL;
 song_data_t *g_current_song = NULL;
 song_data_t *g_modified_song = NULL;
-struct labels_list;
+
 char* open_folder_dialog();
-void add_to_song_list(tree_node_t*,struct labels_list**);
+void add_to_song_list(tree_node_t*, void*);
 
 // This structure contains all the widgets in GUI
 struct ui_widgets {
@@ -25,7 +25,6 @@ struct ui_widgets {
   GtkButton *load_button;
   GtkButton *add_song_button;
   GtkLabel **song_names;
-  struct labels_list **song_labels;
 } g_widgets;
 
 // This structure contains all the global parameters used
@@ -38,16 +37,16 @@ struct parameters{
 /* Define update_song_list here */
 
 void update_song_list(){
-  traverse_in_order(g_song_library, g_widgets.song_labels, (traversal_func_t) add_to_song_list);
+  traverse_in_order(g_song_library, NULL, (traversal_func_t) add_to_song_list);
   printf("Bye\n");
 }
 
-void add_to_song_list(tree_node_t *node, struct labels_list **song_list){
+void add_to_song_list(tree_node_t *node, void *data){
   GtkWidget* song_label = gtk_label_new(node->song_name);
   gtk_label_set_single_line_mode(GTK_LABEL(song_label), true);
-  gtk_label_set_markup (GTK_LABEL(song_label), "<big>large_text</big>");
-  gtk_label_set_use_markup (GTK_LABEL(song_label), TRUE);
+  gtk_label_set_markup (GTK_LABEL(song_label), "<span size=\"0\">large_text</span>");
   printf("%s\n", node->song_name);
+  gtk_widget_show(song_label);
   gtk_list_box_prepend(g_widgets.song_list, song_label);
   return;
 }
