@@ -44,7 +44,7 @@ void update_song_list(){
 void add_to_song_list(tree_node_t *node, void *data){
   GtkWidget* song_label = gtk_label_new(node->song_name);
   gtk_label_set_single_line_mode(GTK_LABEL(song_label), true);
-  gtk_label_set_markup (GTK_LABEL(song_label), "<large>large_text</large>");
+  gtk_label_set_markup (GTK_LABEL(song_label), "<span size=\"0\">large_text</span>");
   printf("%s\n", node->song_name);
   gtk_list_box_insert(g_widgets.song_list, song_label, 0);
   return;
