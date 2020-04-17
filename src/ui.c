@@ -14,7 +14,8 @@ song_data_t *g_current_song = NULL;
 song_data_t *g_modified_song = NULL;
 
 char* open_folder_dialog();
-void add_to_song_list(tree_node_t*, void*);
+void add_to_song_list(tree_node_t*, int*);
+void remove_list();
 
 // This structure contains all the widgets in GUI
 struct ui_widgets {
@@ -37,11 +38,23 @@ struct parameters{
 /* Define update_song_list here */
 
 void update_song_list(){
-  traverse_in_order(g_song_library, NULL, (traversal_func_t) add_to_song_list);
+  int count = 0;
+  remove_list();
+  traverse_in_order(g_song_library, &count, (traversal_func_t) add_to_song_list);
   printf("Bye\n");
 }
 
-void add_to_song_list(tree_node_t *node, void *data){
+void remove_list(){
+  int count = 0;
+  GtkListBoxRow *row = gtk_list_box_get_row_at_index(g_widgets.song_list, count);
+  while (row != NULL){
+    gtk_container_remove(GTK_CONTAINER (g_widgets.song_list),  GTK_WIDGET(row));
+    count++;
+    row = gtk_list_box_get_row_at_index(g_widgets.song_list, count);
+  }
+}
+
+void add_to_song_list(tree_node_t *node, int *count){
   GtkWidget *row = gtk_list_box_row_new();
   GtkWidget *box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
   g_object_set (box, "margin-start", 10, "margin-end", 10, NULL);
@@ -50,7 +63,8 @@ void add_to_song_list(tree_node_t *node, void *data){
   gtk_container_add_with_properties (GTK_CONTAINER (box), song_label, "expand", TRUE, NULL);
   gtk_widget_show_all(row);
   printf("%s\n", node->song_name);
-  gtk_list_box_insert(g_widgets.song_list, row, -1);
+  gtk_list_box_insert(g_widgets.song_list, row, *count);
+  (*count)++;
   return;
 }
 /* Define update_drawing_area here */
@@ -112,6 +126,7 @@ void add_song_cb(GtkButton *button, gpointer user_data){
 
 void load_songs_cb(GtkButton *button, gpointer user_data){
   if (g_parameters.folder_directory != NULL){
+    free_library(g_song_library);
     g_free(g_parameters.folder_directory);
     g_parameters.folder_directory = NULL;
   }
