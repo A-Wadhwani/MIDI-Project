@@ -18,6 +18,7 @@ song_data_t *g_modified_song = NULL;
 struct ui_widgets {
   GtkBuilder *builder;
   GtkWidget *window;
+  GtkWidget *fixed;
 } g_widgets;
 
 // This structure contains all the global parameters used
@@ -61,11 +62,14 @@ void range_of_song(song_data_t *midi_song, int *low_pitch,
 
 void activate(GtkApplication *app, gpointer user_data){
   g_widgets.builder = gtk_builder_new_from_file("src/ui.glade");
-  g_widgets.window = GTK_WIDGET(gtk_builder_get_object(g_widgets.builder, "app_window"));
+  g_widgets.window = gtk_application_window_new(app);
+  gtk_window_set_title(GTK_WINDOW(g_widgets.window), "Hello title");
+
+  g_widgets.fixed = GTK_WIDGET(gtk_builder_get_object(g_widgets.builder, "fixed_grid"));
+  gtk_container_add(GTK_CONTAINER(g_widgets.window), g_widgets.fixed);
+  
   g_signal_connect(g_widgets.window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
   gtk_builder_connect_signals(g_widgets.builder, NULL);
-  gtk_application_add_window(app, GTK_WINDOW(g_widgets.window));
-  // gtk_window_set_application(GTK_WINDOW(g_widgets.window), app);
   gtk_widget_show_all(g_widgets.window);
 }
 
