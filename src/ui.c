@@ -64,7 +64,7 @@ void activate(GtkApplication *app, gpointer user_data){
   gtk_builder_set_application(g_widgets.builder, app);
   g_widgets.window = GTK_WIDGET(gtk_builder_get_object(g_widgets.builder, "app_window"));
   g_signal_connect(g_widgets.window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
-
+  gtk_widget_show(g_widgets.window);
   gtk_main();
 }
 
