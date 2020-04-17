@@ -42,12 +42,15 @@ void update_song_list(){
 }
 
 void add_to_song_list(tree_node_t *node, void *data){
-  GtkWidget* song_label = gtk_label_new(node->song_name);
-  gtk_label_set_single_line_mode(GTK_LABEL(song_label), true);
-  gtk_label_set_markup (GTK_LABEL(song_label), "<span size=\"0\">large_text</span>");
+  GtkWidget *row = gtk_list_box_row_new();
+  GtkWidget *box = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 10);
+  g_object_set (box, "margin-start", 10, "margin-end", 10, NULL);
+  gtk_container_add (GTK_CONTAINER (row), box);
+  GtkWidget *song_label = gtk_label_new(node->song_name);
+  gtk_container_add_with_properties (GTK_CONTAINER (box), song_label, "expand", TRUE, NULL);
+  gtk_widget_show_all(row);
   printf("%s\n", node->song_name);
-  gtk_widget_show(song_label);
-  gtk_list_box_prepend(g_widgets.song_list, song_label);
+  gtk_list_box_insert(g_widgets.song_list, row, -1);
   return;
 }
 /* Define update_drawing_area here */
