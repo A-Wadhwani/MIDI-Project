@@ -36,12 +36,13 @@ struct parameters{
 /* Define update_song_list here */
 
 void update_song_list(){
+  printf("Hello");
   traverse_in_order(g_song_library, NULL, (traversal_func_t) add_to_song_list);
 }
 
 void add_to_song_list(tree_node_t *node, void *data){
   GtkWidget* song_label = gtk_label_new(node->song_name);
-  gtk_list_box_insert(g_widgets.song_list, song_label, -1);
+  gtk_list_box_insert(g_widgets.song_list, song_label, 0);
   return;
 }
 /* Define update_drawing_area here */
@@ -106,6 +107,7 @@ void load_songs_cb(GtkButton *button, gpointer user_data){
     g_free(g_parameters.folder_directory);
     g_parameters.folder_directory = NULL;
   }
+  printf("%s\n", g_parameters.folder_directory);
   g_parameters.folder_directory = open_folder_dialog();
   make_library(g_parameters.folder_directory);
   update_song_list();
