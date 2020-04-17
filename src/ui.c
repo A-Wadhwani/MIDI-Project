@@ -63,7 +63,10 @@ void range_of_song(song_data_t *midi_song, int *low_pitch,
 void activate(GtkApplication *app, gpointer user_data){
   g_widgets.builder = gtk_builder_new_from_file("src/ui.glade");
   g_widgets.window = gtk_application_window_new(app);
-  gtk_window_set_title(GTK_WINDOW(g_widgets.window), "Hello title");
+  
+  gtk_window_set_title(GTK_WINDOW(g_widgets.window), "MIDI Library");
+  gtk_window_set_resizable(GTK_WINDOW(g_widgets.window), false);
+  gtk_window_set_default_size(GTK_WINDOW(g_widgets.window), 950, 720);
 
   g_widgets.fixed = GTK_WIDGET(gtk_builder_get_object(g_widgets.builder, "fixed_grid"));
   gtk_container_add(GTK_CONTAINER(g_widgets.window), g_widgets.fixed);
