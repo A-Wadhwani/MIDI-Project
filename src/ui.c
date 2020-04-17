@@ -19,6 +19,8 @@ struct ui_widgets {
   GtkBuilder *builder;
   GtkWidget *window;
   GtkWidget *fixed;
+  GtkButton *load_button;
+  GtkButton *add_song_button;
 } g_widgets;
 
 // This structure contains all the global parameters used
@@ -70,6 +72,9 @@ void activate(GtkApplication *app, gpointer user_data){
 
   g_widgets.fixed = GTK_WIDGET(gtk_builder_get_object(g_widgets.builder, "fixed_grid"));
   gtk_container_add(GTK_CONTAINER(g_widgets.window), g_widgets.fixed);
+
+  g_widgets.load_button = GTK_BUTTON(gtk_builder_get_object(g_widgets.builder, "load_directory"));
+  g_signal_connect(g_widgets.load_button, "clicked", G_CALLBACK(add_song_cb), NULL);
   
   g_signal_connect(g_widgets.window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
   gtk_builder_connect_signals(g_widgets.builder, NULL);
@@ -85,7 +90,7 @@ void add_song_cb(GtkButton *button, gpointer user_data){
 /* Define load_songs_cb here */
 
 void load_songs_cb(GtkButton *button, gpointer user_data){
-  
+  printf("HELLOOJDIJAOWIDJ");
 }
 
 /* Define song_selected_cb here */
