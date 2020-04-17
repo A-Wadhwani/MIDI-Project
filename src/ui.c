@@ -13,6 +13,17 @@ tree_node_t *g_current_node = NULL;
 song_data_t *g_current_song = NULL;
 song_data_t *g_modified_song = NULL;
 
+
+// This structure contains all the widgets in GUI
+struct ui_widgets {
+
+} g_widgets;
+
+// This structure contains all the global parameters used
+// among different GUI pointers
+struct parameters{
+} g_parameters;
+
 /* Define update_song_list here */
 
 void update_song_list(){
@@ -46,35 +57,81 @@ void range_of_song(song_data_t *midi_song, int *low_pitch,
 }
 
 /* Define activate here */
-/*
-void activate(){
+
+void activate(GtkApplication *app, gpointer user_data){
 
 }
 
-*/
 /* Define add_song_cb here */
+
+void add_song_cb(GtkButton *button, gpointer user_data){
+  
+}
 
 /* Define load_songs_cb here */
 
+void load_songs_cb(GtkButton *button, gpointer user_data){
+  
+}
+
 /* Define song_selected_cb here */
+
+void song_selected_cb(GtkListBox *list_box, GtkListBoxRow *row){
+  
+}
 
 /* Define search_bar_cb here */
 
+void search_bar_cb(GtkSearchBar *search_bar, gpointer user_data){
+
+}
+
 /* Define time_scale_cb here */
+
+void time_scale_cb(GtkSpinButton *time_scale, gpointer user_data){
+
+}
 
 /* Define draw_cb here */
 
+gboolean draw_cb(GtkDrawingArea *draw_area, cairo_t *painter, gpointer user_data){
+  return false;  
+}
+
 /* Define warp_time_cb here */
+
+void warp_time_cb(GtkSpinButton *warp_scale, gpointer user_data){
+  
+}
 
 /* Define song_octave_cb here */
 
+void song_ocatave_cb(GtkSpinButton *octave_scale, gpointer user_data){
+  
+}
+
 /* Define instrument_map_cb here */
+
+void instrument_map_cb(GtkComboBoxText *picked_inst, gpointer user_data){
+}
 
 /* Define note_map_cb here */
 
+void note_map_cb(GtkComboBoxText *picked_note, gpointer user_data){
+  
+}
+
 /* Define save_song_cb here */
 
+void save_song_cb(GtkButton *button, gpointer user_data){
+
+}
+
 /* Define remove_song_cb here */
+
+void remove_song(GtkButton *button, gpointer user_data){
+
+}
 
 /*
  * Function called prior to main that sets up the instrument to color mapping
