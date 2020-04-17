@@ -1,10 +1,13 @@
-/* Name, ui.c, CS 24000, Spring 2020
- * Last updated April 9, 2020
+/* Aryan Wadhwani, ui.c, CS 24000, Spring 2020
+ * Last updated April 16, 2020
  */
 
-/* Add any includes here */
+/* Included Libraries */
 
 #include "ui.h"
+
+#include<string.h>
+#include<malloc.h>
 
 /* Define update_song_list here */
 
