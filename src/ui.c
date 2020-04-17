@@ -14,7 +14,6 @@ song_data_t *g_current_song = NULL;
 song_data_t *g_modified_song = NULL;
 
 char* open_folder_dialog();
-char* gtk_file_chooser_get_file_name(GtkFileChooser*);
 
 // This structure contains all the widgets in GUI
 struct ui_widgets {
@@ -110,7 +109,7 @@ char* open_folder_dialog(){
   gint result = gtk_dialog_run (GTK_DIALOG(dialog));
   if (result == GTK_RESPONSE_ACCEPT){
     GtkFileChooser *chooser = GTK_FILE_CHOOSER(dialog);
-    file_name = gtk_file_chooser_get_file_name (chooser);
+    file_name = gtk_file_chooser_get_filename (chooser);
   }
   gtk_widget_destroy (dialog);
   return file_name;
