@@ -300,7 +300,8 @@ void load_songs_cb(GtkButton *button, gpointer user_data){
 char* open_folder_dialog(){
   GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_SELECT_FOLDER;
   char *file_name = NULL;
-  GtkWidget *dialog = gtk_file_chooser_dialog_new("Select Songs Directory", GTK_WINDOW(g_widgets.window), 
+  GtkWidget *dialog = gtk_file_chooser_dialog_new("Select Songs Directory",
+                                       GTK_WINDOW(g_widgets.window), 
                                        action, "_Cancel", GTK_RESPONSE_CANCEL,
                                        "_Open Folder", GTK_RESPONSE_ACCEPT, NULL);
   gint result = gtk_dialog_run (GTK_DIALOG(dialog));
@@ -393,7 +394,8 @@ gboolean draw_cb(GtkDrawingArea *draw_area, cairo_t *painter, gpointer user_data
   if (user_data == NULL){
     return false;
   }
-
+  song_data_t *given_song = (song_data_t*)user_data;
+  printf("%s", given_song->path);
   return false;  
 }
 
