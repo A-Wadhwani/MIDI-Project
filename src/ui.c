@@ -20,7 +20,6 @@ char* get_file_name(const char *);
 char* open_file_dialog();
 char* open_folder_dialog();
 void add_to_song_list(tree_node_t*, int*);
-void update_file_description();
 void remove_list();
 
 // This structure contains all the widgets in GUI
@@ -32,6 +31,8 @@ struct ui_widgets {
   GtkButton *load_button;
   GtkButton *add_button;
   GtkLabel *file_details;
+  GtkSearchBar *search_bar;
+  GtkSearchEntry *search_entry;
 } g_widgets;
 
 // This structure contains all the global parameters used
@@ -79,7 +80,16 @@ void update_drawing_area(){
 /* Define update_info here */
 
 void update_info(){
-  return;
+  char name_string[1024];
+  char full_path[1024];
+  char note_range[1024];
+  char original_length[1024];
+  snprintf(name_string, 1024, "File name: %s", g_current_node->song_name);
+  snprintf(full_path, 1024, "Full path: %s", g_current_song->path);
+  snprintf(note_range, 1024, "Note range: [0, 10]");
+  snprintf(original_length, 1024, "Original length: 0");
+  snprintf(g_parameters.buffer, 2048, "%s\n%s\n%s\n%s\n", name_string, full_path, note_range, original_length);
+  gtk_label_set_text(g_widgets.file_details, g_parameters.buffer);
 }
 
 /* Define update_song here */
@@ -114,6 +124,11 @@ void activate(GtkApplication *app, gpointer user_data){
 
   g_widgets.song_list = GTK_LIST_BOX(gtk_builder_get_object(g_widgets.builder, "song_list"));
   g_signal_connect(g_widgets.song_list, "row-activated", G_CALLBACK(song_selected_cb), NULL);
+
+  g_widgets.search_bar = GTK_SEARCH_BAR(gtk_builder_get_object(g_widgets.builder, "search_bar"));
+  g_widgets.search_entry = GTK_SEARCH_ENTRY(gtk_builder_get_object(g_widgets.builder, "search_song"));
+  gtk_search_bar_connect_entry(g_widgets.search_bar, GTK_ENTRY(g_widgets.search_entry));
+  g_signal_connect(g_widgets.search_entry, "search-changed", G_CALLBACK(search_bar_cb), NULL);
 
   g_widgets.load_button = GTK_BUTTON(gtk_builder_get_object(g_widgets.builder, "load_directory"));
   g_signal_connect(g_widgets.load_button, "clicked", G_CALLBACK(load_songs_cb), NULL);
@@ -208,20 +223,7 @@ void song_selected_cb(GtkListBox *list_box, GtkListBoxRow *row){
   if (g_parameters.buffer == NULL){
     g_parameters.buffer = malloc(sizeof(2048));
   }
-  update_file_description();
-}
-
-void update_file_description(){
-  char name_string[1024];
-  char full_path[1024];
-  char note_range[1024];
-  char original_length[1024];
-  snprintf(name_string, 1024, "File name: %s", g_current_node->song_name);
-  snprintf(full_path, 1024, "Full path: %s", g_current_song->path);
-  snprintf(note_range, 1024, "Note range: [0, 10]");
-  snprintf(original_length, 1024, "Original length: 0");
-  snprintf(g_parameters.buffer, 2048, "%s\n%s\n%s\n%s\n", name_string, full_path, note_range, original_length);
-  gtk_label_set_text(g_widgets.file_details, g_parameters.buffer);
+  update_info();
 }
 
 /* Define search_bar_cb here */
