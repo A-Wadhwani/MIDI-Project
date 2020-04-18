@@ -20,6 +20,7 @@ char* get_file_name(const char *);
 char* open_file_dialog();
 char* open_folder_dialog();
 void add_to_song_list(tree_node_t*, int*);
+void update_file_description();
 void remove_list();
 
 // This structure contains all the widgets in GUI
@@ -30,7 +31,7 @@ struct ui_widgets {
   GtkListBox *song_list;
   GtkButton *load_button;
   GtkButton *add_button;
-  GtkLabel **song_names;
+  GtkLabel *file_details;
 } g_widgets;
 
 // This structure contains all the global parameters used
@@ -38,6 +39,7 @@ struct ui_widgets {
 struct parameters{
   char *folder_directory;
   char *selected_song_name;
+  char *buffer;
 } g_parameters;
 
 /* Define update_song_list here */
@@ -107,6 +109,8 @@ void activate(GtkApplication *app, gpointer user_data){
 
   g_widgets.fixed = GTK_WIDGET(gtk_builder_get_object(g_widgets.builder, "fixed_grid"));
   gtk_container_add(GTK_CONTAINER(g_widgets.window), g_widgets.fixed);
+
+  g_widgets.file_details = GTK_LABEL(gtk_builder_get_object(g_widgets.builder, "file_details"));
 
   g_widgets.song_list = GTK_LIST_BOX(gtk_builder_get_object(g_widgets.builder, "song_list"));
   g_signal_connect(g_widgets.song_list, "row-activated", G_CALLBACK(song_selected_cb), NULL);
@@ -199,6 +203,23 @@ void song_selected_cb(GtkListBox *list_box, GtkListBoxRow *row){
   g_current_song = g_current_node->song;
   g_modified_song = g_current_node->song;
   printf("%s", g_current_song->path);
+  if (g_parameters.buffer == NULL){
+    g_parameters.buffer = malloc(sizeof(2048));
+  }
+  update_file_description();
+}
+
+void update_file_description(){
+  char name_string[1024];
+  char full_path[1024];
+  char note_range[1024];
+  char original_length[1024];
+  snprintf(name_string, 1024, "File name: %s", g_current_node->song_name);
+  snprintf(full_path, 1024, "Full path: %s", g_current_song->path);
+  snprintf(note_range, 1024, "Note range: [0, 10]");
+  snprintf(original_length, 1024, "Original length: 0");
+  snprintf(g_parameters.buffer, 2048, "%s\n%s\n%s\n%s\n", name_string, full_path, note_range, original_length);
+  gtk_label_set_text(g_widgets.file_details, g_parameters.buffer);
 }
 
 /* Define search_bar_cb here */
