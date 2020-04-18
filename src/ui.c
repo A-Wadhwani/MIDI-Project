@@ -168,7 +168,7 @@ void range_of_song(song_data_t *midi_song, int *low_pitch,
         }
       }
       if (length){
-        (*length) = (*length) + copy_event->event->delta_time;
+        (*length) = copy_event->event->delta_time;
       }
       copy_event = copy_event->next_event;
     }
