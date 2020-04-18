@@ -229,7 +229,7 @@ void song_selected_cb(GtkListBox *list_box, GtkListBoxRow *row){
 /* Define search_bar_cb here */
 
 void search_bar_cb(GtkSearchBar *search_bar, gpointer user_data){
-
+  printf("HELLO");
 }
 
 /* Define time_scale_cb here */
