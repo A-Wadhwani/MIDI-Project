@@ -243,7 +243,7 @@ void search_bar_cb(GtkSearchBar *search_bar, gpointer user_data){
       gtk_widget_destroy(GTK_WIDGET(row));
       row = gtk_list_box_get_row_at_index(g_widgets.song_list, count);
     } else {
-      row = gtk_list_box_get_row_at_index(g_widgets.song_list, count++);
+      row = gtk_list_box_get_row_at_index(g_widgets.song_list, ++count);
     }
   }
 }
