@@ -387,6 +387,7 @@ gboolean draw_cb(GtkDrawingArea *draw_area, cairo_t *painter, gpointer user_data
 
   cairo_set_line_width(painter, 1.0);
   for(int i = 0; i < 99; i++){
+    cairo_set_source_rgb(painter, 1.0, 0.0, 0.0);
     cairo_stroke(painter);
   }
   return false;  
