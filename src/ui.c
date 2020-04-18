@@ -339,7 +339,7 @@ void warp_time_cb(GtkSpinButton *warp_scale, gpointer user_data){
 
 /* Define song_octave_cb here */
 
-void song_ocatave_cb(GtkSpinButton *octave_scale, gpointer user_data){
+void song_octave_cb(GtkSpinButton *octave_scale, gpointer user_data){
   
 }
 
