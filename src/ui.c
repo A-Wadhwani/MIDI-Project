@@ -260,7 +260,7 @@ bool compare_strings(const char* string, const char *pattern){
     pattern_low[i] = toupper(pattern[i]) ? tolower(pattern[i]) : pattern[i];
   }
   printf("%s_____%s\n", string_low, pattern_low);
-  printf("ACTUALLY %s\n", string);
+  printf("ACTUALLY %s\n", pattern);
   if (strstr(string_low, pattern_low) == NULL){
     return false;
   }
