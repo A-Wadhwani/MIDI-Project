@@ -109,6 +109,7 @@ void activate(GtkApplication *app, gpointer user_data){
   gtk_container_add(GTK_CONTAINER(g_widgets.window), g_widgets.fixed);
 
   g_widgets.song_list = GTK_LIST_BOX(gtk_builder_get_object(g_widgets.builder, "song_list"));
+  g_signal_connect(g_widgets.song_list, "row-activated", G_CALLBACK(song_selected_cb), NULL);
 
   g_widgets.load_button = GTK_BUTTON(gtk_builder_get_object(g_widgets.builder, "load_directory"));
   g_signal_connect(g_widgets.load_button, "clicked", G_CALLBACK(load_songs_cb), NULL);
@@ -184,6 +185,7 @@ char* open_folder_dialog(){
 /* Define song_selected_cb here */
 
 void song_selected_cb(GtkListBox *list_box, GtkListBoxRow *row){
+  printf("REACHED");
 }
 
 /* Define search_bar_cb here */
