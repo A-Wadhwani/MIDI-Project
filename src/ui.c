@@ -189,7 +189,11 @@ void song_selected_cb(GtkListBox *list_box, GtkListBoxRow *row){
   GtkWidget *box = GTK_WIDGET(list->data);
   list = gtk_container_get_children(GTK_CONTAINER(box));
   GtkWidget *label = GTK_WIDGET(list->data);
-  printf("%s",gtk_label_get_text(GTK_LABEL(label)));
+  const char *song_name = gtk_label_get_text(GTK_LABEL(label));
+  g_current_node = *(find_parent_pointer(&g_song_library, song_name));
+  g_current_song = g_current_node->song;
+  g_modified_song = g_current_node->song;
+  printf("%s", g_current_song->path);
 }
 
 /* Define search_bar_cb here */
