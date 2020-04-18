@@ -86,10 +86,14 @@ void update_info(){
   char full_path[1024];
   char note_range[1024];
   char original_length[1024];
+  int low_pitch = 128;
+  int high_pitch = -1;
+  int length = 0;
+  range_of_song(g_current_song, &low_pitch, &high_pitch, &length);
   snprintf(name_string, 1024, "File name: %s", g_current_node->song_name);
   snprintf(full_path, 1024, "Full path: %s", g_current_song->path);
-  snprintf(note_range, 1024, "Note range: [0, 10]");
-  snprintf(original_length, 1024, "Original length: 0");
+  snprintf(note_range, 1024, "Note range: [%d, %d]", low_pitch, high_pitch);
+  snprintf(original_length, 1024, "Original length: %d", length);
   snprintf(g_parameters.buffer, 2048, "%s\n%s\n%s\n%s\n", name_string, full_path, note_range, original_length);
   gtk_label_set_text(g_widgets.file_details, g_parameters.buffer);
 }
@@ -105,6 +109,23 @@ void update_song(){
 
 void range_of_song(song_data_t *midi_song, int *low_pitch,
                    int *high_pitch, int *length){
+  track_node_t *copy_track = midi_song->track_list;
+  while (copy_track != NULL){
+    event_node_t *copy_event = copy_track->track->event_list;
+    while (copy_event != NULL){
+      if (event_type(copy_event->event) == MIDI_EVENT_T){
+          if (*low_pitch > copy_event->event->midi_event.data[0]){
+            *low_pitch = copy_event->event->midi_event.data[0];
+          }
+          if (*high_pitch < copy_event->event->midi_event.data[0]){
+            *high_pitch = copy_event->event->midi_event.data[0];
+          }
+      }
+      copy_event = copy_event->next_event;
+    }
+    *length = *length + copy_track->track->length;
+    copy_track = copy_track->next_track;
+  }
   return;
 }
 
