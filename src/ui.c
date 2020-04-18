@@ -150,6 +150,7 @@ void range_of_song(song_data_t *midi_song, int *low_pitch,
                    int *high_pitch, int *length){
   track_node_t *copy_track = midi_song->track_list;
   bool read_length = false;
+  int save_length = 0;
   while (copy_track != NULL){
     event_node_t *copy_event = copy_track->track->event_list;
     while (copy_event != NULL){
@@ -174,7 +175,10 @@ void range_of_song(song_data_t *midi_song, int *low_pitch,
       copy_event = copy_event->next_event;
     }
     if (midi_song->format == 1){
-      read_length = true;
+      if (save_length < (*length)){
+        save_length = *length;
+      }
+      *length = 0;
     }
     copy_track = copy_track->next_track;
   }
