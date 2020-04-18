@@ -57,6 +57,7 @@ struct ui_widgets {
 struct parameters{
   char *folder_directory;
   char *selected_song_name;
+  int time_scale;
 } g_parameters;
 
 /* Define update_song_list here */
@@ -168,9 +169,9 @@ void range_of_song(song_data_t *midi_song, int *low_pitch,
           }
         }
       }
-          if (length){
-            (*length) = (*length) + copy_event->event->delta_time;
-          }
+      if (length){
+        (*length) = (*length) + copy_event->event->delta_time;
+      }
       copy_event = copy_event->next_event;
     }
     if (midi_song->format == 1){
@@ -192,7 +193,8 @@ void range_of_song(song_data_t *midi_song, int *low_pitch,
 void activate(GtkApplication *app, gpointer user_data){
   g_widgets.builder = gtk_builder_new_from_file("src/ui.glade");
   g_widgets.window = gtk_application_window_new(app);
-  
+  g_parameters.time_scale = 10;
+
   gtk_window_set_title(GTK_WINDOW(g_widgets.window), "MIDI Library");
   gtk_window_set_resizable(GTK_WINDOW(g_widgets.window), false);
   gtk_window_set_default_size(GTK_WINDOW(g_widgets.window), 950, 720);
@@ -386,7 +388,9 @@ bool compare_strings(const char* string, const char *pattern){
 /* Define time_scale_cb here */
 
 void time_scale_cb(GtkSpinButton *time_scale, gpointer user_data){
-
+  g_parameters.time_scale = gtk_spin_button_get_value_as_int(time_scale);
+  gtk_widget_queue_draw(GTK_WIDGET(g_widgets.original_area));
+  gtk_widget_queue_draw(GTK_WIDGET(g_widgets.after_area));
 }
 
 /* Define draw_cb here */
