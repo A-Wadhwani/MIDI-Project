@@ -93,6 +93,8 @@ void add_to_song_list(tree_node_t *node, int *count){
 /* Define update_drawing_area here */
 
 void update_drawing_area(){
+  gtk_widget_queue_draw(GTK_WIDGET(g_widgets.original_area));
+  gtk_widget_queue_draw(GTK_WIDGET(g_widgets.after_area));
   return;
 }
 
@@ -138,6 +140,7 @@ void update_info(){
     g_object_set(GTK_ENTRY(g_widgets.warp_time), "sensitive", false, NULL);
     g_object_set(GTK_ENTRY(g_widgets.song_octave), "sensitive", false, NULL);
   }
+  update_drawing_area();
 }
 
 /* Define update_song here */
@@ -394,8 +397,7 @@ bool compare_strings(const char* string, const char *pattern){
 
 void time_scale_cb(GtkSpinButton *time_scale, gpointer user_data){
   g_parameters.time_scale = gtk_spin_button_get_value_as_int(time_scale);
-  gtk_widget_queue_draw(GTK_WIDGET(g_widgets.original_area));
-  gtk_widget_queue_draw(GTK_WIDGET(g_widgets.after_area));
+  update_drawing_area();
 }
 
 /* Define draw_cb here */
