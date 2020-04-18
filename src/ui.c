@@ -102,9 +102,8 @@ void update_info(){
     gtk_label_set_text(g_widgets.file_details, buffer);
   }
   else {
-    const gboolean value = false;
     gtk_label_set_text(g_widgets.file_details, "Select a song from list to start....");
-    g_object_set(G_OBJECT(g_widgets.time_scale), "editable", &value, NULL);
+    g_object_set(GTK_ENTRY(g_widgets.time_scale), "editable", false, NULL);
   }
 }
 
