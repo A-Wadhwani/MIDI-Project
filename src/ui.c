@@ -185,9 +185,11 @@ char* open_folder_dialog(){
 /* Define song_selected_cb here */
 
 void song_selected_cb(GtkListBox *list_box, GtkListBoxRow *row){
-  GtkWidget *box = gtk_container_get_focus_child(GTK_CONTAINER(row));
-  GtkWidget *label = gtk_container_get_focus_child(GTK_CONTAINER(box));
-  printf("%s", gtk_label_get_text(GTK_LABEL(label)));
+  GList *list = gtk_container_get_children(GTK_CONTAINER(row));
+  GtkWidget *box = GTK_WIDGET(list->data);
+  list = gtk_container_get_children(GTK_CONTAINER(box));
+  GtkWidget *label = GTK_WIDGET(list->data);
+  printf("%s",gtk_label_get_text(GTK_LABEL(label)));
 }
 
 /* Define search_bar_cb here */
