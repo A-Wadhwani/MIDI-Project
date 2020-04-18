@@ -90,8 +90,7 @@ void update_info(){
     int low_pitch = 128;
     int high_pitch = -1;
     int length = 0;
-    printf("Entered!");
-//    range_of_song(g_current_song, &low_pitch, &high_pitch, &length);
+    range_of_song(g_current_song, &low_pitch, &high_pitch, &length);
     snprintf(name_string, 1024, "File name: %s", g_current_node->song_name);
     snprintf(full_path, 1024, "Full path: %s", g_current_song->path);
     snprintf(note_range, 1024, "Note range: [%d, %d]", low_pitch, high_pitch);
@@ -100,7 +99,7 @@ void update_info(){
     gtk_label_set_text(g_widgets.file_details, buffer);
   }
   else {
-    gtk_label_set_text(g_widgets.file_details, "Select a song from the list to start....");
+    gtk_label_set_text(g_widgets.file_details, "Select a song from list to start....");
   }
 }
 
