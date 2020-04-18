@@ -259,6 +259,7 @@ bool compare_strings(const char* string, const char *pattern){
   for (int i = 0; i < strlen(pattern); i++){
     pattern_low[i] = tolower(pattern[i]);
   }
+  printf("%s %s", string_low, pattern_low);
   if (strstr(string_low, pattern_low) == NULL){
     return false;
   }
