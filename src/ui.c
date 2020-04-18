@@ -402,6 +402,7 @@ void remove_song_cb(GtkButton *button, gpointer user_data){
   g_current_song = NULL;
   free_song(g_modified_song);
   g_modified_song = NULL;
+  update_song_list();
   update_info();
 }
 
