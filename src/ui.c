@@ -253,11 +253,13 @@ void search_bar_cb(GtkSearchBar *search_bar, gpointer user_data){
 bool compare_strings(const char* string, const char *pattern){
   char string_low[strlen(string)];
   char pattern_low[strlen(pattern)];
-  for (int i = 0; i < strlen(string); i++){
-    string_low[i] = toupper(string[i]) ? tolower(string[i]) : string[i];
+  strcpy(string_low, string);
+  strcpy(pattern_low, pattern);
+  for (int i = 0; i < strlen(string_low); i++){
+    string_low[i] = tolower(string_low[i]);
   }
-  for (int i = 0; i < strlen(pattern); i++){
-    pattern_low[i] = toupper(pattern[i]) ? tolower(pattern[i]) : pattern[i];
+  for (int i = 0; i < strlen(pattern_low); i++){
+    pattern_low[i] = tolower(pattern_low[i]);
   }
   printf("%s_____%s\n", string_low, pattern_low);
   printf("ACTUALLY %s\n", pattern);
