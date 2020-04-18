@@ -42,7 +42,6 @@ struct ui_widgets {
 struct parameters{
   char *folder_directory;
   char *selected_song_name;
-  char *buffer;
 } g_parameters;
 
 /* Define update_song_list here */
@@ -83,15 +82,11 @@ void update_drawing_area(){
 
 void update_info(){
   if (g_current_node){
-    if (g_parameters.buffer != NULL){
-      free(g_parameters.buffer);
-      g_parameters.buffer = NULL;
-    }
-    g_parameters.buffer = malloc(sizeof(4096));
     char name_string[1024];
     char full_path[1024];
     char note_range[1024];
     char original_length[1024];
+    char buffer[4096];
     int low_pitch = 128;
     int high_pitch = -1;
     int length = 0;
@@ -101,8 +96,8 @@ void update_info(){
     snprintf(full_path, 1024, "Full path: %s", g_current_song->path);
     snprintf(note_range, 1024, "Note range: [%d, %d]", low_pitch, high_pitch);
     snprintf(original_length, 1024, "Original length: %d", length);
-    snprintf(g_parameters.buffer, 4096, "%s\n%s\n%s\n%s\n", name_string, full_path, note_range, original_length);
-    gtk_label_set_text(g_widgets.file_details, g_parameters.buffer);
+    snprintf(buffer, 4096, "%s\n%s\n%s\n%s\n", name_string, full_path, note_range, original_length);
+    gtk_label_set_text(g_widgets.file_details, buffer);
   }
   else {
     gtk_label_set_text(g_widgets.file_details, "Select a song from the list to start....");
