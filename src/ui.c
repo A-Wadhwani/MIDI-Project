@@ -83,6 +83,11 @@ void update_drawing_area(){
 
 void update_info(){
   if (g_current_node){
+    if (g_parameters.buffer != NULL){
+      free(g_parameters.buffer);
+      g_parameters.buffer = NULL;
+    }
+    g_parameters.buffer = malloc(sizeof(2048));
     char name_string[1024];
     char full_path[1024];
     char note_range[1024];
@@ -256,9 +261,6 @@ void song_selected_cb(GtkListBox *list_box, GtkListBoxRow *row){
   g_current_node = *(find_parent_pointer(&g_song_library, song_name));
   g_current_song = g_current_node->song;
   g_modified_song = g_current_node->song;
-  if (g_parameters.buffer == NULL){
-    g_parameters.buffer = malloc(sizeof(2048));
-  }
   update_info();
 }
 
