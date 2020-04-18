@@ -238,7 +238,7 @@ void activate(GtkApplication *app, gpointer user_data){
   gtk_builder_connect_signals(g_widgets.builder, NULL);
   gtk_widget_show_all(g_widgets.window);
 
-  gtk_widget_queue_draw(GTK_WIDGET(g_widgets.original_area));
+//  gtk_widget_queue_draw(GTK_WIDGET(g_widgets.original_area));
 }
 
 /* Define add_song_cb here */
