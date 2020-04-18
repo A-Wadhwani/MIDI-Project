@@ -58,6 +58,8 @@ struct parameters{
   char *folder_directory;
   char *selected_song_name;
   int time_scale;
+  int load_original;
+  int load_modified;
 } g_parameters;
 
 /* Define update_song_list here */
@@ -193,7 +195,10 @@ void range_of_song(song_data_t *midi_song, int *low_pitch,
 void activate(GtkApplication *app, gpointer user_data){
   g_widgets.builder = gtk_builder_new_from_file("src/ui.glade");
   g_widgets.window = gtk_application_window_new(app);
+  
   g_parameters.time_scale = 10;
+  g_parameters.load_original = 0;
+  g_parameters.load_modified = 1;
 
   gtk_window_set_title(GTK_WINDOW(g_widgets.window), "MIDI Library");
   gtk_window_set_resizable(GTK_WINDOW(g_widgets.window), false);
@@ -241,10 +246,10 @@ void activate(GtkApplication *app, gpointer user_data){
   g_signal_connect(g_widgets.add_button, "clicked", G_CALLBACK(add_song_cb), NULL);
   
   g_widgets.original_area = GTK_DRAWING_AREA(gtk_builder_get_object(g_widgets.builder, "draw_original"));
-  g_signal_connect(g_widgets.original_area, "draw", G_CALLBACK(draw_cb), g_current_song);
+  g_signal_connect(g_widgets.original_area, "draw", G_CALLBACK(draw_cb), &g_parameters.load_original);
   
   g_widgets.after_area = GTK_DRAWING_AREA(gtk_builder_get_object(g_widgets.builder, "draw_after"));
-  g_signal_connect(g_widgets.after_area, "draw", G_CALLBACK(draw_cb), g_modified_song);
+  g_signal_connect(g_widgets.after_area, "draw", G_CALLBACK(draw_cb), &g_parameters.load_modified);
   
   g_signal_connect(g_widgets.window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
   gtk_builder_connect_signals(g_widgets.builder, NULL);
@@ -405,12 +410,18 @@ gboolean draw_cb(GtkDrawingArea *draw_area, cairo_t *painter, gpointer user_data
   cairo_rectangle(painter, 0.0, 0.0, width, height);
   cairo_stroke_preserve(painter);
   cairo_fill(painter);
-  if (user_data == NULL){
+  if (g_current_node == NULL){
     return false;
   }
-  song_data_t *given_song = (song_data_t*)user_data;
-  printf("%s", given_song->path);
-
+  song_data_t *given_song = NULL;
+  int *flag = (int*)(user_data);
+  if (*flag == 0){
+    given_song = g_current_song;
+  }
+  if (*flag == 1){
+    given_song = g_modified_song;
+  }
+  printf("%s\n", given_song->path);
   
   return false;  
 }
