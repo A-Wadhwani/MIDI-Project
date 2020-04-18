@@ -221,7 +221,6 @@ void song_selected_cb(GtkListBox *list_box, GtkListBoxRow *row){
   g_current_node = *(find_parent_pointer(&g_song_library, song_name));
   g_current_song = g_current_node->song;
   g_modified_song = g_current_node->song;
-  printf("%s", g_current_song->path);
   if (g_parameters.buffer == NULL){
     g_parameters.buffer = malloc(sizeof(2048));
   }
@@ -261,8 +260,6 @@ bool compare_strings(const char* string, const char *pattern){
   for (int i = 0; i < strlen(pattern_low); i++){
     pattern_low[i] = tolower(pattern_low[i]);
   }
-  printf("%s_____%s\n", string_low, pattern_low);
-  printf("ACTUALLY %s\n", pattern);
   if (strstr(string_low, pattern_low) == NULL){
     return false;
   }
