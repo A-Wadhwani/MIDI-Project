@@ -131,6 +131,7 @@ void add_song_cb(GtkButton *button, gpointer user_data){
   add_file_to_library(file_name, NULL, FTW_F);
   g_free(file_name);
   file_name = NULL;
+  update_song_list();
 }
 
 char* open_file_dialog(){
