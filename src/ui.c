@@ -9,10 +9,14 @@
 #include<string.h>
 #include<malloc.h>
 
+#include "parser.h"
+#include "library.c"
+
 tree_node_t *g_current_node = NULL;
 song_data_t *g_current_song = NULL;
 song_data_t *g_modified_song = NULL;
 
+char* open_file_dialog();
 char* open_folder_dialog();
 void add_to_song_list(tree_node_t*, int*);
 void remove_list();
@@ -24,7 +28,7 @@ struct ui_widgets {
   GtkWidget *fixed;
   GtkListBox *song_list;
   GtkButton *load_button;
-  GtkButton *add_song_button;
+  GtkButton *add_button;
   GtkLabel **song_names;
 } g_widgets;
 
@@ -41,7 +45,6 @@ void update_song_list(){
   int count = 0;
   remove_list();
   traverse_in_order(g_song_library, &count, (traversal_func_t) add_to_song_list);
-  printf("Bye\n");
 }
 
 void remove_list(){
@@ -60,7 +63,6 @@ void add_to_song_list(tree_node_t *node, int *count){
   GtkWidget *song_label = gtk_label_new(node->song_name);
   gtk_container_add_with_properties (GTK_CONTAINER (box), song_label, "expand", TRUE, NULL);
   gtk_widget_show_all(row);
-  printf("%s\n", node->song_name);
   gtk_list_box_insert(g_widgets.song_list, row, *count);
   (*count)++;
   return;
@@ -110,6 +112,9 @@ void activate(GtkApplication *app, gpointer user_data){
   g_widgets.load_button = GTK_BUTTON(gtk_builder_get_object(g_widgets.builder, "load_directory"));
   g_signal_connect(g_widgets.load_button, "clicked", G_CALLBACK(load_songs_cb), NULL);
   
+  g_widgets.add_button = GTK_BUTTON(gtk_builder_get_object(g_widgets.builder, "add_song"));
+  g_signal_connect(g_widgets.add_button, "clicked", G_CALLBACK(add_song_cb), NULL);
+  
   g_signal_connect(g_widgets.window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
   gtk_builder_connect_signals(g_widgets.builder, NULL);
   gtk_widget_show_all(g_widgets.window);
@@ -118,6 +123,29 @@ void activate(GtkApplication *app, gpointer user_data){
 /* Define add_song_cb here */
 
 void add_song_cb(GtkButton *button, gpointer user_data){
+  char* file_name = open_file_dialog();
+  if (file_name == NULL){
+    return;
+  }
+  add_file_to_library(file_name, NULL, FTW_F);
+  g_free(file_name);
+  file_name = NULL;
+  update_song_list();
+}
+
+char* open_file_dialog(){
+  GtkFileChooserAction action = GTK_FILE_CHOOSER_ACTION_OPEN;
+  char *file_name = NULL;
+  GtkWidget *dialog = gtk_file_chooser_dialog_new("Select Song to Import", GTK_WINDOW(g_widgets.window), 
+                                       action, "_Cancel", GTK_RESPONSE_CANCEL,
+                                       "_Open File", GTK_RESPONSE_ACCEPT, NULL);
+  gint result = gtk_dialog_run (GTK_DIALOG(dialog));
+  if (result == GTK_RESPONSE_ACCEPT){
+    GtkFileChooser *chooser = GTK_FILE_CHOOSER(dialog);
+    file_name = gtk_file_chooser_get_filename (chooser);
+  }
+  gtk_widget_destroy(dialog);
+  return file_name;
 }
 
 /* Define load_songs_cb here */
@@ -130,7 +158,9 @@ void load_songs_cb(GtkButton *button, gpointer user_data){
     g_parameters.folder_directory = NULL;
   }
   g_parameters.folder_directory = open_folder_dialog();
-  printf("%s\n", g_parameters.folder_directory);
+  if (g_parameters.folder_directory == NULL){
+    return;
+  }
   make_library(g_parameters.folder_directory);
   update_song_list();
 }
