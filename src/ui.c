@@ -167,10 +167,10 @@ void range_of_song(song_data_t *midi_song, int *low_pitch,
           }
         }
       }
+      if (length){
+        (*length) = (*length) + copy_event->event->delta_time;
+      }
       copy_event = copy_event->next_event;
-    }
-    if (length){
-      (*length) = (*length) + copy_track->track->length;
     }
     copy_track = copy_track->next_track;
   }
@@ -382,7 +382,6 @@ void time_scale_cb(GtkSpinButton *time_scale, gpointer user_data){
 /* Define draw_cb here */
 
 gboolean draw_cb(GtkDrawingArea *draw_area, cairo_t *painter, gpointer user_data){
-  printf("Hello");
   cairo_set_source_rgb(painter, 255, 255, 255);
   cairo_set_line_width(painter, 100.0);
 
@@ -397,6 +396,8 @@ gboolean draw_cb(GtkDrawingArea *draw_area, cairo_t *painter, gpointer user_data
   }
   song_data_t *given_song = (song_data_t*)user_data;
   printf("%s", given_song->path);
+
+  
   return false;  
 }
 
