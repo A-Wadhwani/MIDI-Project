@@ -87,7 +87,7 @@ void update_info(){
       free(g_parameters.buffer);
       g_parameters.buffer = NULL;
     }
-    g_parameters.buffer = malloc(sizeof(2048));
+    g_parameters.buffer = malloc(sizeof(4096));
     char name_string[1024];
     char full_path[1024];
     char note_range[1024];
@@ -101,7 +101,7 @@ void update_info(){
     snprintf(full_path, 1024, "Full path: %s", g_current_song->path);
     snprintf(note_range, 1024, "Note range: [%d, %d]", low_pitch, high_pitch);
     snprintf(original_length, 1024, "Original length: %d", length);
-    snprintf(g_parameters.buffer, 2048, "%s\n%s\n%s\n%s\n", name_string, full_path, note_range, original_length);
+    snprintf(g_parameters.buffer, 4096, "%s\n%s\n%s\n%s\n", name_string, full_path, note_range, original_length);
     gtk_label_set_text(g_widgets.file_details, g_parameters.buffer);
   }
   else {
