@@ -82,22 +82,26 @@ void update_drawing_area(){
 /* Define update_info here */
 
 void update_info(){
-  char name_string[1024];
-  char full_path[1024];
-  char note_range[1024];
-  char original_length[1024];
-  int low_pitch = 128;
-  int high_pitch = -1;
-  int length = 0;
-  printf("Entered!");
-  range_of_song(g_current_song, &low_pitch, &high_pitch, &length);
-  snprintf(name_string, 1024, "File name: %s", g_current_node->song_name);
-  snprintf(full_path, 1024, "Full path: %s", g_current_song->path);
-  snprintf(note_range, 1024, "Note range: [%d, %d]", low_pitch, high_pitch);
-  snprintf(original_length, 1024, "Original length: %d", length);
-  snprintf(g_parameters.buffer, 2048, "%s\n%s\n%s\n%s\n", name_string, full_path, note_range, original_length);
-  gtk_label_set_text(g_widgets.file_details, g_parameters.buffer);
-  printf("Exited!");
+  if (g_current_node){
+    char name_string[1024];
+    char full_path[1024];
+    char note_range[1024];
+    char original_length[1024];
+    int low_pitch = 128;
+    int high_pitch = -1;
+    int length = 0;
+    printf("Entered!");
+    range_of_song(g_current_song, &low_pitch, &high_pitch, &length);
+    snprintf(name_string, 1024, "File name: %s", g_current_node->song_name);
+    snprintf(full_path, 1024, "Full path: %s", g_current_song->path);
+    snprintf(note_range, 1024, "Note range: [%d, %d]", low_pitch, high_pitch);
+    snprintf(original_length, 1024, "Original length: %d", length);
+    snprintf(g_parameters.buffer, 2048, "%s\n%s\n%s\n%s\n", name_string, full_path, note_range, original_length);
+    gtk_label_set_text(g_widgets.file_details, g_parameters.buffer);
+  }
+  else {
+    gtk_label_set_text(g_widgets.file_details, "Select a song from the list to start....");
+  }
 }
 
 /* Define update_song here */
@@ -207,6 +211,9 @@ void load_songs_cb(GtkButton *button, gpointer user_data){
       free_library(g_song_library);
       g_song_library = NULL;
     }
+    g_current_node = NULL;
+    g_current_song = NULL;
+    g_modified_song = NULL;
     g_free(g_parameters.folder_directory);
     g_parameters.folder_directory = NULL;
   }
@@ -216,6 +223,7 @@ void load_songs_cb(GtkButton *button, gpointer user_data){
   }
   make_library(g_parameters.folder_directory);
   update_song_list();
+  update_info();
 }
 
 char* open_folder_dialog(){
@@ -236,6 +244,10 @@ char* open_folder_dialog(){
 /* Define song_selected_cb here */
 
 void song_selected_cb(GtkListBox *list_box, GtkListBoxRow *row){
+  g_current_node = NULL;
+  g_current_song = NULL;
+  g_modified_song = NULL;
+
   GList *list = gtk_container_get_children(GTK_CONTAINER(row));
   GtkWidget *box = GTK_WIDGET(list->data);
   list = gtk_container_get_children(GTK_CONTAINER(box));
