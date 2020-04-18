@@ -396,7 +396,7 @@ void save_song_cb(GtkButton *button, gpointer user_data){
 
 /* Define remove_song_cb here */
 
-void remove_song(GtkButton *button, gpointer user_data){
+void remove_song_cb(GtkButton *button, gpointer user_data){
 
 }
 
