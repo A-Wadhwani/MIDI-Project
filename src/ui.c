@@ -9,6 +9,7 @@
 #include<string.h>
 #include<malloc.h>
 #include<ftw.h>
+#include<ctype.h>
 
 #include "parser.h"
 
@@ -16,6 +17,7 @@ tree_node_t *g_current_node = NULL;
 song_data_t *g_current_song = NULL;
 song_data_t *g_modified_song = NULL;
 
+bool compare_strings(const char*, const char *);
 char* get_file_name(const char *);
 char* open_file_dialog();
 char* open_folder_dialog();
@@ -239,13 +241,28 @@ void search_bar_cb(GtkSearchBar *search_bar, gpointer user_data){
     list = gtk_container_get_children(GTK_CONTAINER(box));
     GtkWidget *label = GTK_WIDGET(list->data);
     const char *song_name = gtk_label_get_text(GTK_LABEL(label));
-    if (strstr(song_name, search_string) == NULL){
+    if (compare_strings(song_name, search_string) == false){
       gtk_widget_destroy(GTK_WIDGET(row));
       row = gtk_list_box_get_row_at_index(g_widgets.song_list, count);
     } else {
       row = gtk_list_box_get_row_at_index(g_widgets.song_list, ++count);
     }
   }
+}
+
+bool compare_strings(const char* string, const char *pattern){
+  char string_low[strlen(string)];
+  char pattern_low[strlen(pattern)];
+  for (int i = 0; i < strlen(string); i++){
+    string_low[i] = tolower(string[i]);
+  }
+  for (int i = 0; i < strlen(pattern); i++){
+    pattern_low[i] = pattern[i];
+  }
+  if (strstr(string_low, pattern_low) == NULL){
+    return false;
+  }
+  return true;
 }
 
 /* Define time_scale_cb here */
