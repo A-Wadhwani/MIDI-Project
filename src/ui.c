@@ -229,7 +229,22 @@ void song_selected_cb(GtkListBox *list_box, GtkListBoxRow *row){
 /* Define search_bar_cb here */
 
 void search_bar_cb(GtkSearchBar *search_bar, gpointer user_data){
-  printf("HELLO");
+  const char *search_string = gtk_entry_get_text(GTK_ENTRY(g_widgets.search_entry));
+  GtkListBoxRow *row = gtk_list_box_get_row_at_index(g_widgets.song_list, 0);
+  int count = 0;
+  while (row != NULL){
+    GList *list = gtk_container_get_children(GTK_CONTAINER(row));
+    GtkWidget *box = GTK_WIDGET(list->data);
+    list = gtk_container_get_children(GTK_CONTAINER(box));
+    GtkWidget *label = GTK_WIDGET(list->data);
+    const char *song_name = gtk_label_get_text(GTK_LABEL(label));
+    if (strstr(song_name, search_string) == NULL){
+      gtk_widget_destroy(GTK_WIDGET(row));
+      row = gtk_list_box_get_row_at_index(g_widgets.song_list, count);
+    } else {
+      row = gtk_list_box_get_row_at_index(g_widgets.song_list, count++);
+    }
+  }
 }
 
 /* Define time_scale_cb here */
