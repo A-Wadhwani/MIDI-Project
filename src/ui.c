@@ -229,6 +229,7 @@ void song_selected_cb(GtkListBox *list_box, GtkListBoxRow *row){
 /* Define search_bar_cb here */
 
 void search_bar_cb(GtkSearchBar *search_bar, gpointer user_data){
+  update_song_list();
   const char *search_string = gtk_entry_get_text(GTK_ENTRY(g_widgets.search_entry));
   GtkListBoxRow *row = gtk_list_box_get_row_at_index(g_widgets.song_list, 0);
   int count = 0;
