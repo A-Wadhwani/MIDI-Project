@@ -16,11 +16,11 @@ tree_node_t *g_current_node = NULL;
 song_data_t *g_current_song = NULL;
 song_data_t *g_modified_song = NULL;
 
+char* get_file_name(const char *);
 char* open_file_dialog();
 char* open_folder_dialog();
 void add_to_song_list(tree_node_t*, int*);
 void remove_list();
-int add_file_to_library(const char*, const struct stat*, int);
 
 // This structure contains all the widgets in GUI
 struct ui_widgets {
@@ -129,7 +129,12 @@ void add_song_cb(GtkButton *button, gpointer user_data){
   if (file_name == NULL){
     return;
   }
-  add_file_to_library(file_name, NULL, FTW_F);
+  tree_node_t *new_node = malloc(sizeof(tree_node_t));
+  new_node->song = parse_file(file_name);
+  new_node->song_name = get_file_name(new_node->song->path);
+  new_node->left_child = NULL;
+  new_node->right_child = NULL;
+  tree_insert(&g_song_library, new_node);
   g_free(file_name);
   file_name = NULL;
   update_song_list();
