@@ -102,18 +102,18 @@ void update_info(){
     snprintf(buffer, 4096, "%s\n%s\n%s\n%s\n", name_string, full_path, note_range, original_length);
     gtk_label_set_text(g_widgets.file_details, buffer);
 
-    g_object_set(GTK_ENTRY(g_widgets.time_scale), "editable", true, NULL);
-    g_object_set(GTK_ENTRY(g_widgets.warp_time), "editable", true, NULL);
-    g_object_set(GTK_ENTRY(g_widgets.song_octave), "editable", true, NULL);
+    g_object_set(GTK_ENTRY(g_widgets.time_scale), "sensitive", true, NULL);
+    g_object_set(GTK_ENTRY(g_widgets.warp_time), "sensitive", true, NULL);
+    g_object_set(GTK_ENTRY(g_widgets.song_octave), "sensitive", true, NULL);
     gtk_spin_button_set_value(g_widgets.time_scale, 10.00);
     gtk_spin_button_set_value(g_widgets.warp_time, 1.00);
     gtk_spin_button_set_value(g_widgets.song_octave, 0.0);
   }
   else {
     gtk_label_set_text(g_widgets.file_details, "Select a song from list to start....");
-    g_object_set(GTK_ENTRY(g_widgets.time_scale), "editable", false, NULL);
-    g_object_set(GTK_ENTRY(g_widgets.warp_time), "editable", false, NULL);
-    g_object_set(GTK_ENTRY(g_widgets.song_octave), "editable", false, NULL);
+    g_object_set(GTK_ENTRY(g_widgets.time_scale), "sensitive", false, NULL);
+    g_object_set(GTK_ENTRY(g_widgets.warp_time), "sensitive", false, NULL);
+    g_object_set(GTK_ENTRY(g_widgets.song_octave), "sensitive", false, NULL);
   }
 }
 
