@@ -29,19 +29,27 @@ struct ui_widgets {
   GtkBuilder *builder;
   GtkWidget *window;
   GtkWidget *fixed;
+  
   GtkListBox *song_list;
   GtkButton *load_button;
   GtkButton *add_button;
   GtkButton *save_song;
   GtkButton *remove_song;
+  
   GtkComboBoxText *remap_instruments;
   GtkComboBoxText *remap_notes;
+  
   GtkLabel *file_details;
+  
   GtkSearchBar *search_bar;
   GtkSearchEntry *search_entry;
+  
   GtkSpinButton *time_scale;
   GtkSpinButton *warp_time;
   GtkSpinButton *song_octave;
+
+  GtkDrawingArea *original_area;
+  GtkDrawingArea *after_area;
 } g_widgets;
 
 // This structure contains all the global parameters used
@@ -145,14 +153,17 @@ void range_of_song(song_data_t *midi_song, int *low_pitch,
     event_node_t *copy_event = copy_track->track->event_list;
     while (copy_event != NULL){
       if (event_type(copy_event->event) == MIDI_EVENT_T){
-        if (low_pitch){  
-          if (*low_pitch > copy_event->event->midi_event.data[0]){
-            *low_pitch = copy_event->event->midi_event.data[0];
+        if (copy_event->event->midi_event.status >= 0x80 &&
+            copy_event->event->midi_event.status <= 0xAF){
+          if (low_pitch){
+            if (*low_pitch > copy_event->event->midi_event.data[0]){
+              *low_pitch = copy_event->event->midi_event.data[0];
+            }
           }
-        }
-        if (high_pitch){
-          if (*high_pitch < copy_event->event->midi_event.data[0]){
-            *high_pitch = copy_event->event->midi_event.data[0];
+          if (high_pitch){
+            if (*high_pitch < copy_event->event->midi_event.data[0]){
+              *high_pitch = copy_event->event->midi_event.data[0];
+            }
           }
         }
       }
@@ -217,9 +228,17 @@ void activate(GtkApplication *app, gpointer user_data){
   g_widgets.add_button = GTK_BUTTON(gtk_builder_get_object(g_widgets.builder, "add_song"));
   g_signal_connect(g_widgets.add_button, "clicked", G_CALLBACK(add_song_cb), NULL);
   
+  g_widgets.original_area = GTK_DRAWING_AREA(gtk_builder_get_object(g_widgets.builder, "draw_original"));
+  g_signal_connect(g_widgets.original_area, "draw", G_CALLBACK(draw_cb), g_current_song);
+  
+  g_widgets.after_area = GTK_DRAWING_AREA(gtk_builder_get_object(g_widgets.builder, "draw_after"));
+  g_signal_connect(g_widgets.after_area, "draw", G_CALLBACK(draw_cb), g_modified_song);
+  
   g_signal_connect(g_widgets.window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
   gtk_builder_connect_signals(g_widgets.builder, NULL);
   gtk_widget_show_all(g_widgets.window);
+
+  gtk_widget_queue_draw(GTK_WIDGET(g_widgets.original_area));
 }
 
 /* Define add_song_cb here */
@@ -362,6 +381,7 @@ void time_scale_cb(GtkSpinButton *time_scale, gpointer user_data){
 /* Define draw_cb here */
 
 gboolean draw_cb(GtkDrawingArea *draw_area, cairo_t *painter, gpointer user_data){
+  printf("HELLO");
   return false;  
 }
 
