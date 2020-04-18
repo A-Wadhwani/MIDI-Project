@@ -89,6 +89,7 @@ void update_info(){
   int low_pitch = 128;
   int high_pitch = -1;
   int length = 0;
+  printf("Entered!");
   range_of_song(g_current_song, &low_pitch, &high_pitch, &length);
   snprintf(name_string, 1024, "File name: %s", g_current_node->song_name);
   snprintf(full_path, 1024, "Full path: %s", g_current_song->path);
@@ -96,6 +97,7 @@ void update_info(){
   snprintf(original_length, 1024, "Original length: %d", length);
   snprintf(g_parameters.buffer, 2048, "%s\n%s\n%s\n%s\n", name_string, full_path, note_range, original_length);
   gtk_label_set_text(g_widgets.file_details, g_parameters.buffer);
+  printf("Exited!");
 }
 
 /* Define update_song here */
@@ -123,7 +125,7 @@ void range_of_song(song_data_t *midi_song, int *low_pitch,
       }
       copy_event = copy_event->next_event;
     }
-    *length = *length + copy_track->track->length;
+    (*length) = (*length) + copy_track->track->length;
     copy_track = copy_track->next_track;
   }
   return;
