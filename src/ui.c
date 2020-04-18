@@ -238,12 +238,12 @@ void activate(GtkApplication *app, gpointer user_data){
   gtk_builder_connect_signals(g_widgets.builder, NULL);
   gtk_widget_show_all(g_widgets.window);
 
-//  gtk_widget_queue_draw(GTK_WIDGET(g_widgets.original_area));
 }
 
 /* Define add_song_cb here */
 
 void add_song_cb(GtkButton *button, gpointer user_data){
+  gtk_widget_queue_draw(GTK_WIDGET(g_widgets.original_area));
   char* file_name = open_file_dialog();
   if (file_name == NULL){
     return;
@@ -382,6 +382,7 @@ void time_scale_cb(GtkSpinButton *time_scale, gpointer user_data){
 /* Define draw_cb here */
 
 gboolean draw_cb(GtkDrawingArea *draw_area, cairo_t *painter, gpointer user_data){
+  printf("Hello");
   cairo_set_source_rgb(painter, 255, 255, 255);
   cairo_set_line_width(painter, 100.0);
 
