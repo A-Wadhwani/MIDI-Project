@@ -163,8 +163,10 @@ char* open_file_dialog(){
 
 void load_songs_cb(GtkButton *button, gpointer user_data){
   if (g_parameters.folder_directory != NULL){
-    free_library(g_song_library);
-    g_song_library = NULL;
+    if (g_song_library){
+      free_library(g_song_library);
+      g_song_library = NULL;
+    }
     g_free(g_parameters.folder_directory);
     g_parameters.folder_directory = NULL;
   }
