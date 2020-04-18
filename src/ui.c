@@ -32,6 +32,10 @@ struct ui_widgets {
   GtkListBox *song_list;
   GtkButton *load_button;
   GtkButton *add_button;
+  GtkButton *save_song;
+  GtkButton *remove_song;
+  GtkComboBoxText *remap_instruments;
+  GtkComboBoxText *remap_notes;
   GtkLabel *file_details;
   GtkSearchBar *search_bar;
   GtkSearchEntry *search_entry;
@@ -102,6 +106,10 @@ void update_info(){
     snprintf(buffer, 4096, "%s\n%s\n%s\n%s\n", name_string, full_path, note_range, original_length);
     gtk_label_set_text(g_widgets.file_details, buffer);
 
+    g_object_set(GTK_WIDGET(g_widgets.remove_song), "sensitive", true, NULL);
+    g_object_set(GTK_WIDGET(g_widgets.save_song), "sensitive", true, NULL);
+    g_object_set(GTK_WIDGET(g_widgets.remap_instruments), "sensitive", true, NULL);
+    g_object_set(GTK_WIDGET(g_widgets.remap_notes), "sensitive", true, NULL);
     g_object_set(GTK_ENTRY(g_widgets.time_scale), "sensitive", true, NULL);
     g_object_set(GTK_ENTRY(g_widgets.warp_time), "sensitive", true, NULL);
     g_object_set(GTK_ENTRY(g_widgets.song_octave), "sensitive", true, NULL);
@@ -111,6 +119,10 @@ void update_info(){
   }
   else {
     gtk_label_set_text(g_widgets.file_details, "Select a song from list to start....");
+    g_object_set(GTK_WIDGET(g_widgets.remove_song), "sensitive", false, NULL);
+    g_object_set(GTK_WIDGET(g_widgets.save_song), "sensitive", false, NULL);
+    g_object_set(GTK_WIDGET(g_widgets.remap_instruments), "sensitive", false, NULL);
+    g_object_set(GTK_WIDGET(g_widgets.remap_notes), "sensitive", false, NULL);
     g_object_set(GTK_ENTRY(g_widgets.time_scale), "sensitive", false, NULL);
     g_object_set(GTK_ENTRY(g_widgets.warp_time), "sensitive", false, NULL);
     g_object_set(GTK_ENTRY(g_widgets.song_octave), "sensitive", false, NULL);
@@ -186,6 +198,18 @@ void activate(GtkApplication *app, gpointer user_data){
 
   g_widgets.song_octave = GTK_SPIN_BUTTON(gtk_builder_get_object(g_widgets.builder, "octave_scale"));
   g_signal_connect(g_widgets.song_octave, "value-changed", G_CALLBACK(song_octave_cb), NULL);
+
+  g_widgets.save_song = GTK_BUTTON(gtk_builder_get_object(g_widgets.builder, "save_song"));
+  g_signal_connect(g_widgets.save_song, "clicked", G_CALLBACK(save_song_cb), NULL);
+  
+  g_widgets.remove_song = GTK_BUTTON(gtk_builder_get_object(g_widgets.builder, "remove_song"));
+  g_signal_connect(g_widgets.remove_song, "clicked", G_CALLBACK(remove_song_cb), NULL);
+ 
+  g_widgets.remap_instruments = GTK_COMBO_BOX_TEXT(gtk_builder_get_object(g_widgets.builder, "remap_inst"));
+  g_signal_connect(g_widgets.remap_instruments, "changed", G_CALLBACK(instrument_map_cb), NULL);
+ 
+  g_widgets.remap_notes = GTK_COMBO_BOX_TEXT(gtk_builder_get_object(g_widgets.builder, "remap_notes"));
+  g_signal_connect(g_widgets.remap_notes, "changed", G_CALLBACK(note_map_cb), NULL);
 
   g_widgets.load_button = GTK_BUTTON(gtk_builder_get_object(g_widgets.builder, "load_directory"));
   g_signal_connect(g_widgets.load_button, "clicked", G_CALLBACK(load_songs_cb), NULL);
