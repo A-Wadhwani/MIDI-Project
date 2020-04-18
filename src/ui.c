@@ -35,6 +35,9 @@ struct ui_widgets {
   GtkLabel *file_details;
   GtkSearchBar *search_bar;
   GtkSearchEntry *search_entry;
+  GtkSpinButton *time_scale;
+  GtkSpinButton *warp_time;
+  GtkSpinButton *song_octave;
 } g_widgets;
 
 // This structure contains all the global parameters used
@@ -100,6 +103,7 @@ void update_info(){
   }
   else {
     gtk_label_set_text(g_widgets.file_details, "Select a song from list to start....");
+    g_object_set_property(G_OBJECT(g_widgets.time_scale), "editable", false);
   }
 }
 
@@ -119,16 +123,22 @@ void range_of_song(song_data_t *midi_song, int *low_pitch,
     event_node_t *copy_event = copy_track->track->event_list;
     while (copy_event != NULL){
       if (event_type(copy_event->event) == MIDI_EVENT_T){
+        if (low_pitch){  
           if (*low_pitch > copy_event->event->midi_event.data[0]){
             *low_pitch = copy_event->event->midi_event.data[0];
           }
+        }
+        if (high_pitch){
           if (*high_pitch < copy_event->event->midi_event.data[0]){
             *high_pitch = copy_event->event->midi_event.data[0];
           }
+        }
       }
       copy_event = copy_event->next_event;
     }
-    (*length) = (*length) + copy_track->track->length;
+    if (length){
+      (*length) = (*length) + copy_track->track->length;
+    }
     copy_track = copy_track->next_track;
   }
   return;
@@ -157,6 +167,15 @@ void activate(GtkApplication *app, gpointer user_data){
   g_widgets.search_entry = GTK_SEARCH_ENTRY(gtk_builder_get_object(g_widgets.builder, "search_song"));
   gtk_search_bar_connect_entry(g_widgets.search_bar, GTK_ENTRY(g_widgets.search_entry));
   g_signal_connect(g_widgets.search_entry, "search-changed", G_CALLBACK(search_bar_cb), NULL);
+
+  g_widgets.time_scale = GTK_SPIN_BUTTON(gtk_builder_get_object(g_widgets.builder, "time_scale"));
+  g_signal_connect(g_widgets.time_scale, "value-changed", G_CALLBACK(time_scale_cb), NULL);
+
+  g_widgets.warp_time = GTK_SPIN_BUTTON(gtk_builder_get_object(g_widgets.builder, "warp_scale"));
+  g_signal_connect(g_widgets.warp_time, "value-changed", G_CALLBACK(warp_time_cb), NULL);
+
+  g_widgets.song_octave = GTK_SPIN_BUTTON(gtk_builder_get_object(g_widgets.builder, "octave_scale"));
+  g_signal_connect(g_widgets.song_octave, "value-changed", G_CALLBACK(song_octave_cb), NULL);
 
   g_widgets.load_button = GTK_BUTTON(gtk_builder_get_object(g_widgets.builder, "load_directory"));
   g_signal_connect(g_widgets.load_button, "clicked", G_CALLBACK(load_songs_cb), NULL);
@@ -245,6 +264,9 @@ char* open_folder_dialog(){
 void song_selected_cb(GtkListBox *list_box, GtkListBoxRow *row){
   g_current_node = NULL;
   g_current_song = NULL;
+  if (g_modified_song){
+    free_song(g_modified_song);
+  }
   g_modified_song = NULL;
 
   GList *list = gtk_container_get_children(GTK_CONTAINER(row));
@@ -254,7 +276,7 @@ void song_selected_cb(GtkListBox *list_box, GtkListBoxRow *row){
   const char *song_name = gtk_label_get_text(GTK_LABEL(label));
   g_current_node = *(find_parent_pointer(&g_song_library, song_name));
   g_current_song = g_current_node->song;
-  g_modified_song = g_current_node->song;
+  g_modified_song = parse_file(g_current_node->song->path);
   update_info();
 }
 
