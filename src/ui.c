@@ -94,16 +94,26 @@ void update_info(){
     int high_pitch = -1;
     int length = 0;
     range_of_song(g_current_song, &low_pitch, &high_pitch, &length);
+
     snprintf(name_string, 1024, "File name: %s", g_current_node->song_name);
     snprintf(full_path, 1024, "Full path: %s", g_current_song->path);
     snprintf(note_range, 1024, "Note range: [%d, %d]", low_pitch, high_pitch);
     snprintf(original_length, 1024, "Original length: %d", length);
     snprintf(buffer, 4096, "%s\n%s\n%s\n%s\n", name_string, full_path, note_range, original_length);
     gtk_label_set_text(g_widgets.file_details, buffer);
+
+    g_object_set(GTK_ENTRY(g_widgets.time_scale), "editable", true, NULL);
+    g_object_set(GTK_ENTRY(g_widgets.warp_time), "editable", true, NULL);
+    g_object_set(GTK_ENTRY(g_widgets.song_octave), "editable", true, NULL);
+    gtk_spin_button_set_value(g_widgets.time_scale, 10.00);
+    gtk_spin_button_set_value(g_widgets.warp_time, 1.00);
+    gtk_spin_button_set_value(g_widgets.song_octave, 0.0);
   }
   else {
     gtk_label_set_text(g_widgets.file_details, "Select a song from list to start....");
     g_object_set(GTK_ENTRY(g_widgets.time_scale), "editable", false, NULL);
+    g_object_set(GTK_ENTRY(g_widgets.warp_time), "editable", false, NULL);
+    g_object_set(GTK_ENTRY(g_widgets.song_octave), "editable", false, NULL);
   }
 }
 
