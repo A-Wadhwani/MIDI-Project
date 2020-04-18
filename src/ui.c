@@ -381,14 +381,14 @@ void time_scale_cb(GtkSpinButton *time_scale, gpointer user_data){
 /* Define draw_cb here */
 
 gboolean draw_cb(GtkDrawingArea *draw_area, cairo_t *painter, gpointer user_data){
-  
-  cairo_set_source_rgb(painter, 0.0, 0.0, 0.0);
+  GdkRGBA *color = COLOR_PALETTE[0];
+  cairo_set_source_rgba(painter, color->red, color->green, color->blue, color->alpha);
   cairo_set_line_width(painter, 100.0);
 
   guint height = gtk_widget_get_allocated_height(GTK_WIDGET(draw_area));
   guint width = gtk_widget_get_allocated_width(GTK_WIDGET(draw_area));
 
-  cairo_rectangle(painter, 0.0, 0.0, height, width);
+  cairo_rectangle(painter, 0.0, 0.0, width, height);
   cairo_stroke_preserve(painter);
   cairo_fill(painter);
   if (user_data == NULL){
