@@ -10,7 +10,6 @@
 #include<malloc.h>
 
 #include "parser.h"
-#include "library.c"
 
 tree_node_t *g_current_node = NULL;
 song_data_t *g_current_song = NULL;
@@ -20,6 +19,7 @@ char* open_file_dialog();
 char* open_folder_dialog();
 void add_to_song_list(tree_node_t*, int*);
 void remove_list();
+char* get_file_name(const char *);
 
 // This structure contains all the widgets in GUI
 struct ui_widgets {
@@ -127,10 +127,11 @@ void add_song_cb(GtkButton *button, gpointer user_data){
   if (file_name == NULL){
     return;
   }
-  add_file_to_library(file_name, NULL, FTW_F);
+  tree_node_t *new_node = malloc(sizeof(tree_node_t));
+  new_node->song = parse_file(file_name);
+  new_node->song_name = get_file_name(file_name);
   g_free(file_name);
   file_name = NULL;
-  update_song_list();
 }
 
 char* open_file_dialog(){
@@ -145,7 +146,14 @@ char* open_file_dialog(){
     file_name = gtk_file_chooser_get_filename (chooser);
   }
   gtk_widget_destroy(dialog);
-  return file_name;
+  if (strstr(file_name, ".midi") != NULL){
+    return file_name;
+  }
+  if (file_name){
+    g_free(file_name);
+    file_name = NULL;
+  }
+  return NULL;
 }
 
 /* Define load_songs_cb here */
