@@ -23,8 +23,8 @@ bool compare_strings(const char*, const char *);
 char* get_file_name(const char *);
 char* open_file_dialog();
 char* open_folder_dialog();
-void handle_painting(cairo_t *, song_data_t *, int, int, int, int);
-void draw_line(cairo_t *, int, int, int);
+void handle_painting(cairo_t *, song_data_t *, int, int, int);
+void draw_line(cairo_t *, int, int, int, int);
 void add_to_song_list(tree_node_t*, int*);
 void remove_list();
 
