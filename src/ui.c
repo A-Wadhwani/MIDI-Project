@@ -193,7 +193,9 @@ void range_of_song(song_data_t *midi_song, int *low_pitch,
     }
     copy_track = copy_track->next_track;
   }
-  *length = save_length;
+  if (save_length > *length){
+    *length = save_length;
+  }
   return;
 }
 
