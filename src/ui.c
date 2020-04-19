@@ -63,6 +63,8 @@ struct parameters{
   char *folder_directory;
   char *selected_song_name;
   int time_scale;
+  double change_time;
+  int change_octave;
   int load_original;
   int load_modified;
 } g_parameters;
@@ -98,6 +100,16 @@ void add_to_song_list(tree_node_t *node, int *count){
 /* Define update_drawing_area here */
 
 void update_drawing_area(){
+  if (g_modified_song){
+    free_song(g_modified_song);
+    g_modified_song = NULL;
+  }
+  if (g_current_node){
+    g_modified_song = parse_file(g_current_node->song->path);
+    if (g_parameters.change_time != -2){
+      warp_time(g_modified_song, g_parameters.change_time);
+    }
+  }
   gtk_widget_queue_draw(GTK_WIDGET(g_widgets.original_area));
   gtk_widget_queue_draw(GTK_WIDGET(g_widgets.after_area));
   return;
@@ -107,6 +119,7 @@ void update_drawing_area(){
 
 void update_info(){
   if (g_current_node){
+    
     char name_string[1024];
     char full_path[1024];
     char note_range[1024];
@@ -366,7 +379,8 @@ void song_selected_cb(GtkListBox *list_box, GtkListBoxRow *row){
   const char *song_name = gtk_label_get_text(GTK_LABEL(label));
   g_current_node = *(find_parent_pointer(&g_song_library, song_name));
   g_current_song = g_current_node->song;
-  g_modified_song = parse_file(g_current_node->song->path);
+  g_parameters.change_time = -2;
+  g_parameters.change_octave = -2;
   update_info();
 }
 
@@ -563,9 +577,7 @@ int get_y_pos(int height, int note_scale, int note, int low_note){
 /* Define warp_time_cb here */
 
 void warp_time_cb(GtkSpinButton *warp_scale, gpointer user_data){
-  gdouble change_time = gtk_spin_button_get_value(warp_scale);
-  warp_time(g_modified_song, change_time);
-  update_drawing_area();
+  g_parameters.change_time = gtk_spin_button_get_value(warp_scale);  
 }
 
 /* Define song_octave_cb here */
@@ -599,6 +611,8 @@ void remove_song_cb(GtkButton *button, gpointer user_data){
   g_current_song = NULL;
   free_song(g_modified_song);
   g_modified_song = NULL;
+  g_parameters.change_time = -2;
+  g_parameters.change_octave = -2;
   update_song_list();
   update_info();
 }
