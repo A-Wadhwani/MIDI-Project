@@ -503,21 +503,23 @@ int get_delta_len(event_node_t *found_event, int note){
   event_node_t *copy_event = found_event;
   int delta_len = 0;
   while (copy_event != NULL){
-    if (copy_event->event->midi_event.status >= 0x80 &&
-        copy_event->event->midi_event.status <= 0x8F){
-      if (copy_event->event->midi_event.data[0] == note){
-        return delta_len;
+    delta_len = delta_len + copy_event->event->delta_time;
+    if (event_type(copy_event->event) == MIDI_EVENT_T){
+      if (copy_event->event->midi_event.status >= 0x80 &&
+          copy_event->event->midi_event.status <= 0x8F){
+        if (copy_event->event->midi_event.data[0] == note){
+          return delta_len;
+        }
       }
     }
-    delta_len = delta_len + copy_event->event->delta_time;
     copy_event = copy_event->next_event;
   }
   printf("oof");
-  return 0;
+  return delta_len;
 }
 
 int get_y_pos(int height, int note_scale, int note){
-  return height - note * note_scale;
+  return height - (note * note_scale);
 }
 
 /* Define warp_time_cb here */
