@@ -405,14 +405,15 @@ void time_scale_cb(GtkSpinButton *time_scale, gpointer user_data){
 gboolean draw_cb(GtkDrawingArea *draw_area, cairo_t *painter, gpointer user_data){
   cairo_set_source_rgb(painter, 255, 255, 255);
   cairo_set_line_width(painter, 100.0);
-
-  guint height = gtk_widget_get_allocated_height(GTK_WIDGET(draw_area));
-  guint width = gtk_widget_get_allocated_width(GTK_WIDGET(draw_area));
-
-  cairo_rectangle(painter, 0.0, 0.0, width, height);
-  cairo_stroke_preserve(painter);
-  cairo_fill(painter);
   if (g_current_node == NULL){
+
+    guint height = gtk_widget_get_allocated_height(GTK_WIDGET(draw_area));
+    guint width = gtk_widget_get_allocated_width(GTK_WIDGET(draw_area));
+
+    cairo_rectangle(painter, 0.0, 0.0, width, height);
+    cairo_stroke_preserve(painter);
+    cairo_fill(painter);
+    
     return false;
   }
   song_data_t *given_song = NULL;
@@ -423,8 +424,15 @@ gboolean draw_cb(GtkDrawingArea *draw_area, cairo_t *painter, gpointer user_data
   if (*flag == 1){
     given_song = g_modified_song;
   }
-  printf("%s\n", given_song->path);
+  int length = 0;
+  range_of_song(given_song, NULL, NULL, &length);
+  guint height = length / g_parameters.time_scale;
+  guint width = gtk_widget_get_allocated_width(GTK_WIDGET(draw_area));
   
+  cairo_rectangle(painter, 0.0, 0.0, width, height);
+  cairo_stroke_preserve(painter);
+  cairo_fill(painter);
+
   return false;  
 }
 
