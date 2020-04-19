@@ -110,6 +110,9 @@ void update_drawing_area(){
     if (g_parameters.change_time != -2){
       warp_time(g_modified_song, g_parameters.change_time);
     }
+    if (g_parameters.change_octave != -2){
+      change_octave(g_modified_song, g_parameters.change_octave);
+    }
   }
   gtk_widget_queue_draw(GTK_WIDGET(g_widgets.original_area));
   gtk_widget_queue_draw(GTK_WIDGET(g_widgets.after_area));
@@ -586,7 +589,8 @@ void warp_time_cb(GtkSpinButton *warp_scale, gpointer user_data){
 /* Define song_octave_cb here */
 
 void song_octave_cb(GtkSpinButton *octave_scale, gpointer user_data){
-  
+  g_parameters.change_octave = gtk_spin_button_get_value_as_int(octave_scale);
+  update_drawing_area();
 }
 
 /* Define instrument_map_cb here */
