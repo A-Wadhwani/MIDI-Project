@@ -426,8 +426,9 @@ gboolean draw_cb(GtkDrawingArea *draw_area, cairo_t *painter, gpointer user_data
   }
   int length = 0;
   range_of_song(given_song, NULL, NULL, &length);
-  guint height = length / g_parameters.time_scale;
-  guint width = gtk_widget_get_allocated_width(GTK_WIDGET(draw_area));
+  guint height =  gtk_widget_get_allocated_width(GTK_WIDGET(draw_area));
+  guint width = length / g_parameters.time_scale;
+  gtk_widget_set_size_request(GTK_WIDGET(draw_area), width, height);
   
   cairo_rectangle(painter, 0.0, 0.0, width, height);
   cairo_stroke_preserve(painter);
