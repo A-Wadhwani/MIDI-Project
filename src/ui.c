@@ -578,6 +578,7 @@ int get_y_pos(int height, int note_scale, int note, int low_note){
 
 void warp_time_cb(GtkSpinButton *warp_scale, gpointer user_data){
   g_parameters.change_time = gtk_spin_button_get_value(warp_scale);  
+  update_info();
 }
 
 /* Define song_octave_cb here */
@@ -611,8 +612,6 @@ void remove_song_cb(GtkButton *button, gpointer user_data){
   g_current_song = NULL;
   free_song(g_modified_song);
   g_modified_song = NULL;
-  g_parameters.change_time = -2;
-  g_parameters.change_octave = -2;
   update_song_list();
   update_info();
 }
