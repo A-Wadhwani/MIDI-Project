@@ -611,12 +611,14 @@ void song_octave_cb(GtkSpinButton *octave_scale, gpointer user_data){
 
 void instrument_map_cb(GtkComboBoxText *picked_inst, gpointer user_data){
   char *inst_name = gtk_combo_box_text_get_active_text(picked_inst);
-  printf("%s\n", inst_name);
+  printf("%s|\n", inst_name);
   if (strcmp(inst_name, "Helicopter") == 0){
+    printf("iuwdha%s|\n", inst_name);
     g_parameters.instrument = &I_HELICOPTER;
     g_parameters.use_inst = true;
   }
   else if (strcmp(inst_name, "Brass Band") == 0){
+    printf("iuwdha%s|\n", inst_name);
     g_parameters.instrument = &I_BRASS_BAND;
     g_parameters.use_inst = true;
   }
