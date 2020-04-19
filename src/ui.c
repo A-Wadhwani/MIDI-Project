@@ -457,8 +457,8 @@ gboolean draw_cb(GtkDrawingArea *draw_area, cairo_t *painter, gpointer user_data
 }
 
 void draw_line(cairo_t *painter, int note_pos, int begin_time, int length){
-  int begin_pos = begin_time * g_parameters.time_scale;
-  int end_pos = (length + begin_time) * g_parameters.time_scale;
+  int begin_pos = begin_time / g_parameters.time_scale;
+  int end_pos = (length + begin_time) / g_parameters.time_scale;
   cairo_set_line_width(painter, 1.0);
   cairo_move_to(painter, begin_pos, note_pos);
   cairo_line_to(painter, end_pos, note_pos);
@@ -480,6 +480,7 @@ void handle_painting(cairo_t *painter, song_data_t *song, int height, int width,
         if (copy_event->event->midi_event.status >= 0x90 &&
             copy_event->event->midi_event.status <= 0x9F){
           if (copy_event->event->midi_event.data[1] != 0){
+            printf("%d\n", current_time);
             int note = copy_event->event->midi_event.data[0];
             int length = get_delta_len(copy_event, note);
             int note_pos = get_y_pos(height, note_scale, note);
