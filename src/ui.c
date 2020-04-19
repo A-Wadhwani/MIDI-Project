@@ -457,7 +457,6 @@ gboolean draw_cb(GtkDrawingArea *draw_area, cairo_t *painter, gpointer user_data
 }
 
 void draw_line(cairo_t *painter, int note_pos, int begin_time, int length){
-  printf("Entered!");
   int begin_pos = begin_time * g_parameters.time_scale;
   int end_pos = (length + begin_time) * g_parameters.time_scale;
   cairo_set_line_width(painter, 1.0);
@@ -513,6 +512,7 @@ int get_delta_len(event_node_t *found_event, int note){
     delta_len = delta_len + copy_event->event->delta_time;
     copy_event = copy_event->next_event;
   }
+  printf("oof");
   return 0;
 }
 
