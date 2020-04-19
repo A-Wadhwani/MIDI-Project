@@ -17,6 +17,7 @@ tree_node_t *g_current_node = NULL;
 song_data_t *g_current_song = NULL;
 song_data_t *g_modified_song = NULL;
 
+int get_hight_post(int, int, int);
 bool compare_strings(const char*, const char *);
 char* get_file_name(const char *);
 char* open_file_dialog();
@@ -443,7 +444,7 @@ gboolean draw_cb(GtkDrawingArea *draw_area, cairo_t *painter, gpointer user_data
 
   // Draws the middle C line
   
-  int middle_c_pos = height - (60 * note_scale);
+  int middle_c_pos = get_y_pos(height, note_scale, 60); 
   cairo_set_source_rgb(painter, 0.0, 0.0, 0.0);
   cairo_set_line_width(painter, 1.0);
   cairo_move_to(painter, 0.0, middle_c_pos);
@@ -451,6 +452,10 @@ gboolean draw_cb(GtkDrawingArea *draw_area, cairo_t *painter, gpointer user_data
   cairo_stroke(painter);
   
   return false;  
+}
+
+int get_y_pos(int height, int note_scale, int note){
+  return height - note * note_scale;
 }
 
 /* Define warp_time_cb here */
