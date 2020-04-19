@@ -17,7 +17,7 @@ tree_node_t *g_current_node = NULL;
 song_data_t *g_current_song = NULL;
 song_data_t *g_modified_song = NULL;
 
-int get_hight_post(int, int, int);
+int get_y_pos(int, int, int);
 bool compare_strings(const char*, const char *);
 char* get_file_name(const char *);
 char* open_file_dialog();
