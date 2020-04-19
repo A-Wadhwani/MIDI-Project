@@ -1,3 +1,4 @@
+USE_COURSE_SOLN = 1
 HW     = proj1
 CLASS  = /homes/cs240
 PROJ   = $(CLASS)/public/homework/$(HW)
