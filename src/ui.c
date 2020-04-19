@@ -429,6 +429,9 @@ gboolean draw_cb(GtkDrawingArea *draw_area, cairo_t *painter, gpointer user_data
   range_of_song(given_song, NULL, NULL, &length);
   guint height =  gtk_widget_get_allocated_height(GTK_WIDGET(draw_area));
   guint width = length / g_parameters.time_scale;
+  if (width < 560){
+    width = 560;
+  }
   gtk_widget_set_size_request(GTK_WIDGET(draw_area), width, height);
   guint note_scale = height / 128;
   
