@@ -13,6 +13,7 @@
 
 #include "parser.h"
 #include "alterations.h"
+#include "song_writer.h"
 
 tree_node_t *g_current_node = NULL;
 song_data_t *g_current_song = NULL;
@@ -164,6 +165,7 @@ void update_info(){
 /* Define update_song here */
 
 void update_song(){
+  update_info();
   return;
 }
 
@@ -601,7 +603,11 @@ void note_map_cb(GtkComboBoxText *picked_note, gpointer user_data){
 /* Define save_song_cb here */
 
 void save_song_cb(GtkButton *button, gpointer user_data){
-
+  write_song_data(g_modified_song, g_current_song->path);
+  free_song(g_current_song);
+  g_current_song = g_modified_song;
+  g_modified_song = NULL;
+  g_current_node->song = g_current_song;
 }
 
 /* Define remove_song_cb here */
