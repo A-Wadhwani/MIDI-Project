@@ -546,7 +546,6 @@ void handle_painting(cairo_t *painter, song_data_t *song, int height, int width,
         if (copy_event->event->midi_event.status >= 0x90 &&
             copy_event->event->midi_event.status <= 0x9F){
           if (copy_event->event->midi_event.data[1] != 0){
-            printf("%d\n", current_time);
             int note = copy_event->event->midi_event.data[0];
             int length = get_delta_len(copy_event, note);
             int note_pos = get_y_pos(height, note_scale, note, low_note);
@@ -587,7 +586,6 @@ int get_delta_len(event_node_t *found_event, int note){
     }
     copy_event = copy_event->next_event;
   }
-  printf("oof");
   return delta_len;
 }
 
@@ -613,6 +611,7 @@ void song_octave_cb(GtkSpinButton *octave_scale, gpointer user_data){
 
 void instrument_map_cb(GtkComboBoxText *picked_inst, gpointer user_data){
   char *inst_name = gtk_combo_box_text_get_active_text(picked_inst);
+  printf("%s\n", inst_name);
   if (strcmp(inst_name, "Helicopter") == 0){
     g_parameters.instrument = &I_HELICOPTER;
     g_parameters.use_inst = true;
