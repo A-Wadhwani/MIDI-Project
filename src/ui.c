@@ -613,6 +613,7 @@ void save_song_cb(GtkButton *button, gpointer user_data){
 /* Define remove_song_cb here */
 
 void remove_song_cb(GtkButton *button, gpointer user_data){
+  update_drawing_area();
   remove_song_from_tree(&g_song_library, g_current_node->song_name);
   g_current_node = NULL;
   g_current_song = NULL;
