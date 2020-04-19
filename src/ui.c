@@ -444,7 +444,7 @@ gboolean draw_cb(GtkDrawingArea *draw_area, cairo_t *painter, gpointer user_data
   // Draws the middle C line
   
   int middle_c_pos = 80 * note_scale;
-  cairo_set_source_rgb(painter, 1.0, 1.0, 1.0);
+  cairo_set_source_rgb(painter, 0.0, 0.0, 0.0);
   cairo_set_line_width(painter, 1.0);
   cairo_move_to(painter, 0.0, middle_c_pos);
   cairo_line_to(painter, width, middle_c_pos);
