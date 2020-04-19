@@ -604,10 +604,11 @@ void note_map_cb(GtkComboBoxText *picked_note, gpointer user_data){
 
 void save_song_cb(GtkButton *button, gpointer user_data){
   write_song_data(g_modified_song, g_current_song->path);
+  char file_name[strlen(g_current_song->path)];
+  strcpy(file_name, g_current_song->path);
   remove_song_cb(NULL, NULL);
   tree_node_t *new_node = malloc(sizeof(tree_node_t));
-  new_node->song = g_modified_song;
- // g_modified_song = NULL;
+  new_node->song = parse_file(file_name);
   new_node->song_name = get_file_name(new_node->song->path);
   new_node->left_child = NULL;
   new_node->right_child = NULL;
