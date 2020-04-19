@@ -159,6 +159,9 @@ void update_song(){
 void range_of_song(song_data_t *midi_song, int *low_pitch,
                    int *high_pitch, int *length){
   track_node_t *copy_track = midi_song->track_list;
+  *low_pitch = 128;
+  *high_pitch = -1;
+  *length = 0;
   int save_length = 0;
   while (copy_track != NULL){
     event_node_t *copy_event = copy_track->track->event_list;
@@ -432,14 +435,16 @@ gboolean draw_cb(GtkDrawingArea *draw_area, cairo_t *painter, gpointer user_data
     given_song = g_modified_song;
   }
   int length = 0;
-  range_of_song(given_song, NULL, NULL, &length);
+  int high_note = 0;
+  int low_note = 0;
+  range_of_song(given_song, &low_note, &high_note, &length);
   guint height =  gtk_widget_get_allocated_height(GTK_WIDGET(draw_area));
   guint width = length / g_parameters.time_scale;
   if (width < 560){
     width = 560;
   }
   gtk_widget_set_size_request(GTK_WIDGET(draw_area), width, height);
-  guint note_scale = height / 126;
+  guint note_scale = height / (high_note - low_note + 10);
   
   // Draws the white box
 
