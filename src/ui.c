@@ -460,8 +460,8 @@ void draw_line(cairo_t *painter, int note_pos, int begin_time, int length, int w
   int begin_pos = begin_time / g_parameters.time_scale;
   int end_pos = (length + begin_time) / g_parameters.time_scale;
   cairo_set_line_width(painter, 1.0);
-  cairo_move_to(painter, width - begin_pos, note_pos + 2.0);
-  cairo_line_to(painter, width - end_pos, note_pos + 2.0);
+  cairo_move_to(painter, begin_pos, note_pos + 2.0);
+  cairo_line_to(painter, end_pos, note_pos + 2.0);
   cairo_stroke(painter);
 }
 
