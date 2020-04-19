@@ -433,7 +433,7 @@ gboolean draw_cb(GtkDrawingArea *draw_area, cairo_t *painter, gpointer user_data
     width = 560;
   }
   gtk_widget_set_size_request(GTK_WIDGET(draw_area), width, height);
-  guint note_scale = height / 150;
+  guint note_scale = height / 128;
   
   // Draws the white box
 
@@ -443,7 +443,7 @@ gboolean draw_cb(GtkDrawingArea *draw_area, cairo_t *painter, gpointer user_data
 
   // Draws the middle C line
   
-  int middle_c_pos = 80 * note_scale;
+  int middle_c_pos = 60 * note_scale;
   cairo_set_source_rgb(painter, 0.0, 0.0, 0.0);
   cairo_set_line_width(painter, 1.0);
   cairo_move_to(painter, 0.0, middle_c_pos);
