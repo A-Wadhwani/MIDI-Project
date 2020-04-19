@@ -439,7 +439,7 @@ gboolean draw_cb(GtkDrawingArea *draw_area, cairo_t *painter, gpointer user_data
     width = 560;
   }
   gtk_widget_set_size_request(GTK_WIDGET(draw_area), width, height);
-  guint note_scale = height / 200;
+  guint note_scale = height / 126;
   
   // Draws the white box
 
