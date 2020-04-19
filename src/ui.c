@@ -508,15 +508,21 @@ int get_delta_len(event_node_t *found_event, int note){
     if (event_type(copy_event->event) == MIDI_EVENT_T){
       if (copy_event->event->midi_event.status >= 0x80 &&
           copy_event->event->midi_event.status <= 0x8F){
-//        if (copy_event->event->midi_event.data[0] == note){
+        if (copy_event->event->midi_event.data[0] == note){
           return delta_len;
-//        }
+        }
+      }
+      if (copy_event->event->midi_event.status >= 0x90 &&
+          copy_event->event->midi_event.status <= 0x9F){
+        if (copy_event->event->midi_event.data[1] != 0){
+          return delta_len;
+        }
       }
     }
     copy_event = copy_event->next_event;
   }
   printf("oof");
-  return 0;
+  return delta_len;
 }
 
 int get_y_pos(int height, int note_scale, int note){
