@@ -18,6 +18,7 @@ song_data_t *g_current_song = NULL;
 song_data_t *g_modified_song = NULL;
 
 int get_y_pos(int, int, int);
+int get_delta_len(event_node_t *, int);
 bool compare_strings(const char*, const char *);
 char* get_file_name(const char *);
 char* open_file_dialog();
@@ -448,36 +449,56 @@ gboolean draw_cb(GtkDrawingArea *draw_area, cairo_t *painter, gpointer user_data
   
   int middle_c_pos = get_y_pos(height, note_scale, 60); 
   cairo_set_source_rgb(painter, 0.0, 0.0, 0.0);
-  draw_line(painter, middle_c_pos, 0.0, width);
+  draw_line(painter, middle_c_pos, 0.0, length);
   handle_painting(painter, given_song, height, width, note_scale);
   return false;  
 }
 
-void draw_line(cairo_t *painter, int note_pos, int begin, int end){
+void draw_line(cairo_t *painter, int note_pos, int begin_time, int length){
+  int begin_pos = begin_time * g_parameters.time_scale;
+  int end_pos = (length + begin_time) * g_parameters.time_scale;
   cairo_set_line_width(painter, 1.0);
-  cairo_move_to(painter, begin, note_pos);
-  cairo_line_to(painter, end, note_pos);
+  cairo_move_to(painter, begin_pos, note_pos);
+  cairo_line_to(painter, end_pos, note_pos);
   cairo_stroke(painter);
-
 }
 
 void handle_painting(cairo_t *painter, song_data_t *song, int height, int width, int note_scale){
   int total_time = 0;
   range_of_song(song, NULL, NULL, &total_time);
   track_node_t *copy_track = song->track_list;
+  int current_time = 0;
   while (copy_track != NULL){
     event_node_t *copy_event = copy_track->track->event_list;
     while (copy_event != NULL){
       if (event_type(copy_event->event) == MIDI_EVENT_T){
-        if (copy_event->event->midi_event.status >= 0x80 &&
-            copy_event->event->midi_event.status <= 0xAF){
+        
+        // If a Note On event is found
+        
+        if (copy_event->event->midi_event.status >= 0x90 &&
+            copy_event->event->midi_event.status <= 0x9F){
+          if (copy_event->event->midi_event.data[1] != 0){
+            int note = copy_event->event->midi_event.data[0];
+            int length = get_delta_len(copy_event, note);
+            int note_pos = get_y_pos(height, note_scale, note);
+            draw_line(painter, note_pos, current_time, length);
+          }
         }
+
       }
+      current_time = current_time + copy_event->event->delta_time;
       copy_event = copy_event->next_event;
+    }
+    if (song->format == 1){
+      current_time = 0;
     }
     copy_track = copy_track->next_track;
   }
   
+}
+
+int get_delta_len(event_node_t *found_event, int note){
+  return 0;
 }
 
 int get_y_pos(int height, int note_scale, int note){
