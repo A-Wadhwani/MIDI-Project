@@ -467,8 +467,10 @@ gboolean draw_cb(GtkDrawingArea *draw_area, cairo_t *painter, gpointer user_data
   // Draws the middle C line
   
   int middle_c_pos = get_y_pos(height, note_scale, 60); 
+  cairo_set_line_width(painter, 1.0);
   cairo_set_source_rgb(painter, 0.0, 0.0, 0.0);
   draw_line(painter, middle_c_pos, 0.0, length);
+  cairo_set_line_width(painter, 2.0);
   handle_painting(painter, given_song, height, width, note_scale);
   return false;  
 }
@@ -476,7 +478,6 @@ gboolean draw_cb(GtkDrawingArea *draw_area, cairo_t *painter, gpointer user_data
 void draw_line(cairo_t *painter, int note_pos, int begin_time, int length){
   int begin_pos = begin_time / g_parameters.time_scale;
   int end_pos = (length + begin_time) / g_parameters.time_scale;
-  cairo_set_line_width(painter, 1.0);
   cairo_move_to(painter, begin_pos, note_pos);
   cairo_line_to(painter, end_pos, note_pos);
   cairo_stroke(painter);
