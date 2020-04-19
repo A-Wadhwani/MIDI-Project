@@ -554,7 +554,7 @@ int get_delta_len(event_node_t *found_event, int note){
 }
 
 int get_y_pos(int height, int note_scale, int note, int low_note){
-  return height - ((low_note - note + 10) * note_scale);
+  return height - ((note - low_note + 10) * note_scale);
 }
 
 /* Define warp_time_cb here */
