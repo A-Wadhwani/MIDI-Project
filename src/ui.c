@@ -24,7 +24,7 @@ char* get_file_name(const char *);
 char* open_file_dialog();
 char* open_folder_dialog();
 void handle_painting(cairo_t *, song_data_t *, int, int, int);
-void draw_line(cairo_t *, int, int, int, int);
+void draw_line(cairo_t *, int, int, int);
 void add_to_song_list(tree_node_t*, int*);
 void remove_list();
 
@@ -465,17 +465,17 @@ gboolean draw_cb(GtkDrawingArea *draw_area, cairo_t *painter, gpointer user_data
   
   int middle_c_pos = get_y_pos(height, note_scale, 60); 
   cairo_set_source_rgb(painter, 0.0, 0.0, 0.0);
-  draw_line(painter, middle_c_pos, 0.0, length, width);
+  draw_line(painter, middle_c_pos, 0.0, length);
   handle_painting(painter, given_song, height, width, note_scale);
   return false;  
 }
 
-void draw_line(cairo_t *painter, int note_pos, int begin_time, int length, int width){
+void draw_line(cairo_t *painter, int note_pos, int begin_time, int length){
   int begin_pos = begin_time / g_parameters.time_scale;
   int end_pos = (length + begin_time) / g_parameters.time_scale;
   cairo_set_line_width(painter, 1.0);
-  cairo_move_to(painter, begin_pos, note_pos + 2.0);
-  cairo_line_to(painter, end_pos, note_pos + 2.0);
+  cairo_move_to(painter, begin_pos, note_pos);
+  cairo_line_to(painter, end_pos, note_pos);
   cairo_stroke(painter);
 }
 
@@ -483,12 +483,18 @@ void handle_painting(cairo_t *painter, song_data_t *song, int height, int width,
   int total_time = 0;
   range_of_song(song, NULL, NULL, &total_time);
   track_node_t *copy_track = song->track_list;
+  GdkRGBA *given_color = NULL;
   int current_time = 0;
   while (copy_track != NULL){
     event_node_t *copy_event = copy_track->track->event_list;
     while (copy_event != NULL){
       if (event_type(copy_event->event) == MIDI_EVENT_T){
-        
+        if (copy_event->event->midi_event.status >= 0xC0 &&
+            copy_event->event->midi_event.status <= 0xCF){
+          given_color = COLOR_PALETTE[copy_event->event->midi_event.data[0]];
+          cairo_set_source_rgba(painter, given_color->red, given_color->green, 
+                                given_color->blue, given_color->alpha);
+        } 
         // If a Note On event is found
         
         if (copy_event->event->midi_event.status >= 0x90 &&
@@ -498,7 +504,7 @@ void handle_painting(cairo_t *painter, song_data_t *song, int height, int width,
             int note = copy_event->event->midi_event.data[0];
             int length = get_delta_len(copy_event, note);
             int note_pos = get_y_pos(height, note_scale, note);
-            draw_line(painter, note_pos, current_time, length, width);
+            draw_line(painter, note_pos, current_time, length);
           }
         }
 
