@@ -120,10 +120,10 @@ void update_drawing_area(){
     if (g_parameters.change_octave != -2){
       change_octave(g_modified_song, g_parameters.change_octave);
     }
-    if (g_parameters.use_inst){
+    if (g_parameters.use_inst == true){
       remap_instruments(g_modified_song, *g_parameters.instrument);
     }
-    if (g_parameters.use_notes){
+    if (g_parameters.use_notes == true){
       remap_notes(g_modified_song, *g_parameters.notes);
     }
   }
@@ -625,6 +625,7 @@ void instrument_map_cb(GtkComboBoxText *picked_inst, gpointer user_data){
   else {
     g_parameters.use_inst = false;
   }
+  update_drawing_area();
 }
 
 /* Define note_map_cb here */
@@ -638,6 +639,7 @@ void note_map_cb(GtkComboBoxText *picked_note, gpointer user_data){
   else {
     g_parameters.use_notes = false;
   }
+  update_drawing_area();
 }
 
 /* Define save_song_cb here */
