@@ -665,9 +665,9 @@ void remove_song_cb(GtkButton *button, gpointer user_data){
   g_current_node = NULL;
   g_current_song = NULL;
   free_song(g_modified_song);
-  gtk_combo_box_set_active (GTK_COMBO_BOX(g_widgets.remap_notes), -1);
-  gtk_combo_box_set_active (GTK_COMBO_BOX(g_widgets.remap_instruments), -1);
   g_modified_song = NULL;
+  gtk_combo_box_set_active (GTK_COMBO_BOX(g_widgets.remap_notes), 0);
+  gtk_combo_box_set_active (GTK_COMBO_BOX(g_widgets.remap_instruments), 0);
   update_song_list();
   update_info();
 }
