@@ -453,7 +453,7 @@ gboolean draw_cb(GtkDrawingArea *draw_area, cairo_t *painter, gpointer user_data
   if (low_note > 60){
     low_note = 60;
   }
-  guint note_scale = height / (high_note - low_note + 10);
+  guint note_scale = height / (high_note);
   
   // Draws the white box
 
