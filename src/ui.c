@@ -418,6 +418,7 @@ void time_scale_cb(GtkSpinButton *time_scale, gpointer user_data){
 /* Define draw_cb here */
 
 gboolean draw_cb(GtkDrawingArea *draw_area, cairo_t *painter, gpointer user_data){
+  gtk_widget_set_size_request(GTK_WIDGET(draw_area), 560, 160);
   cairo_set_source_rgb(painter, 255, 255, 255);
   cairo_set_line_width(painter, 1.0);
   if (g_current_node == NULL){
