@@ -17,7 +17,7 @@ tree_node_t *g_current_node = NULL;
 song_data_t *g_current_song = NULL;
 song_data_t *g_modified_song = NULL;
 
-int get_y_pos(int, int, int);
+int get_y_pos(int, int, int, int);
 int get_delta_len(event_node_t *, int);
 bool compare_strings(const char*, const char *);
 char* get_file_name(const char *);
@@ -453,10 +453,10 @@ gboolean draw_cb(GtkDrawingArea *draw_area, cairo_t *painter, gpointer user_data
   if (high_note < 60){
     high_note = 60;
   }
-  if (low_note < 60){
+  if (low_note > 60){
     low_note = 60;
   }
-  guint note_scale = height / high_note;
+  guint note_scale = height / (high_note - low_note + 10);
   
   // Draws the white box
 
@@ -466,7 +466,7 @@ gboolean draw_cb(GtkDrawingArea *draw_area, cairo_t *painter, gpointer user_data
 
   // Draws the middle C line
   
-  int middle_c_pos = get_y_pos(height, note_scale, 60); 
+  int middle_c_pos = get_y_pos(height, note_scale, 60, low_note);
   cairo_set_line_width(painter, 1.0);
   cairo_set_source_rgb(painter, 0.0, 0.0, 0.0);
   draw_line(painter, middle_c_pos, 0.0, length);
@@ -485,7 +485,11 @@ void draw_line(cairo_t *painter, int note_pos, int begin_time, int length){
 
 void handle_painting(cairo_t *painter, song_data_t *song, int height, int width, int note_scale){
   int total_time = 0;
-  range_of_song(song, NULL, NULL, &total_time);
+  int low_note = 0;
+  range_of_song(song, &low_note, NULL, &total_time);
+  if (low_note > 60){
+    low_note = 60;
+  }
   track_node_t *copy_track = song->track_list;
   GdkRGBA *given_color = NULL;
   int current_time = 0;
@@ -507,7 +511,7 @@ void handle_painting(cairo_t *painter, song_data_t *song, int height, int width,
             printf("%d\n", current_time);
             int note = copy_event->event->midi_event.data[0];
             int length = get_delta_len(copy_event, note);
-            int note_pos = get_y_pos(height, note_scale, note);
+            int note_pos = get_y_pos(height, note_scale, note, low_note);
             draw_line(painter, note_pos, current_time, length);
           }
         }
@@ -549,8 +553,8 @@ int get_delta_len(event_node_t *found_event, int note){
   return delta_len;
 }
 
-int get_y_pos(int height, int note_scale, int note){
-  return height - (note * note_scale);
+int get_y_pos(int height, int note_scale, int note, int low_note){
+  return height - ((low_note - note + 10) * note_scale);
 }
 
 /* Define warp_time_cb here */
