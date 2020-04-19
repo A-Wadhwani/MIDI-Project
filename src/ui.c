@@ -12,6 +12,7 @@
 #include<ctype.h>
 
 #include "parser.h"
+#include "alterations.h"
 
 tree_node_t *g_current_node = NULL;
 song_data_t *g_current_song = NULL;
@@ -562,7 +563,9 @@ int get_y_pos(int height, int note_scale, int note, int low_note){
 /* Define warp_time_cb here */
 
 void warp_time_cb(GtkSpinButton *warp_scale, gpointer user_data){
-  
+  gdouble change_time = gtk_spin_button_get_value(warp_scale);
+  warp_time(g_modified_song, change_time);
+  update_drawing_area();
 }
 
 /* Define song_octave_cb here */
