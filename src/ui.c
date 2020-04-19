@@ -400,8 +400,8 @@ void song_selected_cb(GtkListBox *list_box, GtkListBoxRow *row){
   
   g_parameters.change_time = -2;
   g_parameters.change_octave = -2;
-  gtk_combo_box_set_active (GTK_COMBO_BOX(g_widgets.remap_notes), -1);
-  gtk_combo_box_set_active (GTK_COMBO_BOX(g_widgets.remap_instruments), -1);
+  gtk_combo_box_set_active (GTK_COMBO_BOX(g_widgets.remap_notes), 0);
+  gtk_combo_box_set_active (GTK_COMBO_BOX(g_widgets.remap_instruments), 0);
   g_parameters.use_inst = false;
   g_parameters.use_notes = false;
   update_info();
