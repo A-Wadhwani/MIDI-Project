@@ -22,6 +22,8 @@ bool compare_strings(const char*, const char *);
 char* get_file_name(const char *);
 char* open_file_dialog();
 char* open_folder_dialog();
+void handle_painting(cairo_t *, song_data_t *, int, int, int);
+void draw_line(cairo_t *, int, int, int);
 void add_to_song_list(tree_node_t*, int*);
 void remove_list();
 
@@ -446,12 +448,36 @@ gboolean draw_cb(GtkDrawingArea *draw_area, cairo_t *painter, gpointer user_data
   
   int middle_c_pos = get_y_pos(height, note_scale, 60); 
   cairo_set_source_rgb(painter, 0.0, 0.0, 0.0);
-  cairo_set_line_width(painter, 1.0);
-  cairo_move_to(painter, 0.0, middle_c_pos);
-  cairo_line_to(painter, width, middle_c_pos);
-  cairo_stroke(painter);
-  
+  draw_line(painter, middle_c_pos, 0.0, width);
+  handle_painting(painter, given_song, height, width, note_scale);
   return false;  
+}
+
+void draw_line(cairo_t *painter, int note_pos, int begin, int end){
+  cairo_set_line_width(painter, 1.0);
+  cairo_move_to(painter, begin, note_pos);
+  cairo_line_to(painter, end, note_pos);
+  cairo_stroke(painter);
+
+}
+
+void handle_painting(cairo_t *painter, song_data_t *song, int height, int width, int note_scale){
+  int total_time = 0;
+  range_of_song(song, NULL, NULL, &total_time);
+  track_node_t *copy_track = song->track_list;
+  while (copy_track != NULL){
+    event_node_t *copy_event = copy_track->track->event_list;
+    while (copy_event != NULL){
+      if (event_type(copy_event->event) == MIDI_EVENT_T){
+        if (copy_event->event->midi_event.status >= 0x80 &&
+            copy_event->event->midi_event.status <= 0xAF){
+        }
+      }
+      copy_event = copy_event->next_event;
+    }
+    copy_track = copy_track->next_track;
+  }
+  
 }
 
 int get_y_pos(int height, int note_scale, int note){
