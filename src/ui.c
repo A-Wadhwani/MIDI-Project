@@ -452,7 +452,7 @@ gboolean draw_cb(GtkDrawingArea *draw_area, cairo_t *painter, gpointer user_data
   int middle_c_pos = get_y_pos(height, note_scale, 60); 
   cairo_set_source_rgb(painter, 0.0, 0.0, 0.0);
   draw_line(painter, middle_c_pos, 0.0, length, width);
-  handle_painting(painter, given_song, height, width, note_scale);
+//  handle_painting(painter, given_song, height, width, note_scale);
   return false;  
 }
 
@@ -516,7 +516,7 @@ int get_delta_len(event_node_t *found_event, int note){
     copy_event = copy_event->next_event;
   }
   printf("oof");
-  return delta_len;
+  return 0;
 }
 
 int get_y_pos(int height, int note_scale, int note){
