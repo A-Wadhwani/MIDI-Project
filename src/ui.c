@@ -404,8 +404,9 @@ void time_scale_cb(GtkSpinButton *time_scale, gpointer user_data){
 
 gboolean draw_cb(GtkDrawingArea *draw_area, cairo_t *painter, gpointer user_data){
   cairo_set_source_rgb(painter, 255, 255, 255);
-  cairo_set_line_width(painter, 100.0);
+  cairo_set_line_width(painter, 1.0);
   if (g_current_node == NULL){
+    // Draws the white box
 
     guint height = gtk_widget_get_allocated_height(GTK_WIDGET(draw_area));
     guint width = gtk_widget_get_allocated_width(GTK_WIDGET(draw_area));
@@ -429,11 +430,23 @@ gboolean draw_cb(GtkDrawingArea *draw_area, cairo_t *painter, gpointer user_data
   guint height =  gtk_widget_get_allocated_height(GTK_WIDGET(draw_area));
   guint width = length / g_parameters.time_scale;
   gtk_widget_set_size_request(GTK_WIDGET(draw_area), width, height);
+  guint note_scale = height / 128;
   
+  // Draws the white box
+
   cairo_rectangle(painter, 0.0, 0.0, width, height);
   cairo_stroke_preserve(painter);
   cairo_fill(painter);
 
+  // Draws the middle C line
+  
+  int middle_c_pos = 80 * note_scale;
+  cairo_set_source_rgb(painter, 1.0, 1.0, 1.0);
+  cairo_set_line_width(painter, 1.0);
+  cairo_move_to(painter, 0.0, middle_c_pos);
+  cairo_line_to(painter, width, middle_c_pos);
+  cairo_stroke(painter);
+  
   return false;  
 }
 
