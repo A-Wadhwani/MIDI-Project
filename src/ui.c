@@ -418,7 +418,6 @@ void time_scale_cb(GtkSpinButton *time_scale, gpointer user_data){
 /* Define draw_cb here */
 
 gboolean draw_cb(GtkDrawingArea *draw_area, cairo_t *painter, gpointer user_data){
-  gtk_widget_set_size_request(GTK_WIDGET(draw_area), 560, 160);
   cairo_set_source_rgb(painter, 255, 255, 255);
   cairo_set_line_width(painter, 1.0);
   if (g_current_node == NULL){
@@ -426,7 +425,9 @@ gboolean draw_cb(GtkDrawingArea *draw_area, cairo_t *painter, gpointer user_data
 
     guint height = gtk_widget_get_allocated_height(GTK_WIDGET(draw_area));
     guint width = gtk_widget_get_allocated_width(GTK_WIDGET(draw_area));
-
+    if (width != 560){
+      gtk_widget_set_size_request(GTK_WIDGET(draw_area), 560, 160);
+    }
     cairo_rectangle(painter, 0.0, 0.0, width, height);
     cairo_stroke_preserve(painter);
     cairo_fill(painter);
@@ -543,7 +544,7 @@ int get_delta_len(event_node_t *found_event, int note){
       }
       if (copy_event->event->midi_event.status >= 0x90 &&
           copy_event->event->midi_event.status <= 0x9F){
-        if (copy_event->event->midi_event.data[1] != 0){
+        if (copy_event->event->midi_event.data[1] == 0){
           return delta_len;
         }
       }
