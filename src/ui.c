@@ -63,9 +63,16 @@ struct ui_widgets {
 struct parameters{
   char *folder_directory;
   char *selected_song_name;
+  
   int time_scale;
   double change_time;
   int change_octave;
+
+  remapping_t *notes;
+  bool use_notes;
+  remapping_t *instrument;
+  bool use_inst;
+
   int load_original;
   int load_modified;
 } g_parameters;
@@ -112,6 +119,12 @@ void update_drawing_area(){
     }
     if (g_parameters.change_octave != -2){
       change_octave(g_modified_song, g_parameters.change_octave);
+    }
+    if (g_parameters.use_inst){
+      remap_instruments(g_modified_song, *g_parameters.instrument);
+    }
+    if (g_parameters.use_notes){
+      remap_notes(g_modified_song, *g_parameters.notes);
     }
   }
   gtk_widget_queue_draw(GTK_WIDGET(g_widgets.original_area));
@@ -384,8 +397,11 @@ void song_selected_cb(GtkListBox *list_box, GtkListBoxRow *row){
   const char *song_name = gtk_label_get_text(GTK_LABEL(label));
   g_current_node = *(find_parent_pointer(&g_song_library, song_name));
   g_current_song = g_current_node->song;
+  
   g_parameters.change_time = -2;
   g_parameters.change_octave = -2;
+  g_parameters.use_inst = false;
+  g_parameters.use_notes = false;
   update_info();
 }
 
@@ -596,12 +612,31 @@ void song_octave_cb(GtkSpinButton *octave_scale, gpointer user_data){
 /* Define instrument_map_cb here */
 
 void instrument_map_cb(GtkComboBoxText *picked_inst, gpointer user_data){
+  char *inst_name = gtk_combo_box_text_get_active_text(picked_inst);
+  if (strcmp(inst_name, "Helicopter") == 0){
+    g_parameters.instrument = &I_HELICOPTER;
+    g_parameters.use_inst = true;
+  }
+  else if (strcmp(inst_name, "Brass Band") == 0){
+    g_parameters.instrument = &I_BRASS_BAND;
+    g_parameters.use_inst = true;
+  }
+  else {
+    g_parameters.use_inst = false;
+  }
 }
 
 /* Define note_map_cb here */
 
 void note_map_cb(GtkComboBoxText *picked_note, gpointer user_data){
-  
+  char *note_name = gtk_combo_box_text_get_active_text(picked_note);
+  if (strcmp(note_name, "Lower Notes") == 0){
+    g_parameters.notes = &N_LOWER;
+    g_parameters.use_notes = true;
+  }
+  else {
+    g_parameters.use_notes = false;
+  }
 }
 
 /* Define save_song_cb here */
