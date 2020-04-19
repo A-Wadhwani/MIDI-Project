@@ -159,9 +159,15 @@ void update_song(){
 void range_of_song(song_data_t *midi_song, int *low_pitch,
                    int *high_pitch, int *length){
   track_node_t *copy_track = midi_song->track_list;
-  *low_pitch = 128;
-  *high_pitch = -1;
-  *length = 0;
+  if (low_pitch){
+    *low_pitch = 128;
+  }
+  if (high_pitch){
+    *high_pitch = -1;
+  }
+  if (length){
+    *length = 0;
+  }
   int save_length = 0;
   while (copy_track != NULL){
     event_node_t *copy_event = copy_track->track->event_list;
