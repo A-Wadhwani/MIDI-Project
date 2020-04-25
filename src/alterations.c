@@ -166,7 +166,7 @@ void add_round(song_data_t *midi_song, int track_index, int octave_diff,
     change_event_instrument(copy_event->event, new_instrument);
     if (event_type(copy_event->event) == MIDI_EVENT_T){
       uint8_t save_status = copy_event->event->midi_event.status >> 4;
-      copy_event->event->midi_event.status = save_status & channel_no;
+      copy_event->event->midi_event.status = (save_status << 4) & channel_no;
       copy_event->event->type = copy_event->event->midi_event.status;
     }
     copy_event = copy_event->next_event;
