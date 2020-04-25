@@ -271,7 +271,7 @@ track_node_t *duplicate_track(track_node_t *given_track){
 
 track_node_t *find_track(song_data_t *midi_song, int track_index){
   track_node_t *copy_head = midi_song->track_list;
-  for(int i = 1; i <= track_index; i++){
+  for(int i = 0; i < track_index; i++){
     if (copy_head == NULL){
       return NULL;
     }
