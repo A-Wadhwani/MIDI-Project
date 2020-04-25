@@ -6,16 +6,20 @@
 
 #include "alterations.h"
 
-#include<assert.h>
-#include<malloc.h>
+#include <assert.h>
+#include <malloc.h>
+#include <string.h>
 
 #include "song_writer.h"
 
 /* Function Declarations */
 
+int get_event_octave(event_node_t *);
 int find_vlq_length(uint32_t);
+int find_lowest_channel(track_node_t *);
 track_node_t *find_track(song_data_t *, int);
 track_node_t *duplicate_track(track_node_t *);
+
 /* Function Definitions */
 
 /*Define change_event_octave here */
@@ -25,11 +29,14 @@ int change_event_octave(event_t *song_event, int *num_octaves){
     return 0;
   }
   midi_event_t midi_event = song_event->midi_event;
-  if ((midi_event.status >= 0x80) && (midi_event.status <= 0xAF)){
+  if ((strcmp(midi_event.name, "Note Off") == 0) ||
+      (strcmp(midi_event.name, "Note On") == 0) || 
+      (strcmp(midi_event.name, "Polyphonic Key") == 0)){
     uint8_t note = midi_event.data[0];
-    uint8_t note_number = note % 12;
-    uint8_t octave_number = (note / 12) - 1;
-    note = note_number + (octave_number + *num_octaves + 1) * 12;
+//    uint8_t note_number = note % 12;
+//    uint8_t octave_number = (note / 12) - 1;
+//    note = note_number + (octave_number + *num_octaves + 1) * 12;
+    note = note + ((*num_octaves) * 12);
     if (note > 127 || note < 0){
       return 0;
     }
@@ -145,18 +152,23 @@ void add_round(song_data_t *midi_song, int track_index, int octave_diff,
   assert(found_track);
   track_node_t *copy_track = duplicate_track(found_track);
   event_node_t *copy_event = copy_track->track->event_list;
+  int channel_no = find_lowest_channel(midi_song->track_list);
   while(copy_event != NULL){
-    //TODO: Create Channel Changer
-    change_event_octave(copy_event->event, &octave_diff);
-    int old_length = find_vlq_length(copy_event->event->delta_time);
+    int octave = get_event_octave(copy_event) + octave_diff;
+    change_event_octave(copy_event->event, &octave);
     copy_event->event->delta_time -= time_delay;
     int new_length = find_vlq_length(copy_event->event->delta_time);
-    copy_track->track->length += new_length - old_length;
+    copy_track->track->length = new_length;
     remapping_t new_instrument = {0};
     for(int i = 0; i < 0xFF; i++){
       new_instrument[i] = instrument;
     }
     change_event_instrument(copy_event->event, new_instrument);
+    if (event_type(copy_event->event) == MIDI_EVENT_T){
+      uint8_t save_status = copy_event->event->midi_event.status >> 4;
+      copy_event->event->midi_event.status = save_status & channel_no;
+      copy_event->event->type = copy_event->event->midi_event.status;
+    }
     copy_event = copy_event->next_event;
   }
   track_node_t *copy_track_head = midi_song->track_list;
@@ -166,6 +178,51 @@ void add_round(song_data_t *midi_song, int track_index, int octave_diff,
   copy_track_head->next_track = copy_track;
   midi_song->num_tracks += 1;
   midi_song->format = 1;
+}
+
+int get_event_octave(event_node_t *song_event){
+  if (song_event == NULL){
+    return 0;
+  }
+  if (event_type(song_event->event) != MIDI_EVENT_T){
+    return 0;
+  }
+  midi_event_t midi_event = song_event->event->midi_event;
+  if ((strcmp(midi_event.name, "Note Off") == 0) ||
+      (strcmp(midi_event.name, "Note On") == 0) || 
+      (strcmp(midi_event.name, "Polyphonic Key") == 0)){
+    int octave = (midi_event.data[0] / 12) - 1;
+    return octave;
+  }
+  return 0;
+}
+
+int find_lowest_channel(track_node_t *midi_track){
+  if (midi_track == NULL){
+    return 0;
+  }
+  bool is_duplicate = false;
+  int lowest_channel = 0;
+  do {
+    track_node_t *dup_track = midi_track;
+    while (dup_track != NULL){
+      event_node_t *dup_event = midi_track->track->event_list;
+      while (dup_event && event_type(dup_event->event) != MIDI_EVENT_T){
+        dup_event = dup_event->next_event;
+      }
+      if (dup_event){
+        if (event_type(dup_event->event) == MIDI_EVENT_T){
+          uint8_t channel_no = 0x00001111 & dup_event->event->midi_event.status;
+          if (channel_no == lowest_channel){
+            lowest_channel++;
+            is_duplicate = true;
+          }
+        }
+      }
+      dup_track = dup_track->next_track;
+    }
+  } while (is_duplicate);
+  return lowest_channel;
 }
 
 track_node_t *duplicate_track(track_node_t *given_track){
