@@ -95,7 +95,7 @@
         <property name=\"can_focus\">False</property>\
         <property name=\"halign\">start</property>\
         <property name=\"valign\">start</property>\
-\        <property name=\"label\" translatable=\"yes\">Select a file from list to start...\
+       <property name=\"label\" translatable=\"yes\">Select a file from list to start...\
 </property>\
         <property name=\"wrap\">True</property>\
         <property name=\"ellipsize\">end</property>\
