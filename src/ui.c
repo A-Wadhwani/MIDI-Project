@@ -15,439 +15,439 @@
 #include "alterations.h"
 #include "song_writer.h"
 
-#define XML_STRING "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
-<interface>
-  <requires lib=\"gtk+\" version=\"3.20\"/>
-  <object class=\"GtkAdjustment\" id=\"adjustment1\">
-    <property name=\"lower\">1</property>
-    <property name=\"upper\">1000</property>
-    <property name=\"step_increment\">1</property>
-    <property name=\"page_increment\">10</property>
-  </object>
-  <object class=\"GtkAdjustment\" id=\"adjustment2\">
-    <property name=\"upper\">20</property>
-    <property name=\"value\">1</property>
-    <property name=\"step_increment\">0.10000000000000001</property>
-    <property name=\"page_increment\">0.10000000000000001</property>
-  </object>
-  <object class=\"GtkAdjustment\" id=\"adjustment3\">
-    <property name=\"lower\">-6</property>
-    <property name=\"upper\">16</property>
-    <property name=\"step_increment\">1</property>
-    <property name=\"page_increment\">10</property>
-  </object>
-  <object class=\"GtkFixed\" id=\"fixed_grid\">
-    <property name=\"name\">draw_original</property>
-    <property name=\"visible\">True</property>
-    <property name=\"can_focus\">False</property>
-    <child>
-      <object class=\"GtkButton\" id=\"add_song\">
-        <property name=\"label\" translatable=\"yes\">Add Song from File</property>
-        <property name=\"name\">add_song</property>
-        <property name=\"width_request\">160</property>
-        <property name=\"height_request\">35</property>
-        <property name=\"visible\">True</property>
-        <property name=\"can_focus\">True</property>
-        <property name=\"receives_default\">True</property>
-      </object>
-      <packing>
-        <property name=\"x\">10</property>
-        <property name=\"y\">10</property>
-      </packing>
-    </child>
-    <child>
-      <object class=\"GtkButton\" id=\"load_directory\">
-        <property name=\"label\" translatable=\"yes\">Load from Directory</property>
-        <property name=\"name\">load_directory</property>
-        <property name=\"width_request\">160</property>
-        <property name=\"height_request\">35</property>
-        <property name=\"visible\">True</property>
-        <property name=\"can_focus\">True</property>
-        <property name=\"receives_default\">True</property>
-      </object>
-      <packing>
-        <property name=\"x\">180</property>
-        <property name=\"y\">10</property>
-      </packing>
-    </child>
-    <child>
-      <object class=\"GtkSearchEntry\" id=\"search_song\">
-        <property name=\"name\">search_song</property>
-        <property name=\"width_request\">335</property>
-        <property name=\"height_request\">20</property>
-        <property name=\"visible\">True</property>
-        <property name=\"can_focus\">True</property>
-        <property name=\"primary_icon_name\">edit-find-symbolic</property>
-        <property name=\"primary_icon_activatable\">False</property>
-        <property name=\"primary_icon_sensitive\">False</property>
-      </object>
-      <packing>
-        <property name=\"x\">10</property>
-        <property name=\"y\">675</property>
-      </packing>
-    </child>
-    <child>
-      <object class=\"GtkLabel\" id=\"file_details\">
-        <property name=\"name\">file_details</property>
-        <property name=\"width_request\">580</property>
-        <property name=\"height_request\">70</property>
-        <property name=\"visible\">True</property>
-        <property name=\"can_focus\">False</property>
-        <property name=\"halign\">start</property>
-        <property name=\"valign\">start</property>
-        <property name=\"label\" translatable=\"yes\">Select a file from list to start...
-</property>
-        <property name=\"wrap\">True</property>
-        <property name=\"ellipsize\">end</property>
-        <property name=\"width_chars\">1</property>
-        <property name=\"max_width_chars\">15</property>
-        <property name=\"xalign\">0</property>
-        <property name=\"yalign\">0</property>
-      </object>
-      <packing>
-        <property name=\"x\">360</property>
-        <property name=\"y\">10</property>
-      </packing>
-    </child>
-    <child>
-      <object class=\"GtkSpinButton\" id=\"time_scale\">
-        <property name=\"name\">time_scale</property>
-        <property name=\"width_request\">300</property>
-        <property name=\"height_request\">35</property>
-        <property name=\"visible\">True</property>
-        <property name=\"sensitive\">False</property>
-        <property name=\"can_focus\">True</property>
-        <property name=\"activates_default\">True</property>
-        <property name=\"adjustment\">adjustment1</property>
-        <property name=\"value\">10</property>
-      </object>
-      <packing>
-        <property name=\"x\">640</property>
-        <property name=\"y\">90</property>
-      </packing>
-    </child>
-    <child>
-      <object class=\"GtkLabel\" id=\"time_scale_label\">
-        <property name=\"name\">time_scale_label</property>
-        <property name=\"width_request\">290</property>
-        <property name=\"height_request\">35</property>
-        <property name=\"visible\">True</property>
-        <property name=\"can_focus\">False</property>
-        <property name=\"label\" translatable=\"yes\">T scale:</property>
-      </object>
-      <packing>
-        <property name=\"x\">350</property>
-        <property name=\"y\">90</property>
-      </packing>
-    </child>
-    <child>
-      <object class=\"GtkFrame\" id=\"frame1\">
-        <property name=\"width_request\">580</property>
-        <property name=\"height_request\">180</property>
-        <property name=\"visible\">True</property>
-        <property name=\"can_focus\">False</property>
-        <property name=\"label_xalign\">0</property>
-        <property name=\"shadow_type\">none</property>
-        <child>
-          <object class=\"GtkAlignment\" id=\"orginal_song_are\">
-            <property name=\"visible\">True</property>
-            <property name=\"can_focus\">False</property>
-            <property name=\"left_padding\">12</property>
-            <child>
-              <object class=\"GtkScrolledWindow\">
-                <property name=\"width_request\">560</property>
-                <property name=\"height_request\">160</property>
-                <property name=\"visible\">True</property>
-                <property name=\"can_focus\">True</property>
-                <property name=\"hscrollbar_policy\">always</property>
-                <property name=\"vscrollbar_policy\">never</property>
-                <property name=\"shadow_type\">in</property>
-                <child>
-                  <object class=\"GtkViewport\">
-                    <property name=\"visible\">True</property>
-                    <property name=\"can_focus\">False</property>
-                    <child>
-                      <object class=\"GtkDrawingArea\" id=\"draw_original\">
-                        <property name=\"visible\">True</property>
-                        <property name=\"can_focus\">False</property>
-                      </object>
-                    </child>
-                  </object>
-                </child>
-              </object>
-            </child>
-          </object>
-        </child>
-        <child type=\"label\">
-          <object class=\"GtkLabel\">
-            <property name=\"visible\">True</property>
-            <property name=\"can_focus\">False</property>
-            <property name=\"label\" translatable=\"yes\">Original song:</property>
-          </object>
-        </child>
-      </object>
-      <packing>
-        <property name=\"x\">360</property>
-        <property name=\"y\">135</property>
-      </packing>
-    </child>
-    <child>
-      <object class=\"GtkSearchBar\" id=\"search_bar\">
-        <property name=\"name\">search_bar</property>
-        <property name=\"can_focus\">False</property>
-        <property name=\"double_buffered\">False</property>
-        <property name=\"search_mode_enabled\">True</property>
-        <child>
-          <placeholder/>
-        </child>
-      </object>
-      <packing>
-        <property name=\"x\">10</property>
-        <property name=\"y\">655</property>
-      </packing>
-    </child>
-    <child>
-      <object class=\"GtkListBox\" id=\"song_list\">
-        <property name=\"name\">song_list</property>
-        <property name=\"width_request\">335</property>
-        <property name=\"height_request\">610</property>
-        <property name=\"visible\">True</property>
-        <property name=\"can_focus\">True</property>
-      </object>
-      <packing>
-        <property name=\"x\">10</property>
-        <property name=\"y\">55</property>
-      </packing>
-    </child>
-    <child>
-      <object class=\"GtkFrame\" id=\"frame2\">
-        <property name=\"width_request\">580</property>
-        <property name=\"height_request\">180</property>
-        <property name=\"visible\">True</property>
-        <property name=\"can_focus\">False</property>
-        <property name=\"label_xalign\">0</property>
-        <property name=\"shadow_type\">none</property>
-        <child>
-          <object class=\"GtkAlignment\" id=\"orginal_song_are1\">
-            <property name=\"name\">after_effect</property>
-            <property name=\"visible\">True</property>
-            <property name=\"can_focus\">False</property>
-            <property name=\"left_padding\">12</property>
-            <child>
-              <object class=\"GtkScrolledWindow\">
-                <property name=\"width_request\">560</property>
-                <property name=\"height_request\">160</property>
-                <property name=\"visible\">True</property>
-                <property name=\"can_focus\">True</property>
-                <property name=\"hscrollbar_policy\">always</property>
-                <property name=\"vscrollbar_policy\">never</property>
-                <property name=\"shadow_type\">in</property>
-                <child>
-                  <object class=\"GtkViewport\">
-                    <property name=\"visible\">True</property>
-                    <property name=\"can_focus\">False</property>
-                    <child>
-                      <object class=\"GtkDrawingArea\" id=\"draw_after\">
-                        <property name=\"visible\">True</property>
-                        <property name=\"can_focus\">False</property>
-                      </object>
-                    </child>
-                  </object>
-                </child>
-              </object>
-            </child>
-          </object>
-        </child>
-        <child type=\"label\">
-          <object class=\"GtkLabel\">
-            <property name=\"visible\">True</property>
-            <property name=\"can_focus\">False</property>
-            <property name=\"label\" translatable=\"yes\">After effect:</property>
-          </object>
-        </child>
-      </object>
-      <packing>
-        <property name=\"x\">360</property>
-        <property name=\"y\">320</property>
-      </packing>
-    </child>
-    <child>
-      <object class=\"GtkSpinButton\" id=\"warp_scale\">
-        <property name=\"name\">time_scale</property>
-        <property name=\"width_request\">275</property>
-        <property name=\"height_request\">35</property>
-        <property name=\"visible\">True</property>
-        <property name=\"sensitive\">False</property>
-        <property name=\"can_focus\">True</property>
-        <property name=\"activates_default\">True</property>
-        <property name=\"text\" translatable=\"yes\">10</property>
-        <property name=\"adjustment\">adjustment2</property>
-        <property name=\"digits\">1</property>
-        <property name=\"value\">1</property>
-      </object>
-      <packing>
-        <property name=\"x\">640</property>
-        <property name=\"y\">510</property>
-      </packing>
-    </child>
-    <child>
-      <object class=\"GtkLabel\" id=\"warp_scale_label\">
-        <property name=\"name\">warp_scale_label</property>
-        <property name=\"width_request\">290</property>
-        <property name=\"height_request\">35</property>
-        <property name=\"visible\">True</property>
-        <property name=\"can_focus\">False</property>
-        <property name=\"label\" translatable=\"yes\">Warp time:</property>
-      </object>
-      <packing>
-        <property name=\"x\">350</property>
-        <property name=\"y\">510</property>
-      </packing>
-    </child>
-    <child>
-      <object class=\"GtkSpinButton\" id=\"octave_scale\">
-        <property name=\"name\">octave_scale</property>
-        <property name=\"width_request\">275</property>
-        <property name=\"height_request\">35</property>
-        <property name=\"visible\">True</property>
-        <property name=\"sensitive\">False</property>
-        <property name=\"can_focus\">True</property>
-        <property name=\"activates_default\">True</property>
-        <property name=\"text\" translatable=\"yes\">1.0</property>
-        <property name=\"adjustment\">adjustment3</property>
-        <property name=\"value\">1</property>
-      </object>
-      <packing>
-        <property name=\"x\">640</property>
-        <property name=\"y\">550</property>
-      </packing>
-    </child>
-    <child>
-      <object class=\"GtkLabel\" id=\"octave_scale_label\">
-        <property name=\"name\">octave_scale_label</property>
-        <property name=\"width_request\">290</property>
-        <property name=\"height_request\">35</property>
-        <property name=\"visible\">True</property>
-        <property name=\"can_focus\">False</property>
-        <property name=\"label\" translatable=\"yes\">Change octave:</property>
-      </object>
-      <packing>
-        <property name=\"x\">350</property>
-        <property name=\"y\">550</property>
-      </packing>
-    </child>
-    <child>
-      <object class=\"GtkLabel\" id=\"remap_inst_label\">
-        <property name=\"name\">remap_label</property>
-        <property name=\"width_request\">290</property>
-        <property name=\"height_request\">35</property>
-        <property name=\"visible\">True</property>
-        <property name=\"can_focus\">False</property>
-        <property name=\"label\" translatable=\"yes\">Remap instruments:</property>
-      </object>
-      <packing>
-        <property name=\"x\">350</property>
-        <property name=\"y\">590</property>
-      </packing>
-    </child>
-    <child>
-      <object class=\"GtkComboBoxText\" id=\"remap_inst\">
-        <property name=\"name\">remap_inst</property>
-        <property name=\"width_request\">275</property>
-        <property name=\"height_request\">30</property>
-        <property name=\"visible\">True</property>
-        <property name=\"sensitive\">False</property>
-        <property name=\"can_focus\">False</property>
-        <property name=\"has_entry\">True</property>
-        <items>
-          <item translatable=\"yes\"> </item>
-          <item translatable=\"yes\">Brass Band</item>
-          <item translatable=\"yes\">Helicopter</item>
-        </items>
-        <child internal-child=\"entry\">
-          <object class=\"GtkEntry\">
-            <property name=\"can_focus\">False</property>
-            <property name=\"text\" translatable=\"yes\"> </property>
-          </object>
-        </child>
-      </object>
-      <packing>
-        <property name=\"x\">640</property>
-        <property name=\"y\">590</property>
-      </packing>
-    </child>
-    <child>
-      <object class=\"GtkLabel\" id=\"remap_notes_label\">
-        <property name=\"name\">remap_notes_label</property>
-        <property name=\"width_request\">290</property>
-        <property name=\"height_request\">35</property>
-        <property name=\"visible\">True</property>
-        <property name=\"can_focus\">False</property>
-        <property name=\"label\" translatable=\"yes\">Remap notes:</property>
-      </object>
-      <packing>
-        <property name=\"x\">350</property>
-        <property name=\"y\">630</property>
-      </packing>
-    </child>
-    <child>
-      <object class=\"GtkComboBoxText\" id=\"remap_notes\">
-        <property name=\"name\">remap_notes</property>
-        <property name=\"width_request\">275</property>
-        <property name=\"height_request\">35</property>
-        <property name=\"visible\">True</property>
-        <property name=\"sensitive\">False</property>
-        <property name=\"can_focus\">False</property>
-        <property name=\"has_entry\">True</property>
-        <items>
-          <item translatable=\"yes\"> </item>
-          <item translatable=\"yes\">Lower Notes</item>
-        </items>
-        <child internal-child=\"entry\">
-          <object class=\"GtkEntry\">
-            <property name=\"can_focus\">True</property>
-            <property name=\"text\" translatable=\"yes\"> </property>
-          </object>
-        </child>
-      </object>
-      <packing>
-        <property name=\"x\">640</property>
-        <property name=\"y\">630</property>
-      </packing>
-    </child>
-    <child>
-      <object class=\"GtkButton\" id=\"save_song\">
-        <property name=\"label\" translatable=\"yes\">Save Song</property>
-        <property name=\"name\">save_song</property>
-        <property name=\"width_request\">270</property>
-        <property name=\"height_request\">35</property>
-        <property name=\"visible\">True</property>
-        <property name=\"sensitive\">False</property>
-        <property name=\"can_focus\">True</property>
-        <property name=\"receives_default\">True</property>
-      </object>
-      <packing>
-        <property name=\"x\">360</property>
-        <property name=\"y\">675</property>
-      </packing>
-    </child>
-    <child>
-      <object class=\"GtkButton\" id=\"remove_song\">
-        <property name=\"label\" translatable=\"yes\">Remove Song</property>
-        <property name=\"name\">save_song</property>
-        <property name=\"width_request\">270</property>
-        <property name=\"height_request\">35</property>
-        <property name=\"visible\">True</property>
-        <property name=\"sensitive\">False</property>
-        <property name=\"can_focus\">True</property>
-        <property name=\"receives_default\">True</property>
-      </object>
-      <packing>
-        <property name=\"x\">645</property>
-        <property name=\"y\">675</property>
-      </packing>
-    </child>
-  </object>
+#define XML_STRING "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\
+<interface>\
+  <requires lib=\"gtk+\" version=\"3.20\"/>\
+  <object class=\"GtkAdjustment\" id=\"adjustment1\">\
+    <property name=\"lower\">1</property>\
+    <property name=\"upper\">1000</property>\
+    <property name=\"step_increment\">1</property>\
+    <property name=\"page_increment\">10</property>\
+  </object>\
+  <object class=\"GtkAdjustment\" id=\"adjustment2\">\
+    <property name=\"upper\">20</property>\
+    <property name=\"value\">1</property>\
+    <property name=\"step_increment\">0.10000000000000001</property>\
+    <property name=\"page_increment\">0.10000000000000001</property>\
+  </object>\
+  <object class=\"GtkAdjustment\" id=\"adjustment3\">\
+    <property name=\"lower\">-6</property>\
+    <property name=\"upper\">16</property>\
+    <property name=\"step_increment\">1</property>\
+    <property name=\"page_increment\">10</property>\
+  </object>\
+  <object class=\"GtkFixed\" id=\"fixed_grid\">\
+    <property name=\"name\">draw_original</property>\
+    <property name=\"visible\">True</property>\
+    <property name=\"can_focus\">False</property>\
+    <child>\
+      <object class=\"GtkButton\" id=\"add_song\">\
+        <property name=\"label\" translatable=\"yes\">Add Song from File</property>\
+        <property name=\"name\">add_song</property>\
+        <property name=\"width_request\">160</property>\
+        <property name=\"height_request\">35</property>\
+        <property name=\"visible\">True</property>\
+        <property name=\"can_focus\">True</property>\
+        <property name=\"receives_default\">True</property>\
+      </object>\
+      <packing>\
+        <property name=\"x\">10</property>\
+        <property name=\"y\">10</property>\
+      </packing>\
+    </child>\
+    <child>\
+      <object class=\"GtkButton\" id=\"load_directory\">\
+        <property name=\"label\" translatable=\"yes\">Load from Directory</property>\
+        <property name=\"name\">load_directory</property>\
+        <property name=\"width_request\">160</property>\
+        <property name=\"height_request\">35</property>\
+        <property name=\"visible\">True</property>\
+        <property name=\"can_focus\">True</property>\
+        <property name=\"receives_default\">True</property>\
+      </object>\
+      <packing>\
+        <property name=\"x\">180</property>\
+        <property name=\"y\">10</property>\
+      </packing>\
+    </child>\
+    <child>\
+      <object class=\"GtkSearchEntry\" id=\"search_song\">\
+        <property name=\"name\">search_song</property>\
+        <property name=\"width_request\">335</property>\
+        <property name=\"height_request\">20</property>\
+        <property name=\"visible\">True</property>\
+        <property name=\"can_focus\">True</property>\
+        <property name=\"primary_icon_name\">edit-find-symbolic</property>\
+        <property name=\"primary_icon_activatable\">False</property>\
+        <property name=\"primary_icon_sensitive\">False</property>\
+      </object>\
+      <packing>\
+        <property name=\"x\">10</property>\
+        <property name=\"y\">675</property>\
+      </packing>\
+    </child>\
+    <child>\
+      <object class=\"GtkLabel\" id=\"file_details\">\
+        <property name=\"name\">file_details</property>\
+        <property name=\"width_request\">580</property>\
+        <property name=\"height_request\">70</property>\
+        <property name=\"visible\">True</property>\
+        <property name=\"can_focus\">False</property>\
+        <property name=\"halign\">start</property>\
+        <property name=\"valign\">start</property>\
+\        <property name=\"label\" translatable=\"yes\">Select a file from list to start...\
+</property>\
+        <property name=\"wrap\">True</property>\
+        <property name=\"ellipsize\">end</property>\
+        <property name=\"width_chars\">1</property>\
+        <property name=\"max_width_chars\">15</property>\
+        <property name=\"xalign\">0</property>\
+        <property name=\"yalign\">0</property>\
+      </object>\
+      <packing>\
+        <property name=\"x\">360</property>\
+        <property name=\"y\">10</property>\
+      </packing>\
+    </child>\
+    <child>\
+      <object class=\"GtkSpinButton\" id=\"time_scale\">\
+        <property name=\"name\">time_scale</property>\
+        <property name=\"width_request\">300</property>\
+        <property name=\"height_request\">35</property>\
+        <property name=\"visible\">True</property>\
+        <property name=\"sensitive\">False</property>\
+        <property name=\"can_focus\">True</property>\
+        <property name=\"activates_default\">True</property>\
+        <property name=\"adjustment\">adjustment1</property>\
+        <property name=\"value\">10</property>\
+      </object>\
+      <packing>\
+        <property name=\"x\">640</property>\
+        <property name=\"y\">90</property>\
+      </packing>\
+    </child>\
+    <child>\
+      <object class=\"GtkLabel\" id=\"time_scale_label\">\
+        <property name=\"name\">time_scale_label</property>\
+        <property name=\"width_request\">290</property>\
+        <property name=\"height_request\">35</property>\
+        <property name=\"visible\">True</property>\
+        <property name=\"can_focus\">False</property>\
+        <property name=\"label\" translatable=\"yes\">T scale:</property>\
+      </object>\
+      <packing>\
+        <property name=\"x\">350</property>\
+        <property name=\"y\">90</property>\
+      </packing>\
+    </child>\
+    <child>\
+      <object class=\"GtkFrame\" id=\"frame1\">\
+        <property name=\"width_request\">580</property>\
+        <property name=\"height_request\">180</property>\
+        <property name=\"visible\">True</property>\
+        <property name=\"can_focus\">False</property>\
+        <property name=\"label_xalign\">0</property>\
+        <property name=\"shadow_type\">none</property>\
+        <child>\
+          <object class=\"GtkAlignment\" id=\"orginal_song_are\">\
+            <property name=\"visible\">True</property>\
+            <property name=\"can_focus\">False</property>\
+            <property name=\"left_padding\">12</property>\
+            <child>\
+              <object class=\"GtkScrolledWindow\">\
+                <property name=\"width_request\">560</property>\
+                <property name=\"height_request\">160</property>\
+                <property name=\"visible\">True</property>\
+                <property name=\"can_focus\">True</property>\
+                <property name=\"hscrollbar_policy\">always</property>\
+                <property name=\"vscrollbar_policy\">never</property>\
+                <property name=\"shadow_type\">in</property>\
+                <child>\
+                  <object class=\"GtkViewport\">\
+                    <property name=\"visible\">True</property>\
+                    <property name=\"can_focus\">False</property>\
+                    <child>\
+                      <object class=\"GtkDrawingArea\" id=\"draw_original\">\
+                        <property name=\"visible\">True</property>\
+                        <property name=\"can_focus\">False</property>\
+                      </object>\
+                    </child>\
+                  </object>\
+                </child>\
+              </object>\
+            </child>\
+          </object>\
+        </child>\
+        <child type=\"label\">\
+          <object class=\"GtkLabel\">\
+            <property name=\"visible\">True</property>\
+            <property name=\"can_focus\">False</property>\
+            <property name=\"label\" translatable=\"yes\">Original song:</property>\
+          </object>\
+        </child>\
+      </object>\
+      <packing>\
+        <property name=\"x\">360</property>\
+        <property name=\"y\">135</property>\
+      </packing>\
+    </child>\
+    <child>\
+      <object class=\"GtkSearchBar\" id=\"search_bar\">\
+        <property name=\"name\">search_bar</property>\
+        <property name=\"can_focus\">False</property>\
+        <property name=\"double_buffered\">False</property>\
+        <property name=\"search_mode_enabled\">True</property>\
+        <child>\
+          <placeholder/>\
+        </child>\
+      </object>\
+      <packing>\
+        <property name=\"x\">10</property>\
+        <property name=\"y\">655</property>\
+      </packing>\
+    </child>\
+    <child>\
+      <object class=\"GtkListBox\" id=\"song_list\">\
+        <property name=\"name\">song_list</property>\
+        <property name=\"width_request\">335</property>\
+        <property name=\"height_request\">610</property>\
+        <property name=\"visible\">True</property>\
+        <property name=\"can_focus\">True</property>\
+      </object>\
+      <packing>\
+        <property name=\"x\">10</property>\
+        <property name=\"y\">55</property>\
+      </packing>\
+    </child>\
+    <child>\
+      <object class=\"GtkFrame\" id=\"frame2\">\
+        <property name=\"width_request\">580</property>\
+        <property name=\"height_request\">180</property>\
+        <property name=\"visible\">True</property>\
+        <property name=\"can_focus\">False</property>\
+        <property name=\"label_xalign\">0</property>\
+        <property name=\"shadow_type\">none</property>\
+        <child>\
+          <object class=\"GtkAlignment\" id=\"orginal_song_are1\">\
+            <property name=\"name\">after_effect</property>\
+            <property name=\"visible\">True</property>\
+            <property name=\"can_focus\">False</property>\
+            <property name=\"left_padding\">12</property>\
+            <child>\
+              <object class=\"GtkScrolledWindow\">\
+                <property name=\"width_request\">560</property>\
+                <property name=\"height_request\">160</property>\
+                <property name=\"visible\">True</property>\
+                <property name=\"can_focus\">True</property>\
+                <property name=\"hscrollbar_policy\">always</property>\
+                <property name=\"vscrollbar_policy\">never</property>\
+                <property name=\"shadow_type\">in</property>\
+                <child>\
+                  <object class=\"GtkViewport\">\
+                    <property name=\"visible\">True</property>\
+                    <property name=\"can_focus\">False</property>\
+                    <child>\
+                      <object class=\"GtkDrawingArea\" id=\"draw_after\">\
+                        <property name=\"visible\">True</property>\
+                        <property name=\"can_focus\">False</property>\
+                      </object>\
+                    </child>\
+                  </object>\
+                </child>\
+              </object>\
+            </child>\
+          </object>\
+        </child>\
+        <child type=\"label\">\
+          <object class=\"GtkLabel\">\
+            <property name=\"visible\">True</property>\
+            <property name=\"can_focus\">False</property>\
+            <property name=\"label\" translatable=\"yes\">After effect:</property>\
+          </object>\
+        </child>\
+      </object>\
+      <packing>\
+        <property name=\"x\">360</property>\
+        <property name=\"y\">320</property>\
+      </packing>\
+    </child>\
+    <child>\
+      <object class=\"GtkSpinButton\" id=\"warp_scale\">\
+        <property name=\"name\">time_scale</property>\
+        <property name=\"width_request\">275</property>\
+        <property name=\"height_request\">35</property>\
+        <property name=\"visible\">True</property>\
+        <property name=\"sensitive\">False</property>\
+        <property name=\"can_focus\">True</property>\
+        <property name=\"activates_default\">True</property>\
+        <property name=\"text\" translatable=\"yes\">10</property>\
+        <property name=\"adjustment\">adjustment2</property>\
+        <property name=\"digits\">1</property>\
+        <property name=\"value\">1</property>\
+      </object>\
+      <packing>\
+        <property name=\"x\">640</property>\
+        <property name=\"y\">510</property>\
+      </packing>\
+    </child>\
+    <child>\
+      <object class=\"GtkLabel\" id=\"warp_scale_label\">\
+        <property name=\"name\">warp_scale_label</property>\
+        <property name=\"width_request\">290</property>\
+        <property name=\"height_request\">35</property>\
+        <property name=\"visible\">True</property>\
+        <property name=\"can_focus\">False</property>\
+        <property name=\"label\" translatable=\"yes\">Warp time:</property>\
+      </object>\
+      <packing>\
+        <property name=\"x\">350</property>\
+        <property name=\"y\">510</property>\
+      </packing>\
+    </child>\
+    <child>\
+      <object class=\"GtkSpinButton\" id=\"octave_scale\">\
+        <property name=\"name\">octave_scale</property>\
+        <property name=\"width_request\">275</property>\
+        <property name=\"height_request\">35</property>\
+        <property name=\"visible\">True</property>\
+        <property name=\"sensitive\">False</property>\
+        <property name=\"can_focus\">True</property>\
+        <property name=\"activates_default\">True</property>\
+        <property name=\"text\" translatable=\"yes\">1.0</property>\
+        <property name=\"adjustment\">adjustment3</property>\
+        <property name=\"value\">1</property>\
+      </object>\
+      <packing>\
+        <property name=\"x\">640</property>\
+        <property name=\"y\">550</property>\
+      </packing>\
+    </child>\
+    <child>\
+      <object class=\"GtkLabel\" id=\"octave_scale_label\">\
+        <property name=\"name\">octave_scale_label</property>\
+        <property name=\"width_request\">290</property>\
+        <property name=\"height_request\">35</property>\
+        <property name=\"visible\">True</property>\
+        <property name=\"can_focus\">False</property>\
+        <property name=\"label\" translatable=\"yes\">Change octave:</property>\
+      </object>\
+      <packing>\
+        <property name=\"x\">350</property>\
+        <property name=\"y\">550</property>\
+      </packing>\
+    </child>\
+    <child>\
+      <object class=\"GtkLabel\" id=\"remap_inst_label\">\
+        <property name=\"name\">remap_label</property>\
+        <property name=\"width_request\">290</property>\
+        <property name=\"height_request\">35</property>\
+        <property name=\"visible\">True</property>\
+        <property name=\"can_focus\">False</property>\
+        <property name=\"label\" translatable=\"yes\">Remap instruments:</property>\
+      </object>\
+      <packing>\
+        <property name=\"x\">350</property>\
+        <property name=\"y\">590</property>\
+      </packing>\
+    </child>\
+    <child>\
+      <object class=\"GtkComboBoxText\" id=\"remap_inst\">\
+        <property name=\"name\">remap_inst</property>\
+        <property name=\"width_request\">275</property>\
+        <property name=\"height_request\">30</property>\
+        <property name=\"visible\">True</property>\
+        <property name=\"sensitive\">False</property>\
+        <property name=\"can_focus\">False</property>\
+        <property name=\"has_entry\">True</property>\
+        <items>\
+          <item translatable=\"yes\"> </item>\
+          <item translatable=\"yes\">Brass Band</item>\
+          <item translatable=\"yes\">Helicopter</item>\
+        </items>\
+        <child internal-child=\"entry\">\
+          <object class=\"GtkEntry\">\
+            <property name=\"can_focus\">False</property>\
+            <property name=\"text\" translatable=\"yes\"> </property>\
+          </object>\
+        </child>\
+      </object>\
+      <packing>\
+        <property name=\"x\">640</property>\
+        <property name=\"y\">590</property>\
+      </packing>\
+    </child>\
+    <child>\
+      <object class=\"GtkLabel\" id=\"remap_notes_label\">\
+        <property name=\"name\">remap_notes_label</property>\
+        <property name=\"width_request\">290</property>\
+        <property name=\"height_request\">35</property>\
+        <property name=\"visible\">True</property>\
+        <property name=\"can_focus\">False</property>\
+        <property name=\"label\" translatable=\"yes\">Remap notes:</property>\
+      </object>\
+      <packing>\
+        <property name=\"x\">350</property>\
+        <property name=\"y\">630</property>\
+      </packing>\
+    </child>\
+    <child>\
+      <object class=\"GtkComboBoxText\" id=\"remap_notes\">\
+        <property name=\"name\">remap_notes</property>\
+        <property name=\"width_request\">275</property>\
+        <property name=\"height_request\">35</property>\
+        <property name=\"visible\">True</property>\
+        <property name=\"sensitive\">False</property>\
+        <property name=\"can_focus\">False</property>\
+        <property name=\"has_entry\">True</property>\
+        <items>\
+          <item translatable=\"yes\"> </item>\
+          <item translatable=\"yes\">Lower Notes</item>\
+        </items>\
+        <child internal-child=\"entry\">\
+          <object class=\"GtkEntry\">\
+            <property name=\"can_focus\">True</property>\
+            <property name=\"text\" translatable=\"yes\"> </property>\
+          </object>\
+        </child>\
+      </object>\
+      <packing>\
+        <property name=\"x\">640</property>\
+        <property name=\"y\">630</property>\
+      </packing>\
+    </child>\
+    <child>\
+      <object class=\"GtkButton\" id=\"save_song\">\
+        <property name=\"label\" translatable=\"yes\">Save Song</property>\
+        <property name=\"name\">save_song</property>\
+        <property name=\"width_request\">270</property>\
+        <property name=\"height_request\">35</property>\
+        <property name=\"visible\">True</property>\
+        <property name=\"sensitive\">False</property>\
+        <property name=\"can_focus\">True</property>\
+        <property name=\"receives_default\">True</property>\
+      </object>\
+      <packing>\
+        <property name=\"x\">360</property>\
+        <property name=\"y\">675</property>\
+      </packing>\
+    </child>\
+    <child>\
+      <object class=\"GtkButton\" id=\"remove_song\">\
+        <property name=\"label\" translatable=\"yes\">Remove Song</property>\
+        <property name=\"name\">save_song</property>\
+        <property name=\"width_request\">270</property>\
+        <property name=\"height_request\">35</property>\
+        <property name=\"visible\">True</property>\
+        <property name=\"sensitive\">False</property>\
+        <property name=\"can_focus\">True</property>\
+        <property name=\"receives_default\">True</property>\
+      </object>\
+      <packing>\
+        <property name=\"x\">645</property>\
+        <property name=\"y\">675</property>\
+      </packing>\
+    </child>\
+  </object>\
 </interface>"
 
 tree_node_t *g_current_node = NULL;
