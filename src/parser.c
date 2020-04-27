@@ -202,9 +202,11 @@ event_t *parse_event(FILE *read_file){
       new_event->sys_event = parse_sys_event(read_file, read_type);
       break;
     case META_EVENT_T:
+      printf("META EVENT\n");
       new_event->meta_event = parse_meta_event(read_file);
       break;
     case MIDI_EVENT_T:
+      printf("MIDI EVENT\n");
       new_event->midi_event = parse_midi_event(read_file, read_type);
       break;
   }
