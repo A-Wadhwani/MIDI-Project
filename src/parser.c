@@ -265,7 +265,6 @@ meta_event_t parse_meta_event(FILE *read_file){
  */
 
 midi_event_t parse_midi_event(FILE *read_file, uint8_t read_status){
-  printf("STATUS = %d", read_status);
   midi_event_t midi_event = (midi_event_t) {"\0", 0, 0, NULL};
   if (check_midi_status(read_status)){
     midi_event.status = read_status;
